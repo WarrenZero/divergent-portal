@@ -19,7 +19,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      signInUrl="/login"
+      signUpUrl="/signup"
+    >
       <html lang="en" data-theme="auto">
         <body>
           <a href="#main-content" className="skip-link">

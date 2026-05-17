@@ -62,7 +62,7 @@ export default function SignUpPage() {
     <SignUp
       appearance={divergentAppearance}
       fallbackRedirectUrl="/dashboard"
-      signInForceRedirectUrl="/sign-in"
+      signInUrl="/login"
     />
   );
 }
