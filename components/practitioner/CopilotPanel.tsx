@@ -1,0 +1,321 @@
+'use client';
+
+import { useState, useRef, useCallback, useEffect } from 'react';
+import styles from './CopilotPanel.module.css';
+
+// ─── Types ────────────────────────────────────────────────────
+
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  streaming?: boolean;
+}
+
+interface Props {
+  clientId?: string;
+}
+
+// ─── Suggested prompts (mirror v11 welcome message) ───────────
+
+const SUGGESTED_PROMPTS = [
+  "Walk me through a client's HTMA — I see slow oxidation but want a second pair of eyes on the mineral ratios.",
+  "I want to put a slow oxidizer on a high-dose cruciferous protocol for liver detox. Thoughts?",
+  "Help me think through SDA macro ratios for fast vs slow metabolic types.",
+];
+
+// ─── Component ────────────────────────────────────────────────
+
+export default function CopilotPanel({ clientId }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const idCounter = useRef(0);
+
+  // Auto-scroll body on new content
+  const scrollToBottom = useCallback(() => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => { scrollToBottom(); }, [messages, scrollToBottom]);
+
+  // Focus input when panel opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 250);
+    }
+  }, [isOpen]);
+
+  function nextId() {
+    return String(++idCounter.current);
+  }
+
+  function toggle() {
+    setIsOpen((o) => !o);
+  }
+
+  function handleSuggest(text: string) {
+    setInput(text);
+    inputRef.current?.focus();
+  }
+
+  // Auto-resize textarea
+  function handleInputChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setInput(e.target.value);
+    const el = e.target;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+  }
+
+  async function handleSend() {
+    const text = input.trim();
+    if (!text || isStreaming) return;
+
+    // Reset input height
+    if (inputRef.current) {
+      inputRef.current.style.height = '38px';
+    }
+    setInput('');
+
+    // Append user message
+    const userMsg: Message = { id: nextId(), role: 'user', content: text };
+    const aiMsgId = nextId();
+
+    setMessages((prev) => [
+      ...prev,
+      userMsg,
+      { id: aiMsgId, role: 'assistant', content: '', streaming: true },
+    ]);
+    setIsStreaming(true);
+
+    // Build conversation history for API
+    const history = [
+      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      { role: 'user' as const, content: text },
+    ];
+
+    try {
+      const res = await fetch('/api/copilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, clientId }),
+      });
+
+      if (!res.ok || !res.body) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      // Read SSE stream
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // Process complete SSE lines
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const jsonStr = line.slice(6);
+
+          let event: { type: string; content?: string; message?: string };
+          try { event = JSON.parse(jsonStr); } catch { continue; }
+
+          if (event.type === 'delta' && event.content) {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === aiMsgId
+                  ? { ...m, content: m.content + event.content }
+                  : m,
+              ),
+            );
+          } else if (event.type === 'error') {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === aiMsgId
+                  ? { ...m, content: event.message ?? 'An error occurred.', streaming: false }
+                  : m,
+              ),
+            );
+          } else if (event.type === 'done') {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === aiMsgId ? { ...m, streaming: false } : m,
+              ),
+            );
+          }
+        }
+      }
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : 'Connection error.';
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === aiMsgId
+            ? { ...m, content: errMsg, streaming: false }
+            : m,
+        ),
+      );
+    } finally {
+      setIsStreaming(false);
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  }
+
+  const showWelcome = messages.length === 0;
+
+  return (
+    <>
+      {/* ─── Floating Action Button ─── */}
+      <button
+        className={`${styles.fab} ${isOpen ? styles.fabOpen : ''}`}
+        onClick={toggle}
+        aria-label={isOpen ? 'Close Clinical Co-Pilot' : 'Open Clinical Co-Pilot'}
+        aria-expanded={isOpen}
+      >
+        <span className={styles.fabIcon}>✦</span>
+        <span className={styles.fabDot} aria-hidden="true" />
+      </button>
+
+      {/* ─── Chat Panel ─── */}
+      <div
+        className={`${styles.panel} ${isOpen ? styles.panelOpen : ''}`}
+        role="dialog"
+        aria-label="Clinical Co-Pilot"
+        aria-modal="false"
+      >
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.avatar}>DC</div>
+          <div className={styles.titleBlock}>
+            <div className={styles.title}>Divergent Clinical Co-Pilot</div>
+            <div className={styles.status}>
+              {isStreaming ? 'Reasoning…' : 'Ready · HTMA + metabolic typing engine online'}
+            </div>
+          </div>
+          <button className={styles.closeBtn} onClick={toggle} aria-label="Close">
+            &times;
+          </button>
+        </div>
+
+        {/* Message body */}
+        <div className={styles.body} ref={bodyRef}>
+          {/* Welcome / empty state */}
+          {showWelcome && (
+            <div className={styles.msg}>
+              <div className={`${styles.msgAvatar} ${styles.msgAvatarAi}`}>DC</div>
+              <div className={styles.bubble}>
+                {`Good morning, Dr. Rivera. I'm your clinical reasoning partner — here to help you connect HTMA patterns to protocols, and to flag friction before it becomes inflammation.\n\nWhat are we looking at today?`}
+                <div className={styles.suggest}>
+                  {SUGGESTED_PROMPTS.map((p) => (
+                    <button
+                      key={p}
+                      className={styles.suggestBtn}
+                      onClick={() => handleSuggest(p)}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Conversation messages */}
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`${styles.msg} ${msg.role === 'user' ? styles.msgUser : ''}`}
+            >
+              <div
+                className={`${styles.msgAvatar} ${
+                  msg.role === 'assistant' ? styles.msgAvatarAi : styles.msgAvatarUser
+                }`}
+              >
+                {msg.role === 'assistant' ? 'DC' : 'DR'}
+              </div>
+
+              {/* Show typing indicator for empty streaming bubble */}
+              {msg.role === 'assistant' && msg.streaming && msg.content === '' ? (
+                <div className={styles.typing}>
+                  <div className={styles.typingDot} />
+                  <div className={styles.typingDot} />
+                  <div className={styles.typingDot} />
+                </div>
+              ) : (
+                <div
+                  className={`${styles.bubble} ${msg.role === 'user' ? styles.bubbleUser : ''}`}
+                >
+                  {msg.content}
+                  {/* Streaming cursor */}
+                  {msg.streaming && msg.content !== '' && (
+                    <span aria-hidden="true" style={{ opacity: 0.5 }}>▋</span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Input bar */}
+        <div className={styles.inputBar}>
+          <textarea
+            ref={inputRef}
+            className={styles.input}
+            placeholder="Ask the Co-Pilot…"
+            value={input}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            rows={1}
+            autoCorrect="on"
+            autoCapitalize="sentences"
+            spellCheck
+            disabled={isStreaming}
+            aria-label="Message input"
+          />
+          <button
+            className={styles.sendBtn}
+            onClick={handleSend}
+            disabled={isStreaming || !input.trim()}
+            aria-label="Send message"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+
+        <div className={styles.foot}>
+          Divergent Clinical Co-Pilot · claude-sonnet-4-6 · 20% guardrail active
+        </div>
+      </div>
+    </>
+  );
+}

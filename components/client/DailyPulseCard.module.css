@@ -1,0 +1,218 @@
+/* ─── DAILY PULSE CARD ───────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--pine-800), var(--pine-600));
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.headerSub {
+  font-size: 11px;
+  color: var(--pine-300);
+  margin-top: 2px;
+}
+
+.headerBadge {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--pine-200);
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.body {
+  padding: 16px;
+}
+
+/* ─── SLIDER ─────────────────────────────────────────────────── */
+
+.sliderWrap {
+  margin-bottom: 14px;
+}
+
+.sliderWrap:nth-child(3) {
+  margin-bottom: 16px;
+}
+
+.sliderLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.sliderName {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sliderVal {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  /* color is set inline per slider */
+}
+
+.scaleHint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: 3px;
+}
+
+/* Range input — cross-browser */
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  background: var(--bone-300);
+  /* filled track color is set per-slider via CSS custom property */
+  background: linear-gradient(
+    to right,
+    var(--track-color) 0%,
+    var(--track-color) var(--fill-pct),
+    var(--bone-300) var(--fill-pct),
+    var(--bone-300) 100%
+  );
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--track-color);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(15, 31, 19, 0.18);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-out);
+}
+
+.range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--track-color);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(15, 31, 19, 0.18);
+  cursor: pointer;
+}
+
+.range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* ─── SUBMIT BUTTON ───────────────────────────────────────────── */
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--pine-700);
+  color: var(--pine-200);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s var(--ease-out), transform 0.15s var(--ease-out);
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: var(--pine-600);
+  transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submitHint {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ─── SUCCESS STATE ───────────────────────────────────────────── */
+
+.successBox {
+  background: var(--pine-100);
+  border: 1px solid var(--pine-200);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+  animation: fadeUp var(--dur-base) var(--ease-out);
+}
+
+.successGlyph {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.successTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pine-700);
+}
+
+.successSub {
+  font-size: 12px;
+  color: var(--pine-500);
+  margin-top: 4px;
+  font-family: 'Lora', serif;
+}
+
+/* ─── ERROR STATE ─────────────────────────────────────────────── */
+
+.errorBox {
+  background: #FEEAEA;
+  border: 1px solid #F0C4C4;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #8A2020;
+  font-family: 'Lora', serif;
+  margin-bottom: 10px;
+}
