@@ -48,10 +48,21 @@ const SUGGESTED_PROMPTS = [
 // ─── Component ────────────────────────────────────────────────
 
 export default function CopilotPanel({ clientId }: Props) {
-  const { user } = useUser();
-  const firstName = user?.firstName;
-  const lastName = user?.lastName;
+  const { user, isLoaded } = useUser();
+  const firstName = user?.firstName ?? null;
+  const lastName = user?.lastName ?? null;
   const initials = userInitials(firstName, lastName);
+
+  // Dev-only: surface what Clerk actually resolved so missing names are obvious
+  useEffect(() => {
+    if (isLoaded && process.env.NODE_ENV === 'development') {
+      console.log('[CopilotPanel] Clerk user resolved:', {
+        firstName,
+        lastName,
+        email: user?.primaryEmailAddress?.emailAddress,
+      });
+    }
+  }, [isLoaded, firstName, lastName, user]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -245,8 +256,8 @@ export default function CopilotPanel({ clientId }: Props) {
 
         {/* Message body */}
         <div className={styles.body} ref={bodyRef}>
-          {/* Welcome / empty state */}
-          {showWelcome && (
+          {/* Welcome / empty state — defer until Clerk has resolved */}
+          {showWelcome && isLoaded && (
             <div className={styles.msg}>
               <div className={`${styles.msgAvatar} ${styles.msgAvatarAi}`}>DC</div>
               <div className={styles.bubble}>
