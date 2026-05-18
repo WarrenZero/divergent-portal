@@ -1,0 +1,485 @@
+/* ─── Page shell ────────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ─── Hero header ────────────────────────────────────────────── */
+.hero {
+  background: var(--pine-900);
+  padding: 32px 40px;
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(134,178,146,0.10) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 60% at 0% 100%, rgba(90,124,98,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.heroLeft {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-bottom: 8px;
+}
+
+.name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.nameEm {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  color: var(--copper-300);
+  font-weight: 400;
+}
+
+.tagline {
+  font-size: 14px;
+  color: var(--pine-300);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 480px;
+}
+
+/* ─── Wellness score ring ────────────────────────────────────── */
+.scoreRing {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreSvg {
+  width: 110px;
+  height: 110px;
+}
+
+.scoreTrack {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.10);
+  stroke-width: 6;
+}
+
+.scoreFill {
+  fill: none;
+  stroke: var(--copper-400);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scoreText {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  fill: #fff;
+  text-anchor: middle;
+}
+
+.scoreSub {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  fill: var(--pine-300);
+  text-anchor: middle;
+}
+
+.scoreLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* ─── Stats strip ────────────────────────────────────────────── */
+.statsStrip {
+  background: var(--pine-800);
+  padding: 12px 40px;
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.statsStrip::-webkit-scrollbar {
+  display: none;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.statVal {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+.statLab {
+  font-size: 11px;
+  color: var(--pine-300);
+  font-family: 'Syne', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Content grid ───────────────────────────────────────────── */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 20px;
+  padding: 24px 40px 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.mainCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.sideCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Section heading ────────────────────────────────────────── */
+.sectionLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+/* ─── Card base ──────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.cardPad {
+  padding: 16px;
+}
+
+/* ─── AI nudge ───────────────────────────────────────────────── */
+.aiNudge {
+  background: linear-gradient(135deg, var(--pine-100), var(--bone-100));
+  border: 1px solid var(--pine-200);
+  border-radius: var(--radius);
+  padding: 14px 16px 14px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.aiNudge::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--pine-500), var(--pine-300));
+}
+
+.aiNudgeLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pine-600);
+  margin-bottom: 6px;
+}
+
+.aiNudgeText {
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.65;
+}
+
+/* ─── Quick actions ──────────────────────────────────────────── */
+.qaList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.qaBtn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms;
+  text-align: left;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.qaBtnPine {
+  background: var(--pine-700);
+  color: #fff;
+}
+
+.qaBtnPine:hover {
+  background: var(--pine-600);
+}
+
+.qaBtnGhost {
+  background: var(--surface);
+  color: var(--text-2);
+  border: 1px solid var(--border-2);
+}
+
+.qaBtnGhost:hover {
+  background: var(--pine-100);
+  color: var(--pine-700);
+  border-color: var(--pine-300);
+}
+
+.qaBtnCopper {
+  background: var(--copper-500);
+  color: #fff;
+}
+
+.qaBtnCopper:hover {
+  background: var(--copper-600, #a86438);
+}
+
+.qaIcon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+/* ─── Next session ───────────────────────────────────────────── */
+.sessionBlock {
+  padding: 14px;
+  background: var(--pine-100);
+  border-radius: var(--radius);
+  border: 1px solid var(--pine-200);
+}
+
+.sessionDate {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pine-600);
+  margin-bottom: 4px;
+}
+
+.sessionType {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.sessionDuration {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.sessionEmpty {
+  padding: 20px 16px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-3);
+  font-style: italic;
+  text-align: center;
+}
+
+.joinBtn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 14px;
+  background: var(--pine-600);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 150ms;
+}
+
+.joinBtn:hover {
+  background: var(--pine-500);
+}
+
+/* ─── Supplements ────────────────────────────────────────────── */
+.suppList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.suppItem {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.suppItem:last-child {
+  border-bottom: none;
+}
+
+.suppName {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.suppDose {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.suppTiming {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.suppEmpty {
+  padding: 16px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-3);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ─── Protocol badge ─────────────────────────────────────────── */
+.protocolBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pine-200);
+  letter-spacing: 0.03em;
+}
+
+.protocolDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--copper-400);
+  flex-shrink: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero {
+    padding: 24px 20px;
+    grid-template-columns: 1fr 110px;
+  }
+
+  .statsStrip {
+    padding: 12px 20px;
+    gap: 20px;
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .sideCol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .scoreRing {
+    display: none;
+  }
+
+  .sideCol {
+    grid-template-columns: 1fr;
+  }
+}
