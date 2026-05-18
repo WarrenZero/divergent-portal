@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import styles from './ClientProfile.module.css';
 import ProtocolPanel from './ProtocolPanel';
+import SupplementPanel from './SupplementPanel';
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -476,40 +477,10 @@ export default async function ClientProfilePage({
           />
 
           {/* Supplements */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitle}>
-                Supplements
-                {supplements.length > 0 ? ` · ${supplements.length}` : ''}
-              </span>
-              <button className={styles.btnGhost} style={{ padding: '4px 10px', fontSize: 10 }}>
-                + Add
-              </button>
-            </div>
-            {supplements.length === 0 ? (
-              <div className={styles.emptyState}>
-                <div className={styles.emptyGlyph}>💊</div>
-                <div className={styles.emptyTitle}>No supplements assigned</div>
-                <p className={styles.emptyText}>
-                  Add supplements to build this client&rsquo;s personalised protocol.
-                </p>
-              </div>
-            ) : (
-              <div className={`${styles.cardPad} ${styles.suppList}`}>
-                {supplements.map((s) => (
-                  <div key={s.id} className={styles.suppRow}>
-                    <div style={{ flex: 1 }}>
-                      <div className={styles.suppName}>{s.name}</div>
-                      {s.dose && <div className={styles.suppDose}>{s.dose}</div>}
-                    </div>
-                    {s.timing && (
-                      <span className={styles.suppTiming}>{s.timing}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <SupplementPanel
+            clientId={client.id}
+            initialSupplements={supplements}
+          />
 
         </div>
       </div>
