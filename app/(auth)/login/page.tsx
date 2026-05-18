@@ -67,7 +67,7 @@ export default function LoginPage() {
   return (
     <SignIn
       appearance={divergentAppearance}
-      forceRedirectUrl="/dashboard"
+      forceRedirectUrl="/portal"
       signUpUrl="/signup"
     />
   );

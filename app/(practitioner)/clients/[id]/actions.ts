@@ -1,6 +1,7 @@
 'use server';
 
-import { auth } from '@clerk/nextjs/server';
+import { auth, clerkClient } from '@clerk/nextjs/server';
+import { headers } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/server';
 
 export async function assignProtocol(
@@ -104,4 +105,56 @@ export async function addSupplement(
 
   if (insertErr) return { error: insertErr.message };
   return {};
+}
+
+// ─── Invite Client ────────────────────────────────────────────
+
+export async function inviteClient(
+  clientId: string,
+  email: string,
+): Promise<{ error?: string; sent?: boolean }> {
+  const { userId } = await auth();
+  if (!userId) return { error: 'Not authenticated' };
+
+  const supabase = await createServiceClient();
+
+  // Verify practitioner owns this client
+  const { data: practitioner } = await supabase
+    .from('practitioners')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .single();
+
+  if (!practitioner) return { error: 'Practitioner not found' };
+
+  const { data: client } = await supabase
+    .from('clients')
+    .select('id, clerk_user_id')
+    .eq('id', clientId)
+    .eq('practitioner_id', practitioner.id)
+    .single();
+
+  if (!client) return { error: 'Client not found' };
+  if (client.clerk_user_id) return { error: 'Client already has an active account' };
+
+  // Resolve app URL from request headers
+  const headersList = await headers();
+  const host = headersList.get('host') ?? 'divergentportal.com';
+  const protocol = host.startsWith('localhost') ? 'http' : 'https';
+  const redirectUrl = `${protocol}://${host}/portal`;
+
+  try {
+    const clerk = await clerkClient();
+    await clerk.invitations.createInvitation({
+      emailAddress: email,
+      redirectUrl,
+      ignoreExisting: true,
+      publicMetadata: { role: 'client', clientId },
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Failed to send invitation';
+    return { error: msg };
+  }
+
+  return { sent: true };
 }

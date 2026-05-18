@@ -6,12 +6,14 @@ import type { Metadata } from 'next';
 import styles from './ClientProfile.module.css';
 import ProtocolPanel from './ProtocolPanel';
 import SupplementPanel from './SupplementPanel';
+import InviteButton from './InviteButton';
 
 // ─── Types ────────────────────────────────────────────────────
 
 interface ClientRow {
   id: string;
   practitioner_id: string;
+  clerk_user_id: string | null;
   first_name: string;
   last_name: string;
   email: string | null;
@@ -314,8 +316,14 @@ export default async function ClientProfilePage({
         </div>
 
         <div className={styles.profileActions}>
+          {client.email && (
+            <InviteButton
+              clientId={client.id}
+              email={client.email}
+              alreadyActive={!!client.clerk_user_id}
+            />
+          )}
           <button className={styles.btnGhost}>Start NAQ</button>
-          <button className={styles.btnGhost}>Add Supplement</button>
           <button className={styles.btnPrimary}>Open Co-Pilot →</button>
         </div>
       </div>
