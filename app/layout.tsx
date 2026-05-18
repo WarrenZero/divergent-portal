@@ -23,7 +23,7 @@ export default function RootLayout({
       signInUrl="/login"
       signUpUrl="/signup"
     >
-      <html lang="en" data-theme="auto">
+      <html lang="en" data-theme="light">
         <body>
           <a href="#main-content" className="skip-link">
             Skip to main content
