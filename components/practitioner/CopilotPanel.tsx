@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
 import styles from './CopilotPanel.module.css';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -16,6 +17,26 @@ interface Props {
   clientId?: string;
 }
 
+// ─── Name helpers ─────────────────────────────────────────────
+
+function timeGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function welcomeGreeting(firstName: string | null | undefined): string {
+  const base = timeGreeting();
+  return firstName ? `${base}, ${firstName}.` : `${base}.`;
+}
+
+function userInitials(firstName: string | null | undefined, lastName: string | null | undefined): string {
+  const f = firstName?.[0] ?? '';
+  const l = lastName?.[0] ?? '';
+  return (f + l).toUpperCase() || '?';
+}
+
 // ─── Suggested prompts (mirror v11 welcome message) ───────────
 
 const SUGGESTED_PROMPTS = [
@@ -27,6 +48,11 @@ const SUGGESTED_PROMPTS = [
 // ─── Component ────────────────────────────────────────────────
 
 export default function CopilotPanel({ clientId }: Props) {
+  const { user } = useUser();
+  const firstName = user?.firstName;
+  const lastName = user?.lastName;
+  const initials = userInitials(firstName, lastName);
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -207,7 +233,9 @@ export default function CopilotPanel({ clientId }: Props) {
           <div className={styles.titleBlock}>
             <div className={styles.title}>Divergent Clinical Co-Pilot</div>
             <div className={styles.status}>
-              {isStreaming ? 'Reasoning…' : 'Ready · HTMA + metabolic typing engine online'}
+              {isStreaming
+                ? 'Reasoning…'
+                : `${firstName ? `${firstName} · ` : ''}HTMA + metabolic typing engine online`}
             </div>
           </div>
           <button className={styles.closeBtn} onClick={toggle} aria-label="Close">
@@ -222,7 +250,7 @@ export default function CopilotPanel({ clientId }: Props) {
             <div className={styles.msg}>
               <div className={`${styles.msgAvatar} ${styles.msgAvatarAi}`}>DC</div>
               <div className={styles.bubble}>
-                {`Good morning, Dr. Rivera. I'm your clinical reasoning partner — here to help you connect HTMA patterns to protocols, and to flag friction before it becomes inflammation.\n\nWhat are we looking at today?`}
+                {`${welcomeGreeting(firstName)} I'm your clinical reasoning partner — here to help you connect HTMA patterns to protocols, and to flag friction before it becomes inflammation.\n\nWhat are we looking at today?`}
                 <div className={styles.suggest}>
                   {SUGGESTED_PROMPTS.map((p) => (
                     <button
@@ -249,7 +277,7 @@ export default function CopilotPanel({ clientId }: Props) {
                   msg.role === 'assistant' ? styles.msgAvatarAi : styles.msgAvatarUser
                 }`}
               >
-                {msg.role === 'assistant' ? 'DC' : 'DR'}
+                {msg.role === 'assistant' ? 'DC' : initials}
               </div>
 
               {/* Show typing indicator for empty streaming bubble */}
