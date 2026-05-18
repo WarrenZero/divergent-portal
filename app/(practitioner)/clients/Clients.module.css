@@ -1,0 +1,199 @@
+/* ─── Page header ────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--pine-900);
+  margin: 0;
+}
+
+.pageSub {
+  font-size: 13px;
+  color: var(--text-3);
+  margin: 4px 0 0;
+  font-family: 'Lora', Georgia, serif;
+}
+
+.pageActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 18px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: var(--shadow-copper);
+  transition: opacity 150ms;
+}
+
+.btnPrimary:hover {
+  opacity: 0.88;
+}
+
+/* ─── Client list ────────────────────────────────────────────── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  text-decoration: none;
+  transition: border-color 200ms, box-shadow 200ms, transform 200ms;
+}
+
+.card:hover {
+  border-color: var(--pine-200);
+  box-shadow: var(--shadow);
+  transform: translateX(3px);
+}
+
+/* ─── Avatar ─────────────────────────────────────────────────── */
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* ─── Client info ────────────────────────────────────────────── */
+.name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.meta {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.concern {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 4px;
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+}
+
+/* ─── Score badge ────────────────────────────────────────────── */
+.scoreCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.scoreBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.badgeNew {
+  background: var(--copper-100);
+  color: var(--copper-700);
+}
+
+.badgeActive {
+  background: var(--pine-100);
+  color: var(--pine-600);
+}
+
+.scoreNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.scoreLabel {
+  font-size: 10px;
+  color: var(--text-3);
+  font-family: 'Syne', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Empty state ────────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: 72px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.emptyGlyph {
+  font-size: 36px;
+  color: var(--pine-200);
+  margin-bottom: 16px;
+}
+
+.emptyTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+
+.emptyText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-3);
+  line-height: 1.65;
+  margin-bottom: 24px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
