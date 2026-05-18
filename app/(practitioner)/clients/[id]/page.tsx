@@ -4,6 +4,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import styles from './ClientProfile.module.css';
+import ProtocolPanel from './ProtocolPanel';
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -48,12 +49,20 @@ interface ProtocolAssignment {
   protocols: { name: string } | null;
 }
 
+interface ProtocolRow {
+  id: string;
+  name: string;
+  category: string | null;
+  phase_count: number;
+}
+
 interface ProfileData {
   client: ClientRow;
   pulseEntries: PulseRow[];
   supplements: SupplementRow[];
   journalEntries: JournalRow[];
   protocol: ProtocolAssignment | null;
+  protocols: ProtocolRow[];
   sessionsCompleted: number;
 }
 
@@ -76,7 +85,7 @@ async function getProfileData(
   if (clientError || !client) return null;
 
   // Parallel fetch of all related data
-  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes] = await Promise.all([
+  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes] = await Promise.all([
     supabase
       .from('daily_pulse')
       .select('id, digestion_score, sleep_score, stress_score, logged_at')
@@ -112,6 +121,12 @@ async function getProfileData(
       .select('id', { count: 'exact', head: true })
       .eq('client_id', clientId)
       .eq('status', 'completed'),
+
+    supabase
+      .from('protocols')
+      .select('id, name, category, phase_count')
+      .or(`is_template.eq.true,created_by.eq.${practitionerId}`)
+      .order('name'),
   ]);
 
   let protocol: ProtocolAssignment | null = null;
@@ -133,6 +148,7 @@ async function getProfileData(
     supplements: (suppRes.data ?? []) as SupplementRow[],
     journalEntries: (journalRes.data ?? []) as JournalRow[],
     protocol,
+    protocols: (protocolsRes.data ?? []) as ProtocolRow[],
     sessionsCompleted: sessionRes.count ?? 0,
   };
 }
@@ -231,7 +247,7 @@ export default async function ClientProfilePage({
   const data = await getProfileData(id, practitioner.id);
   if (!data) notFound();
 
-  const { client, pulseEntries, supplements, journalEntries, protocol, sessionsCompleted } = data;
+  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted } = data;
 
   const age = clientAge(client.date_of_birth);
   const days = protocol ? protocolDays(protocol.start_date) : 0;
@@ -452,46 +468,12 @@ export default async function ClientProfilePage({
         <div className={styles.rightCol}>
 
           {/* Assigned protocol */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardTitle}>Protocol</span>
-              {protocol && (
-                <span className={`${styles.badge} ${styles.badgeActive}`}>Active</span>
-              )}
-            </div>
-            <div className={styles.cardPad}>
-              {protocol ? (
-                <div className={styles.protocolBlock}>
-                  <div className={styles.protocolBadge}>
-                    <span className={styles.protocolDot} />
-                    Phase {protocol.current_phase}
-                  </div>
-                  <div className={styles.protocolName}>
-                    {protocol.protocols?.name}
-                  </div>
-                  {protocol.start_date && (
-                    <div className={styles.protocolMeta}>
-                      Started{' '}
-                      {new Date(protocol.start_date).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                      {' · '}Day {days}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.emptyState} style={{ padding: '20px 0' }}>
-                  <div className={styles.emptyGlyph}>⊞</div>
-                  <div className={styles.emptyTitle}>No protocol assigned</div>
-                  <p className={styles.emptyText}>
-                    Assign a protocol from the Protocol Library to begin tracking this
-                    client&rsquo;s progress.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+          <ProtocolPanel
+            clientId={client.id}
+            initialProtocol={protocol}
+            protocols={protocols}
+            days={days}
+          />
 
           {/* Supplements */}
           <div className={styles.card}>
