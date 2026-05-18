@@ -90,11 +90,11 @@ export async function syncPractitioner(): Promise<Practitioner | null> {
  */
 export async function requirePractitioner(): Promise<Practitioner> {
   const { userId } = await auth();
-  if (!userId) redirect('/sign-in');
+  if (!userId) redirect('/login');
 
   // Sync on every request — no-op if record already exists
   const practitioner = await syncPractitioner();
-  if (!practitioner) redirect('/sign-in?error=sync_failed');
+  if (!practitioner) redirect('/login?error=sync_failed');
 
   return practitioner;
 }
@@ -128,10 +128,10 @@ export async function getCurrentClient(): Promise<Client | null> {
  */
 export async function requireClient(): Promise<Client> {
   const { userId } = await auth();
-  if (!userId) redirect('/sign-in');
+  if (!userId) redirect('/login');
 
   const client = await getCurrentClient();
-  if (!client) redirect('/sign-in?error=no_client_record');
+  if (!client) redirect('/login?error=no_client_record');
 
   return client;
 }
