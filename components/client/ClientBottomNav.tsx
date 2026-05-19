@@ -10,7 +10,7 @@ const NAV = [
   { href: '/checkin',  label: 'Check-In',  glyph: '◈', live: true  },
   { href: '/journal',  label: 'Journal',   glyph: '⚘', live: true  },
   { href: '/protocol', label: 'Protocol',  glyph: '⊞', live: false },
-  { href: '/journey',  label: 'Journey',   glyph: '◉', live: false },
+  { href: '/naq',      label: 'Assessment', glyph: '◉', live: true  },
   { href: '/vault',    label: 'Vault',     glyph: '✦', live: false },
 ];
 

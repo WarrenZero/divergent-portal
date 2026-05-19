@@ -1,0 +1,627 @@
+/* ═══════════════════════════════════════════════════════════════
+   NAQ — Nutritional Assessment Questionnaire
+   One domain at a time, 0–4 scale, adaptive branch questions
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Page shell ─────────────────────────────────────────────── */
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Progress header (sticky) ───────────────────────────────── */
+.progressHeader {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  background: var(--pine-900);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 24px 12px;
+}
+
+.progressMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.progressTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+}
+
+.progressFraction {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pine-300);
+}
+
+.progressTrack {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 2px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pine-500), var(--copper-400));
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Domain pills strip ─────────────────────────────────────── */
+.domainPills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.domainPills::-webkit-scrollbar { display: none; }
+
+.domainPill {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
+  cursor: default;
+  transition: all 150ms;
+  white-space: nowrap;
+}
+
+.domainPillPending {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.domainPillActive {
+  background: rgba(192, 120, 72, 0.20);
+  color: var(--copper-300);
+  border-color: var(--copper-500);
+}
+
+.domainPillDone {
+  background: rgba(90, 124, 98, 0.25);
+  color: var(--pine-300);
+  border-color: var(--pine-500);
+}
+
+/* ─── Main content area ──────────────────────────────────────── */
+.main {
+  flex: 1;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 20px 120px;
+  box-sizing: border-box;
+}
+
+/* ─── Domain hero ────────────────────────────────────────────── */
+.domainHero {
+  background: linear-gradient(135deg, var(--pine-900) 0%, var(--pine-700) 100%);
+  border-radius: var(--radius-lg);
+  padding: 28px 28px 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.domainHero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 100% 0%, rgba(192, 120, 72, 0.10) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.domainGlyphRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.domainGlyph {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.domainNameLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-bottom: 2px;
+}
+
+.domainName {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.domainTagline {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--pine-300);
+  line-height: 1.55;
+  margin: 0;
+  position: relative;
+  max-width: 440px;
+}
+
+/* ─── Branch reveal notice ───────────────────────────────────── */
+.branchReveal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(192, 120, 72, 0.12), rgba(192, 120, 72, 0.06));
+  border: 1px solid var(--copper-300);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  animation: fadeSlideIn 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.branchRevealIcon {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--copper-500);
+  flex-shrink: 0;
+}
+
+.branchRevealText {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--copper-700);
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Question cards ─────────────────────────────────────────── */
+.questionCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 20px 18px;
+  margin-bottom: 10px;
+  animation: fadeSlideIn 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.questionCardBranch {
+  background: linear-gradient(135deg, rgba(245, 224, 204, 0.3), var(--surface));
+  border-color: var(--copper-300);
+}
+
+.questionMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.questionNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.branchTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--copper-100);
+  border: 1px solid var(--copper-300);
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--copper-700);
+}
+
+.questionText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-1);
+  margin-bottom: 18px;
+}
+
+/* ─── Scale buttons ──────────────────────────────────────────── */
+.scaleRow {
+  display: flex;
+  gap: 6px;
+}
+
+.scaleBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 4px 8px;
+  background: var(--surface);
+  border: 2px solid var(--border-2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  min-width: 0;
+}
+
+.scaleBtnNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-2);
+  line-height: 1;
+  transition: color 150ms;
+}
+
+.scaleBtnLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  line-height: 1;
+  text-align: center;
+  transition: color 150ms;
+}
+
+.scaleBtn:hover:not(.scaleBtnSelected) {
+  background: var(--pine-100);
+  border-color: var(--pine-400);
+}
+.scaleBtn:hover:not(.scaleBtnSelected) .scaleBtnNum { color: var(--pine-700); }
+.scaleBtn:hover:not(.scaleBtnSelected) .scaleBtnLabel { color: var(--pine-600); }
+
+.scaleBtnSelected {
+  background: var(--pine-700);
+  border-color: var(--pine-700);
+}
+.scaleBtnSelected .scaleBtnNum { color: #fff; }
+.scaleBtnSelected .scaleBtnLabel { color: rgba(255, 255, 255, 0.7); }
+
+/* ─── Questions required notice ──────────────────────────────── */
+.requiredNote {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #C45C40;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* ─── Fixed footer ───────────────────────────────────────────── */
+.foot {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  z-index: calc(var(--z-nav) - 1);
+}
+
+.continueBtn {
+  padding: 13px 24px;
+  background: var(--pine-700);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  letter-spacing: 0.02em;
+}
+.continueBtn:hover:not(:disabled) {
+  background: var(--pine-900);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(15, 31, 19, 0.25);
+}
+.continueBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── Completion screen ──────────────────────────────────────── */
+.completionPage {
+  min-height: 100vh;
+  background: var(--bg);
+  padding-bottom: 40px;
+}
+
+.completionHero {
+  background: linear-gradient(135deg, var(--pine-900), var(--pine-700));
+  padding: 40px 24px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.completionHero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(192, 120, 72, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.completionGlyph {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--copper-300);
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.completionScoreRing {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.completionRingSvg {
+  width: 130px;
+  height: 130px;
+}
+
+.completionRingTrack {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 7;
+}
+
+.completionRingFill {
+  fill: none;
+  stroke: var(--copper-400);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.completionScoreNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  fill: #fff;
+  text-anchor: middle;
+}
+
+.completionScoreSub {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--pine-300);
+  text-anchor: middle;
+}
+
+.completionScoreLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-top: 10px;
+}
+
+.completionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 8px;
+  position: relative;
+}
+
+.completionSub {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--pine-300);
+  line-height: 1.6;
+  margin: 0;
+  position: relative;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ─── Domain score grid ──────────────────────────────────────── */
+.domainGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 24px 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.domainScoreCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+
+.domainScoreHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.domainScoreGlyph {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.domainScoreName {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1.2;
+}
+
+.domainBurdenBar {
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.domainBurdenFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.domainBurdenMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.domainBurdenPct {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-2);
+}
+
+.domainBurdenLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── Completion CTA ─────────────────────────────────────────── */
+.completionActions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px;
+  max-width: 400px;
+  margin: 4px auto 0;
+}
+
+.ctaBtn {
+  padding: 13px 24px;
+  border-radius: var(--radius-lg);
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  transition: all 150ms;
+}
+
+.ctaBtnPrimary {
+  background: var(--pine-700);
+  color: #fff;
+  border: none;
+}
+.ctaBtnPrimary:hover {
+  background: var(--pine-900);
+  transform: translateY(-1px);
+}
+
+.ctaBtnGhost {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-2);
+}
+.ctaBtnGhost:hover {
+  background: var(--pine-100);
+  color: var(--pine-700);
+  border-color: var(--pine-300);
+}
+
+/* ─── Disclaimer ─────────────────────────────────────────────── */
+.disclaimer {
+  max-width: 600px;
+  margin: 20px auto 0;
+  padding: 0 20px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-3);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .progressHeader { padding: 12px 16px 10px; }
+  .main { padding: 20px 16px 120px; }
+
+  .domainHero { padding: 20px 18px; }
+  .domainName { font-size: 18px; }
+
+  .scaleBtn { padding: 8px 2px 7px; }
+  .scaleBtnNum { font-size: 14px; }
+  .scaleBtnLabel { font-size: 7px; }
+
+  .domainGrid {
+    grid-template-columns: 1fr;
+    padding: 20px 16px;
+  }
+
+  .completionHero { padding: 32px 16px 28px; }
+}

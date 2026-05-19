@@ -279,7 +279,11 @@ export default async function CheckInPage() {
             <div className={styles.cardHeader}>Quick Actions</div>
             <div className={styles.cardPad}>
               <div className={styles.qaList}>
-                <button className={`${styles.qaBtn} ${styles.qaBtnPine}`}>
+                <Link href="/naq" className={`${styles.qaBtn} ${styles.qaBtnPine}`} style={{ display: 'flex', alignItems: 'center' }}>
+                  <span className={styles.qaIcon}>✦</span>
+                  Start NAQ Assessment
+                </Link>
+                <button className={`${styles.qaBtn} ${styles.qaBtnGhost}`}>
                   <span className={styles.qaIcon}>🗝</span>
                   Access The Vault
                 </button>
