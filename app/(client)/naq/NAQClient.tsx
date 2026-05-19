@@ -92,8 +92,31 @@ export default function NAQClient({ firstName }: Props) {
   }
 
   function handleContinue() {
+    const unanswered = visibleQuestions.filter((q) => responses[q.id] === undefined);
+
+    // ── Debug logging ────────────────────────────────────────
+    console.group('[NAQ] Continue clicked');
+    console.log('Domain index:', domainIdx, '—', domain.name);
+    console.log('Branch visible:', branchVisible, '| Visible questions:', visibleQuestions.length);
+    console.log('All answered:', unanswered.length === 0);
+    if (unanswered.length > 0) {
+      console.warn('Unanswered question IDs:', unanswered.map((q) => q.id));
+      console.table(unanswered.map((q) => ({ id: q.id, branch: q.isBranch, text: q.text.slice(0, 60) })));
+    }
+    console.log('Current responses snapshot:', { ...responses });
+    console.groupEnd();
+    // ────────────────────────────────────────────────────────
+
     if (!allAnswered) {
       setShowRequired(true);
+      // Scroll to first unanswered question so user can see it
+      const firstUnansweredId = unanswered[0]?.id;
+      if (firstUnansweredId) {
+        setTimeout(() => {
+          document.getElementById(`naq-q-${firstUnansweredId}`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 50);
+      }
       return;
     }
 
@@ -108,6 +131,7 @@ export default function NAQClient({ firstName }: Props) {
     startTransition(async () => {
       try {
         const saveResult = await saveNAQDomain(domain.name, domainResponses);
+        console.log('[NAQ] saveNAQDomain result:', saveResult);
         if (saveResult.error) {
           setError(saveResult.error);
           return;
@@ -115,6 +139,7 @@ export default function NAQClient({ firstName }: Props) {
 
         if (isLastDomain) {
           const result = await completeNAQ(responses);
+          console.log('[NAQ] completeNAQ result:', result);
           if (result.error) {
             setError(result.error);
             return;
@@ -126,6 +151,7 @@ export default function NAQClient({ firstName }: Props) {
           setDomainIdx((i) => i + 1);
         }
       } catch (err) {
+        console.error('[NAQ] Unexpected error in handleContinue:', err);
         setError(err instanceof Error ? err.message : 'Failed to save. Please try again.');
       }
     });
@@ -283,11 +309,35 @@ export default function NAQClient({ firstName }: Props) {
           </div>
         )}
 
+        {/* Answered progress within domain */}
+        {visibleQuestions.length > 2 && (
+          <div className={styles.domainProgress}>
+            <span className={styles.domainProgressText}>
+              {visibleQuestions.filter((q) => responses[q.id] !== undefined).length}
+              {' / '}
+              {visibleQuestions.length} answered
+            </span>
+            <div className={styles.domainProgressTrack}>
+              <div
+                className={styles.domainProgressFill}
+                style={{
+                  width: `${(visibleQuestions.filter((q) => responses[q.id] !== undefined).length / visibleQuestions.length) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
+
         {/* Questions */}
         {visibleQuestions.map((q, i) => (
           <div
             key={q.id}
-            className={`${styles.questionCard} ${q.isBranch ? styles.questionCardBranch : ''}`}
+            id={`naq-q-${q.id}`}
+            className={[
+              styles.questionCard,
+              q.isBranch ? styles.questionCardBranch : '',
+              showRequired && responses[q.id] === undefined ? styles.questionCardUnanswered : '',
+            ].join(' ').trim()}
           >
             <div className={styles.questionMeta}>
               <span className={styles.questionNum}>
@@ -326,7 +376,10 @@ export default function NAQClient({ firstName }: Props) {
       <div className={styles.foot}>
         {showRequired && !allAnswered && (
           <div className={styles.requiredNote}>
-            Please answer all questions before continuing
+            {visibleQuestions.filter((q) => responses[q.id] === undefined).length} question
+            {visibleQuestions.filter((q) => responses[q.id] === undefined).length !== 1 ? 's' : ''}{' '}
+            still need{visibleQuestions.filter((q) => responses[q.id] === undefined).length === 1 ? 's' : ''}{' '}
+            an answer — scrolling up to show{visibleQuestions.filter((q) => responses[q.id] === undefined).length !== 1 ? ' them' : ' it'}
           </div>
         )}
         <button

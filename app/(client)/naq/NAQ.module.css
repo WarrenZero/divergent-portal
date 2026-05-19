@@ -206,6 +206,40 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── Within-domain answered progress ───────────────────────── */
+.domainProgress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+
+.domainProgressText {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.domainProgressTrack {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.domainProgressFill {
+  height: 100%;
+  background: var(--pine-500);
+  border-radius: 2px;
+  transition: width 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ─── Question cards ─────────────────────────────────────────── */
 .questionCard {
   background: var(--surface);
@@ -219,6 +253,21 @@
 .questionCardBranch {
   background: linear-gradient(135deg, rgba(245, 224, 204, 0.3), var(--surface));
   border-color: var(--copper-300);
+}
+
+.questionCardUnanswered {
+  border-color: #C45C40;
+  box-shadow: 0 0 0 1px #C45C40;
+  animation: shakeCard 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes shakeCard {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-4px); }
+  40%  { transform: translateX(4px); }
+  60%  { transform: translateX(-3px); }
+  80%  { transform: translateX(3px); }
+  100% { transform: translateX(0); }
 }
 
 .questionMeta {
