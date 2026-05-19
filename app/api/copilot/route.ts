@@ -7,9 +7,15 @@ import type { MessageParam } from '@anthropic-ai/sdk/resources/messages';
 
 // ─── Request / response shape ─────────────────────────────────
 
+interface CopilotAttachment {
+  name: string;
+  base64: string;
+}
+
 interface CopilotRequest {
   messages: Array<{ role: 'user' | 'assistant'; content: string }>;
   clientId?: string;
+  attachment?: CopilotAttachment | null;
 }
 
 // ─── SSE helpers ──────────────────────────────────────────────
@@ -41,7 +47,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const { messages, clientId } = body;
+  const { messages, clientId, attachment } = body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return new Response(sseChunk({ type: 'error', message: 'messages array is required' }), {
@@ -83,11 +89,32 @@ export async function POST(req: NextRequest) {
         controller.enqueue(encoder.encode(sseChunk(data)));
 
       try {
-        // Cast messages to Anthropic's MessageParam type
-        const anthropicMessages: MessageParam[] = messages.map((m) => ({
-          role: m.role,
-          content: m.content,
-        }));
+        // Cast messages to Anthropic's MessageParam type.
+        // If a PDF attachment is present, replace the last user message's
+        // content with a multi-block array: [document, text].
+        const anthropicMessages: MessageParam[] = messages.map((m, i) => {
+          const isLastUser =
+            attachment && i === messages.length - 1 && m.role === 'user';
+
+          if (isLastUser) {
+            return {
+              role: 'user',
+              content: [
+                {
+                  type: 'document' as const,
+                  source: {
+                    type: 'base64' as const,
+                    media_type: 'application/pdf' as const,
+                    data: attachment!.base64,
+                  },
+                },
+                { type: 'text' as const, text: m.content },
+              ],
+            };
+          }
+
+          return { role: m.role, content: m.content };
+        });
 
         // Stream from Anthropic
         const anthropicStream = anthropic.messages.stream({

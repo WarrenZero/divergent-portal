@@ -301,6 +301,52 @@
   30%           { opacity: 1;   transform: translateY(-3px); }
 }
 
+/* ─── ATTACHMENT BAR ──────────────────────────────────────────── */
+
+.attachBar {
+  padding: 8px 14px 0;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+
+.attachPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 10px;
+  background: var(--copper-100);
+  border: 1px solid var(--copper-300);
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--copper-700);
+  max-width: 100%;
+}
+
+.attachPillName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 240px;
+}
+
+.attachPillRemove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--copper-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.attachPillRemove:hover { opacity: 1; }
+
 /* ─── INPUT BAR ───────────────────────────────────────────────── */
 
 .inputBar {
@@ -312,6 +358,27 @@
   gap: 8px;
   align-items: flex-end;
 }
+
+.attachBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid var(--border-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.attachBtn:hover:not(:disabled) {
+  background: var(--pine-100);
+  color: var(--pine-700);
+  border-color: var(--pine-300);
+}
+.attachBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .input {
   flex: 1;

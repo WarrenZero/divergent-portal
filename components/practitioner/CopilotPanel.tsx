@@ -68,9 +68,11 @@ export default function CopilotPanel({ clientId }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
+  const [attachment, setAttachment] = useState<{ name: string; base64: string } | null>(null);
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const idCounter = useRef(0);
 
   // Auto-scroll body on new content
@@ -110,9 +112,23 @@ export default function CopilotPanel({ clientId }: Props) {
     el.style.height = Math.min(el.scrollHeight, 100) + 'px';
   }
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.split(',')[1];
+      setAttachment({ name: file.name, base64 });
+    };
+    reader.readAsDataURL(file);
+    // Reset so the same file can be reattached later
+    e.target.value = '';
+  }
+
   async function handleSend() {
     const text = input.trim();
-    if (!text || isStreaming) return;
+    if ((!text && !attachment) || isStreaming) return;
 
     // Reset input height
     if (inputRef.current) {
@@ -120,8 +136,13 @@ export default function CopilotPanel({ clientId }: Props) {
     }
     setInput('');
 
+    // Capture and clear attachment before async work
+    const pendingAttachment = attachment;
+    setAttachment(null);
+
     // Append user message
-    const userMsg: Message = { id: nextId(), role: 'user', content: text };
+    const displayText = text || `[PDF: ${pendingAttachment?.name}]`;
+    const userMsg: Message = { id: nextId(), role: 'user', content: displayText };
     const aiMsgId = nextId();
 
     setMessages((prev) => [
@@ -134,14 +155,14 @@ export default function CopilotPanel({ clientId }: Props) {
     // Build conversation history for API
     const history = [
       ...messages.map((m) => ({ role: m.role, content: m.content })),
-      { role: 'user' as const, content: text },
+      { role: 'user' as const, content: displayText },
     ];
 
     try {
       const res = await fetch('/api/copilot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history, clientId }),
+        body: JSON.stringify({ messages: history, clientId, attachment: pendingAttachment }),
       });
 
       if (!res.ok || !res.body) {
@@ -212,7 +233,7 @@ export default function CopilotPanel({ clientId }: Props) {
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      if (input.trim() || attachment) handleSend();
     }
   }
 
@@ -313,8 +334,50 @@ export default function CopilotPanel({ clientId }: Props) {
           ))}
         </div>
 
+        {/* Hidden PDF file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/pdf"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+
+        {/* Attachment pill — shown when a PDF is staged */}
+        {attachment && (
+          <div className={styles.attachBar}>
+            <div className={styles.attachPill}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span className={styles.attachPillName}>{attachment.name}</span>
+              <button
+                className={styles.attachPillRemove}
+                onClick={() => setAttachment(null)}
+                aria-label="Remove attachment"
+                type="button"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Input bar */}
         <div className={styles.inputBar}>
+          <button
+            className={styles.attachBtn}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isStreaming}
+            aria-label="Attach PDF"
+            type="button"
+            title="Attach PDF"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
           <textarea
             ref={inputRef}
             className={styles.input}
@@ -332,7 +395,7 @@ export default function CopilotPanel({ clientId }: Props) {
           <button
             className={styles.sendBtn}
             onClick={handleSend}
-            disabled={isStreaming || !input.trim()}
+            disabled={isStreaming || (!input.trim() && !attachment)}
             aria-label="Send message"
           >
             <svg
