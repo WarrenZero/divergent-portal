@@ -29,6 +29,7 @@ const BRISTOL_LABELS: Record<number, { short: string; color: string }> = {
 
 const EMPTY_FORM = {
   meal_time: '',
+  time_eaten: '',   // HH:MM — lazy-initialized to current time in useState
   foods_eaten: '',
   mood_before: 0,
   mood_after: 0,
@@ -37,10 +38,15 @@ const EMPTY_FORM = {
   notes: '',
 };
 
+function nowHHMM(): string {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
 // ─── Component ────────────────────────────────────────────────
 
 export default function JournalForm() {
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState(() => ({ ...EMPTY_FORM, time_eaten: nowHHMM() }));
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -61,7 +67,7 @@ export default function JournalForm() {
       if (result.error) {
         setError(result.error);
       } else {
-        setForm(EMPTY_FORM);
+        setForm({ ...EMPTY_FORM, time_eaten: nowHHMM() });
         setSaved(true);
         router.refresh();
         setTimeout(() => setSaved(false), 4000);
@@ -74,21 +80,35 @@ export default function JournalForm() {
   return (
     <form onSubmit={handleSubmit} className={styles.formCard}>
 
-      {/* ── Meal time ──────────────────────────────────────── */}
-      <div className={styles.formSection}>
-        <div className={styles.fieldLabel}>Meal Time</div>
-        <div className={styles.mealPills}>
-          {MEAL_TIMES.map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={`${styles.pill} ${form.meal_time === t ? styles.pillActive : ''}`}
-              onClick={() => set('meal_time', t)}
-              disabled={isPending}
-            >
-              {t}
-            </button>
-          ))}
+      {/* ── Meal time + Time eaten (same row) ─────────────── */}
+      <div className={styles.mealTimeRow}>
+        <div className={styles.mealPillsGroup}>
+          <div className={styles.fieldLabel}>Meal Time</div>
+          <div className={styles.mealPills}>
+            {MEAL_TIMES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`${styles.pill} ${form.meal_time === t ? styles.pillActive : ''}`}
+                onClick={() => set('meal_time', t)}
+                disabled={isPending}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.timeGroup}>
+          <label className={styles.fieldLabel} htmlFor="j-time">Time eaten</label>
+          <input
+            id="j-time"
+            type="time"
+            className={styles.timeInput}
+            value={form.time_eaten}
+            onChange={(e) => set('time_eaten', e.target.value)}
+            disabled={isPending}
+          />
         </div>
       </div>
 

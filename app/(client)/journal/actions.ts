@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 
 export interface JournalFields {
   meal_time: string;
+  time_eaten: string;   // HH:MM — stored as logged_at on the row
   foods_eaten: string;
   mood_before: number;
   mood_after: number;
@@ -29,6 +30,18 @@ export async function logJournalEntry(
 
   const supabase = await createServiceClient();
 
+  // Build logged_at from today's date + the client-specified HH:MM time.
+  // Falls back to now() if time_eaten is empty or malformed.
+  let loggedAt: string | undefined;
+  if (fields.time_eaten) {
+    const [hh, mm] = fields.time_eaten.split(':').map(Number);
+    if (!Number.isNaN(hh) && !Number.isNaN(mm)) {
+      const d = new Date();
+      d.setHours(hh, mm, 0, 0);
+      loggedAt = d.toISOString();
+    }
+  }
+
   const { error: dbError } = await supabase.from('journal_entries').insert({
     client_id: client.id,
     meal_time: fields.meal_time,
@@ -38,6 +51,7 @@ export async function logJournalEntry(
     symptoms: fields.symptoms.trim() || null,
     bowel_rating: fields.bowel_rating || null,
     notes: fields.notes.trim() || null,
+    ...(loggedAt ? { logged_at: loggedAt } : {}),
   });
 
   if (dbError) return { error: dbError.message };
