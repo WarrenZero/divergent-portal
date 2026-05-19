@@ -141,7 +141,7 @@ export async function inviteClient(
   const headersList = await headers();
   const host = headersList.get('host') ?? 'divergentportal.com';
   const protocol = host.startsWith('localhost') ? 'http' : 'https';
-  const redirectUrl = `${protocol}://${host}/portal`;
+  const redirectUrl = `${protocol}://${host}/signup`;
 
   try {
     const clerk = await clerkClient();
