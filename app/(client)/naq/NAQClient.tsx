@@ -37,8 +37,8 @@ function wellnessOffset(score: number): number {
 export default function NAQClient({ firstName }: Props) {
   const [domainIdx, setDomainIdx] = useState(0);
   const [responses, setResponses] = useState<Record<string, number>>({});
-  const [branchVisible, setBranchVisible] = useState(false);
   const [branchJustRevealed, setBranchJustRevealed] = useState(false);
+  const [didRevealBranches, setDidRevealBranches] = useState(false);
   const [showRequired, setShowRequired] = useState(false);
 
   const [phase, setPhase] = useState<'assessment' | 'complete'>('assessment');
@@ -50,23 +50,28 @@ export default function NAQClient({ firstName }: Props) {
   const domain = NAQ_DOMAINS[domainIdx];
   const isLastDomain = domainIdx === NAQ_DOMAINS.length - 1;
 
-  // ── Branch reveal logic ──────────────────────────────────────
-  useEffect(() => {
-    const wasVisible = branchVisible;
-    const high = domain.screening.some(
-      (q) => (responses[q.id] ?? -1) >= domain.branchThreshold,
-    );
-    if (high && !wasVisible && domain.branches.length > 0) {
-      setBranchVisible(true);
-      setBranchJustRevealed(true);
-      setTimeout(() => setBranchJustRevealed(false), 2000);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [responses]);
+  // ── Branch visibility — derived, never stored as state ────────
+  // Storing branchVisible as state caused a render-window bug:
+  // when domainIdx advanced, isPending went false before the
+  // [domainIdx] cleanup effect could reset branchVisible, so the
+  // new domain briefly showed all branches with allAnswered=false.
+  const branchVisible =
+    domain.branches.length > 0 &&
+    domain.screening.some((q) => (responses[q.id] ?? -1) >= domain.branchThreshold);
 
-  // ── Reset branch state when domain changes ───────────────────
+  // ── Animate the reveal notice once per domain ─────────────────
   useEffect(() => {
-    setBranchVisible(false);
+    if (branchVisible && !didRevealBranches) {
+      setDidRevealBranches(true);
+      setBranchJustRevealed(true);
+      const timer = setTimeout(() => setBranchJustRevealed(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [branchVisible, didRevealBranches]);
+
+  // ── Reset per-domain transient state when domain advances ─────
+  useEffect(() => {
+    setDidRevealBranches(false);
     setBranchJustRevealed(false);
     setShowRequired(false);
   }, [domainIdx]);
@@ -96,28 +101,32 @@ export default function NAQClient({ firstName }: Props) {
 
     const domainResponses: DomainResponse[] = visibleQuestions.map((q) => ({
       questionId: q.id,
-      value: responses[q.id]!,
+      value: responses[q.id] ?? 0,
       isBranch: q.isBranch,
     }));
 
     startTransition(async () => {
-      const saveResult = await saveNAQDomain(domain.name, domainResponses);
-      if (saveResult.error) {
-        setError(saveResult.error);
-        return;
-      }
-
-      if (isLastDomain) {
-        const result = await completeNAQ(responses);
-        if (result.error) {
-          setError(result.error);
+      try {
+        const saveResult = await saveNAQDomain(domain.name, domainResponses);
+        if (saveResult.error) {
+          setError(saveResult.error);
           return;
         }
-        setWellnessScore(result.wellnessScore);
-        setDomainScores(result.domainScores);
-        setPhase('complete');
-      } else {
-        setDomainIdx((i) => i + 1);
+
+        if (isLastDomain) {
+          const result = await completeNAQ(responses);
+          if (result.error) {
+            setError(result.error);
+            return;
+          }
+          setWellnessScore(result.wellnessScore);
+          setDomainScores(result.domainScores);
+          setPhase('complete');
+        } else {
+          setDomainIdx((i) => i + 1);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to save. Please try again.');
       }
     });
   }
