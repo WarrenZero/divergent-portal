@@ -217,6 +217,66 @@
   padding: 16px;
 }
 
+/* ─── Journal shortcut card ──────────────────────────────────── */
+.journalCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, var(--copper-100), var(--bone-100));
+  border: 1px solid var(--copper-300);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+}
+
+.journalCard:hover {
+  border-color: var(--copper-500);
+  box-shadow: 0 4px 16px rgba(192, 120, 72, 0.15);
+  transform: translateY(-1px);
+}
+
+.journalCardGlyph {
+  font-size: 24px;
+  color: var(--copper-500);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.journalCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.journalCardTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pine-900);
+  margin-bottom: 3px;
+}
+
+.journalCardSub {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+
+.journalCardArrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--copper-500);
+  flex-shrink: 0;
+  transition: transform 150ms;
+}
+
+.journalCard:hover .journalCardArrow {
+  transform: translateX(3px);
+}
+
 /* ─── AI nudge ───────────────────────────────────────────────── */
 .aiNudge {
   background: linear-gradient(135deg, var(--pine-100), var(--bone-100));

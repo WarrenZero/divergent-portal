@@ -1,5 +1,6 @@
 import { getCurrentClient } from '@/lib/clerk';
 import { createClient } from '@/lib/supabase/server';
+import Link from 'next/link';
 import DailyPulseCard from '@/components/client/DailyPulseCard';
 import styles from './Checkin.module.css';
 
@@ -247,6 +248,18 @@ export default async function CheckInPage() {
             <div className={styles.sectionLabel}>Daily Check-In · 20 seconds</div>
             <DailyPulseCard firstName={firstName} />
           </div>
+
+          {/* Journal shortcut */}
+          <Link href="/journal" className={styles.journalCard}>
+            <div className={styles.journalCardGlyph}>⚘</div>
+            <div className={styles.journalCardBody}>
+              <div className={styles.journalCardTitle}>Food + Mood Journal</div>
+              <div className={styles.journalCardSub}>
+                Log today&rsquo;s meals, mood, and symptoms — reviewed before every session
+              </div>
+            </div>
+            <div className={styles.journalCardArrow}>→</div>
+          </Link>
 
           {/* AI pattern nudge */}
           <div className={styles.aiNudge}>
