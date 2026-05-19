@@ -6,13 +6,23 @@ export const metadata: Metadata = {
   title: 'Divergent · Nutritional Therapy — Humane AI Wellness Platform',
   description:
     'Humane AI wellness platform — parasympathetic-first clinical tools for NTPs and their clients.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Divergent',
+  },
+  icons: {
+    apple: '/apple-touch-icon.png',
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#0F1F13' },
-    { media: '(prefers-color-scheme: light)', color: '#FDFAF5' },
-  ],
+  themeColor: '#1E3122',
 };
 
 export default function RootLayout({
