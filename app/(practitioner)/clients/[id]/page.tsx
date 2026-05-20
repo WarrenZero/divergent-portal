@@ -7,6 +7,8 @@ import styles from './ClientProfile.module.css';
 import ProtocolPanel from './ProtocolPanel';
 import SupplementPanel from './SupplementPanel';
 import InviteButton from './InviteButton';
+import NAQCopyButton from './NAQCopyButton';
+import { calculateScores, type NAQDomainScore } from '@/app/(client)/naq/data';
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -59,6 +61,12 @@ interface ProtocolRow {
   phase_count: number;
 }
 
+interface NAQResponseRow {
+  question_id: string;
+  response_value: number;
+  responded_at: string;
+}
+
 interface ProfileData {
   client: ClientRow;
   pulseEntries: PulseRow[];
@@ -67,6 +75,7 @@ interface ProfileData {
   protocol: ProtocolAssignment | null;
   protocols: ProtocolRow[];
   sessionsCompleted: number;
+  naqResponses: NAQResponseRow[];
 }
 
 // ─── Data fetching ─────────────────────────────────────────────
@@ -88,7 +97,7 @@ async function getProfileData(
   if (clientError || !client) return null;
 
   // Parallel fetch of all related data
-  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes] = await Promise.all([
+  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes] = await Promise.all([
     supabase
       .from('daily_pulse')
       .select('id, digestion_score, sleep_score, stress_score, logged_at')
@@ -130,6 +139,12 @@ async function getProfileData(
       .select('id, name, category, phase_count')
       .or(`is_template.eq.true,created_by.eq.${practitionerId}`)
       .order('name'),
+
+    supabase
+      .from('naq_responses')
+      .select('question_id, response_value, responded_at')
+      .eq('client_id', clientId)
+      .order('responded_at', { ascending: true }),
   ]);
 
   let protocol: ProtocolAssignment | null = null;
@@ -153,6 +168,7 @@ async function getProfileData(
     protocol,
     protocols: (protocolsRes.data ?? []) as ProtocolRow[],
     sessionsCompleted: sessionRes.count ?? 0,
+    naqResponses: (naqRes.data ?? []) as NAQResponseRow[],
   };
 }
 
@@ -209,6 +225,44 @@ function formatJournalDate(iso: string): string {
   });
 }
 
+function burdenLabel(burden: number): string {
+  if (burden <= 25) return 'Low';
+  if (burden <= 55) return 'Moderate';
+  if (burden <= 75) return 'Elevated';
+  return 'High';
+}
+
+function buildNAQSummary(
+  name: string,
+  date: string,
+  wellnessScore: number,
+  domainScores: NAQDomainScore[],
+  primaryConcern: string | null,
+): string {
+  const domainLines = domainScores
+    .map((d) => `${d.name}: ${Math.round(d.burden)}% — ${burdenLabel(d.burden)}`)
+    .join('\n');
+
+  const topDomains = [...domainScores]
+    .sort((a, b) => b.burden - a.burden)
+    .slice(0, 3)
+    .filter((d) => d.burden > 25)
+    .map((d) => d.name);
+
+  return [
+    `CLIENT: ${name}`,
+    `NAQ COMPLETED: ${date}`,
+    `WELLNESS SCORE: ${wellnessScore}/100`,
+    '',
+    'DOMAIN BURDEN:',
+    domainLines,
+    '',
+    `TOP PRIORITY DOMAINS: ${topDomains.join(', ') || 'None above moderate threshold'}`,
+    '',
+    `CHIEF COMPLAINT: ${primaryConcern ?? 'Not specified'}`,
+  ].join('\n');
+}
+
 function clientAge(dob: string | null): string | null {
   if (!dob) return null;
   const years = Math.floor(
@@ -250,11 +304,27 @@ export default async function ClientProfilePage({
   const data = await getProfileData(id, practitioner.id);
   if (!data) notFound();
 
-  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted } = data;
+  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses } = data;
 
   const age = clientAge(client.date_of_birth);
   const days = protocol ? protocolDays(protocol.start_date) : 0;
-  const scoreOffset = wellnessDashOffset(client.wellness_score);
+
+  // Build response map (ordered ASC so last write wins if client retook NAQ)
+  const naqComplete = naqResponses.length > 0;
+  const responsesMap: Record<string, number> = {};
+  for (const r of naqResponses) responsesMap[r.question_id] = r.response_value;
+  const { wellnessScore, domainScores } = naqComplete
+    ? calculateScores(responsesMap)
+    : { wellnessScore: client.wellness_score, domainScores: [] as NAQDomainScore[] };
+
+  // Date of last NAQ completion (last responded_at in the batch)
+  const naqDate = naqComplete
+    ? new Date(naqResponses[naqResponses.length - 1].responded_at).toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric',
+      })
+    : null;
+
+  const scoreOffset = wellnessDashOffset(wellnessScore);
 
   return (
     <div>
@@ -305,7 +375,7 @@ export default async function ClientProfilePage({
               style={{ strokeDashoffset: scoreOffset }}
             />
             <text className={styles.scoreText} x="26" y="30">
-              {client.wellness_score}
+              {wellnessScore}
             </text>
           </svg>
           <div>
@@ -333,11 +403,11 @@ export default async function ClientProfilePage({
         <div className={styles.statCard}>
           <div className={styles.statLabel}>Wellness Score</div>
           <div className={styles.statValue}>
-            {client.wellness_score}
+            {wellnessScore}
             <span className={styles.statValueUnit}> / 100</span>
           </div>
           <div className={styles.statSub}>
-            {client.wellness_score === 0 ? 'No assessment yet' : 'Overall score'}
+            {naqComplete ? `From NAQ · ${naqDate}` : 'No assessment yet'}
           </div>
         </div>
 
@@ -373,6 +443,81 @@ export default async function ClientProfilePage({
 
         {/* ── Left column ────────────────────────────────────── */}
         <div className={styles.leftCol}>
+
+          {/* NAQ Assessment Results */}
+          {naqComplete ? (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <span className={styles.cardTitle}>NAQ Assessment ✦</span>
+                <span style={{ fontFamily: 'Syne, sans-serif', fontSize: 10, color: 'var(--text-3)' }}>
+                  Completed {naqDate}
+                </span>
+              </div>
+              <div className={styles.naqGrid}>
+                {domainScores.map((d) => (
+                  <div key={d.domainId} className={styles.naqDomainCard}>
+                    <div className={styles.naqDomainTop}>
+                      <span className={styles.naqGlyph}>{d.glyph}</span>
+                      <span className={styles.naqDomainName}>{d.name}</span>
+                    </div>
+                    <div className={styles.naqBarTrack}>
+                      <div
+                        className={styles.naqBarFill}
+                        style={{
+                          width: `${d.burden}%`,
+                          background: d.burden <= 25
+                            ? 'var(--pine-500)'
+                            : d.burden <= 55
+                              ? 'var(--copper-400)'
+                              : '#C45C40',
+                        }}
+                      />
+                    </div>
+                    <div className={styles.naqMeta}>
+                      <span
+                        className={styles.naqPct}
+                        style={{
+                          color: d.burden <= 25
+                            ? 'var(--pine-500)'
+                            : d.burden <= 55
+                              ? 'var(--copper-500)'
+                              : '#C45C40',
+                        }}
+                      >
+                        {Math.round(d.burden)}%
+                      </span>
+                      <span className={styles.naqLabel}>
+                        {d.burden <= 25 ? 'Low' : d.burden <= 55 ? 'Moderate' : d.burden <= 75 ? 'Elevated' : 'High'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.naqCopyRow}>
+                <NAQCopyButton text={buildNAQSummary(
+                  `${client.first_name} ${client.last_name}`,
+                  naqDate!,
+                  wellnessScore,
+                  domainScores,
+                  client.primary_concern,
+                )} />
+              </div>
+            </div>
+          ) : (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <span className={styles.cardTitle}>NAQ Assessment ✦</span>
+              </div>
+              <div className={styles.emptyState}>
+                <div className={styles.emptyGlyph}>✦</div>
+                <div className={styles.emptyTitle}>No assessment yet</div>
+                <p className={styles.emptyText}>
+                  The client&rsquo;s 10-domain NAQ results will appear here once they complete
+                  their first assessment in the client portal.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Daily Pulse entries */}
           <div className={styles.card}>
