@@ -1,12 +1,13 @@
 import { requireClient } from '@/lib/clerk';
 import ClientBottomNav from '@/components/client/ClientBottomNav';
+import ClientTopBar from '@/components/client/ClientTopBar';
 
 export default async function ClientLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireClient();
+  const client = await requireClient();
 
   return (
     <div
@@ -17,6 +18,7 @@ export default async function ClientLayout({
         paddingBottom: 'calc(56px + env(safe-area-inset-bottom))',
       }}
     >
+      <ClientTopBar email={client.email} />
       {children}
       <ClientBottomNav />
     </div>

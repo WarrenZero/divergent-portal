@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useClerk } from '@clerk/nextjs';
 import styles from './PractitionerSidebar.module.css';
 
 interface Props {
@@ -71,6 +72,7 @@ export default function PractitionerSidebar({
   naqFlagCount,
 }: Props) {
   const pathname = usePathname();
+  const { signOut } = useClerk();
 
   const badges: Record<string, number | undefined> = {
     clientCount,
@@ -117,6 +119,12 @@ export default function PractitionerSidebar({
             <div className={styles.userRole}>NTP · Solo Practice</div>
           </div>
         </div>
+        <button
+          className={styles.signOutBtn}
+          onClick={() => signOut({ redirectUrl: 'https://divergentportal.com' })}
+        >
+          Sign out
+        </button>
       </div>
     </aside>
   );
