@@ -379,17 +379,17 @@
 /* ─── Fixed footer ───────────────────────────────────────────── */
 .foot {
   position: fixed;
-  bottom: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
-  padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+  padding: 14px 24px;
   background: var(--surface);
   border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 8px;
-  z-index: calc(var(--z-nav) - 1);
+  z-index: 200;
 }
 
 .continueBtn {
