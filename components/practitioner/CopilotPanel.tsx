@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './CopilotPanel.module.css';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -105,6 +105,7 @@ export default function CopilotPanel({ clientId }: Props) {
   const firstName = user?.firstName ?? null;
   const lastName = user?.lastName ?? null;
   const initials = userInitials(firstName, lastName);
+  const router = useRouter();
 
   // Derive clientId from the current URL when not passed as a prop
   // e.g. /clients/abc-123-... → 'abc-123-...'
@@ -139,16 +140,35 @@ export default function CopilotPanel({ clientId }: Props) {
 
   // ─── Clinical notes auto-summary ─────────────────────────────
 
-  function fireSummary(msgs: Message[]) {
+  function fireSummary(msgs: Message[]): Promise<Response> | null {
     const history = msgs
       .filter((m) => !m.streaming)
       .map((m) => ({ role: m.role, content: m.content }));
-    if (history.length < 2) return;
-    void fetch('/api/clinical-notes/summarize', {
+    if (history.length < 2) return null;
+    return fetch('/api/clinical-notes/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: history, clientId: effectiveClientId }),
     });
+  }
+
+  // ─── Copy individual message ──────────────────────────────────
+
+  const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+
+  async function handleCopyMsg(id: string, content: string) {
+    try {
+      await navigator.clipboard.writeText(content);
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = content;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+    }
+    setCopiedMsgId(id);
+    setTimeout(() => setCopiedMsgId((prev) => (prev === id ? null : prev)), 2000);
   }
 
   // Trigger on panel close (if new messages since last summary)
@@ -206,11 +226,15 @@ export default function CopilotPanel({ clientId }: Props) {
     }
   }
 
-  function handleSaveAndClose() {
-    fireSummary(messages);
+  async function handleSaveAndClose() {
+    const promise = fireSummary(messages);
     summarizedUpToRef.current = messages.length;
     setSavePromptOpen(false);
     setIsOpen(false);
+    if (promise) {
+      await promise;
+      router.refresh();
+    }
   }
 
   function handleDismissAndClose() {
@@ -446,17 +470,34 @@ export default function CopilotPanel({ clientId }: Props) {
                   <div className={styles.typingDot} />
                 </div>
               ) : msg.role === 'assistant' ? (
-                // AI messages: render markdown as HTML
-                <div
-                  className={styles.bubble}
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      renderMarkdown(msg.content) +
-                      (msg.streaming && msg.content
-                        ? '<span aria-hidden="true" style="opacity:0.5">▋</span>'
-                        : ''),
-                  }}
-                />
+                // AI messages: render markdown as HTML, with hover copy button
+                <div className={styles.bubbleWrap}>
+                  <div
+                    className={styles.bubble}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        renderMarkdown(msg.content) +
+                        (msg.streaming && msg.content
+                          ? '<span aria-hidden="true" style="opacity:0.5">▋</span>'
+                          : ''),
+                    }}
+                  />
+                  {!msg.streaming && (
+                    <button
+                      className={styles.copyMsgBtn}
+                      onClick={() => handleCopyMsg(msg.id, msg.content)}
+                      aria-label="Copy message"
+                      title={copiedMsgId === msg.id ? 'Copied!' : 'Copy'}
+                    >
+                      {copiedMsgId === msg.id ? '✓' : (
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      )}
+                    </button>
+                  )}
+                </div>
               ) : (
                 // User messages: plain text, no markdown processing
                 <div className={`${styles.bubble} ${styles.bubbleUser}`}>

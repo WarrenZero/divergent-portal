@@ -124,7 +124,7 @@ export default function NotesPanel({ clientId, initialNotes }: Props) {
     <>
       <div className={styles.card}>
         <div className={styles.header}>
-          <span className={styles.title}>Clinical Notes</span>
+          <span className={styles.title}>My Notes</span>
           <button className={styles.addBtn} onClick={openAdd}>+ Add Note</button>
         </div>
 

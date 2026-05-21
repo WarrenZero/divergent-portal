@@ -269,6 +269,39 @@
   white-space: pre-wrap;
 }
 
+/* ─── BUBBLE WRAP (AI messages) ───────────────────────────────── */
+
+.bubbleWrap {
+  position: relative;
+  display: inline-block;
+  max-width: 88%;
+}
+
+.copyMsgBtn {
+  position: absolute;
+  bottom: -8px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  color: var(--text-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out), color var(--dur-fast);
+  box-shadow: 0 1px 4px rgba(15, 31, 19, 0.1);
+}
+
+.bubbleWrap:hover .copyMsgBtn { opacity: 1; }
+.copyMsgBtn:hover { color: var(--pine-700); border-color: var(--pine-300); }
+
 /* ─── SUGGESTED PROMPTS ───────────────────────────────────────── */
 
 .suggest {
