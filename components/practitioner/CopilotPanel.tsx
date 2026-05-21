@@ -17,6 +17,58 @@ interface Props {
   clientId?: string;
 }
 
+// ─── Markdown renderer ────────────────────────────────────────
+// Converts the subset of markdown Claude produces into safe HTML.
+// HTML entities are escaped first so no user-supplied content can
+// inject tags — the only HTML present is what we explicitly add.
+
+function applyInline(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/_([^_\s][^_]*)_/g, '<em>$1</em>');
+}
+
+function renderMarkdown(raw: string): string {
+  // 1. Escape HTML to prevent injection
+  const safe = raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  const lines = safe.split('\n');
+  const out: string[] = [];
+  const listBuf: string[] = [];
+
+  function flushList() {
+    if (listBuf.length) {
+      out.push(`<ul>${listBuf.splice(0).join('')}</ul>`);
+    }
+  }
+
+  for (const line of lines) {
+    // Bullet line
+    const bullet = line.match(/^[-*•]\s+(.+)/);
+    if (bullet) { listBuf.push(`<li>${applyInline(bullet[1])}</li>`); continue; }
+    flushList();
+
+    // Header (## or #)
+    const heading = line.match(/^#{1,3}\s+(.+)/);
+    if (heading) {
+      out.push(`<strong style="display:block;margin-bottom:4px">${applyInline(heading[1])}</strong>`);
+      continue;
+    }
+
+    // Empty line — skip (CSS margin handles visual spacing between blocks)
+    if (!line.trim()) continue;
+
+    // Regular paragraph line
+    out.push(`<p>${applyInline(line)}</p>`);
+  }
+  flushList();
+  return out.join('');
+}
+
 // ─── Name helpers ─────────────────────────────────────────────
 
 function timeGreeting(): string {
@@ -316,8 +368,15 @@ export default function CopilotPanel({ clientId }: Props) {
           {showWelcome && isLoaded && (
             <div className={styles.msg}>
               <div className={`${styles.msgAvatar} ${styles.msgAvatarAi}`}>DC</div>
-              <div className={styles.bubble}>
-                {`${welcomeGreeting(firstName)} I'm your clinical reasoning partner — here to help you connect HTMA patterns to protocols, and to flag friction before it becomes inflammation.\n\nWhat are we looking at today?`}
+              <div>
+                <div
+                  className={styles.bubble}
+                  dangerouslySetInnerHTML={{
+                    __html: renderMarkdown(
+                      `${welcomeGreeting(firstName)} I'm your clinical reasoning partner — here to help you connect HTMA patterns to protocols, and to flag friction before it becomes inflammation.\n\nWhat are we looking at today?`
+                    ),
+                  }}
+                />
                 <div className={styles.suggest}>
                   {SUGGESTED_PROMPTS.map((p) => (
                     <button
@@ -354,15 +413,22 @@ export default function CopilotPanel({ clientId }: Props) {
                   <div className={styles.typingDot} />
                   <div className={styles.typingDot} />
                 </div>
-              ) : (
+              ) : msg.role === 'assistant' ? (
+                // AI messages: render markdown as HTML
                 <div
-                  className={`${styles.bubble} ${msg.role === 'user' ? styles.bubbleUser : ''}`}
-                >
+                  className={styles.bubble}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      renderMarkdown(msg.content) +
+                      (msg.streaming && msg.content
+                        ? '<span aria-hidden="true" style="opacity:0.5">▋</span>'
+                        : ''),
+                  }}
+                />
+              ) : (
+                // User messages: plain text, no markdown processing
+                <div className={`${styles.bubble} ${styles.bubbleUser}`}>
                   {msg.content}
-                  {/* Streaming cursor */}
-                  {msg.streaming && msg.content !== '' && (
-                    <span aria-hidden="true" style={{ opacity: 0.5 }}>▋</span>
-                  )}
                 </div>
               )}
             </div>

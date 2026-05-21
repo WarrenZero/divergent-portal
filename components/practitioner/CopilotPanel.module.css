@@ -234,9 +234,30 @@
   color: var(--text-2);
   max-width: 88%;
   font-family: 'Lora', serif;
-  white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* Markdown child element styles — scoped to AI bubbles */
+.bubble p {
+  margin: 0 0 8px;
+}
+.bubble p:last-child { margin-bottom: 0; }
+
+.bubble ul {
+  margin: 4px 0 8px;
+  padding-left: 18px;
+  list-style: disc;
+}
+.bubble ul:last-child { margin-bottom: 0; }
+
+.bubble li {
+  margin-bottom: 4px;
+  line-height: 1.55;
+}
+.bubble li:last-child { margin-bottom: 0; }
+
+.bubble strong { font-weight: 700; color: var(--text-1); }
+.bubble em { font-style: italic; }
 
 .bubbleUser {
   background: var(--pine-700);
@@ -244,6 +265,8 @@
   border-color: var(--pine-700);
   font-family: 'Syne', sans-serif;
   font-size: 12px;
+  /* User messages are plain text — preserve whitespace */
+  white-space: pre-wrap;
 }
 
 /* ─── SUGGESTED PROMPTS ───────────────────────────────────────── */
