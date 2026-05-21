@@ -74,8 +74,43 @@ export default function CopilotPanel({ clientId }: Props) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const idCounter = useRef(0);
+  // Track up to which message count we've already generated a summary
+  const summarizedUpToRef = useRef(0);
 
-  // Auto-scroll body on new content
+  // ─── Clinical notes auto-summary ─────────────────────────────
+
+  function fireSummary(msgs: Message[]) {
+    const history = msgs
+      .filter((m) => !m.streaming)
+      .map((m) => ({ role: m.role, content: m.content }));
+    if (history.length < 2) return;
+    void fetch('/api/clinical-notes/summarize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: history, clientId: clientId ?? null }),
+    });
+  }
+
+  // Trigger on panel close (if new messages since last summary)
+  useEffect(() => {
+    if (!isOpen && messages.length >= 2 && messages.length > summarizedUpToRef.current) {
+      fireSummary(messages);
+      summarizedUpToRef.current = messages.length;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  // Trigger every 10 completed messages (≈ 5 exchanges)
+  const completedCount = messages.filter((m) => !m.streaming).length;
+  useEffect(() => {
+    if (completedCount > 0 && completedCount % 10 === 0 && completedCount > summarizedUpToRef.current) {
+      fireSummary(messages);
+      summarizedUpToRef.current = completedCount;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completedCount]);
+
+  // ─── Auto-scroll body on new content ─────────────────────────
   const scrollToBottom = useCallback(() => {
     if (bodyRef.current) {
       bodyRef.current.scrollTop = bodyRef.current.scrollHeight;

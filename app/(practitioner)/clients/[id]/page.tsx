@@ -8,6 +8,7 @@ import ProtocolPanel from './ProtocolPanel';
 import SupplementPanel from './SupplementPanel';
 import InviteButton from './InviteButton';
 import NAQCopyButton from './NAQCopyButton';
+import NotesPanel, { type NoteRow } from './NotesPanel';
 import { calculateScores, type NAQDomainScore } from '@/app/(client)/naq/data';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -76,6 +77,7 @@ interface ProfileData {
   protocols: ProtocolRow[];
   sessionsCompleted: number;
   naqResponses: NAQResponseRow[];
+  notes: NoteRow[];
 }
 
 // ─── Data fetching ─────────────────────────────────────────────
@@ -97,7 +99,7 @@ async function getProfileData(
   if (clientError || !client) return null;
 
   // Parallel fetch of all related data
-  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes] = await Promise.all([
+  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes, notesRes] = await Promise.all([
     supabase
       .from('daily_pulse')
       .select('id, digestion_score, sleep_score, stress_score, logged_at')
@@ -145,6 +147,12 @@ async function getProfileData(
       .select('question_id, response_value, responded_at')
       .eq('client_id', clientId)
       .order('responded_at', { ascending: true }),
+
+    supabase
+      .from('clinical_notes')
+      .select('id, note_type, content, created_at')
+      .eq('client_id', clientId)
+      .order('created_at', { ascending: false }),
   ]);
 
   let protocol: ProtocolAssignment | null = null;
@@ -169,6 +177,7 @@ async function getProfileData(
     protocols: (protocolsRes.data ?? []) as ProtocolRow[],
     sessionsCompleted: sessionRes.count ?? 0,
     naqResponses: (naqRes.data ?? []) as NAQResponseRow[],
+    notes: (notesRes.data ?? []) as NoteRow[],
   };
 }
 
@@ -304,7 +313,7 @@ export default async function ClientProfilePage({
   const data = await getProfileData(id, practitioner.id);
   if (!data) notFound();
 
-  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses } = data;
+  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses, notes } = data;
 
   const age = clientAge(client.date_of_birth);
   const days = protocol ? protocolDays(protocol.start_date) : 0;
@@ -633,6 +642,12 @@ export default async function ClientProfilePage({
           <SupplementPanel
             clientId={client.id}
             initialSupplements={supplements}
+          />
+
+          {/* Clinical Notes */}
+          <NotesPanel
+            clientId={client.id}
+            initialNotes={notes}
           />
 
         </div>

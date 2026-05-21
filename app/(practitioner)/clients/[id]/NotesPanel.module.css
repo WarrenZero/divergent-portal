@@ -1,0 +1,234 @@
+/* ─── Card shell ─────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.addBtn {
+  padding: 5px 12px;
+  background: var(--pine-700);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.addBtn:hover { background: var(--pine-600); }
+
+/* ─── Empty state ────────────────────────────────────────────── */
+.empty {
+  padding: 28px 18px;
+  text-align: center;
+}
+.emptyGlyph { font-size: 22px; color: var(--pine-200); margin-bottom: 10px; }
+.emptyTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 5px;
+}
+.emptyText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ─── Note list ──────────────────────────────────────────────── */
+.list { padding: 4px 0 8px; }
+
+.dateGroup { padding: 10px 18px 4px; }
+
+.dateLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.noteRow {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.noteRow:last-child { border-bottom: none; }
+
+.noteMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.noteIcon {
+  font-size: 11px;
+  color: var(--copper-500);
+  flex-shrink: 0;
+}
+
+.noteTime {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+
+.noteType {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.noteContent {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* ─── Modal overlay ──────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 31, 19, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(15, 31, 19, 0.22);
+}
+
+.modalHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-3);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 150ms;
+}
+.modalClose:hover { color: var(--text-1); }
+
+.modalTextarea {
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 120px;
+  box-sizing: border-box;
+  outline: none;
+}
+.modalTextarea::placeholder { color: var(--text-3); font-style: italic; }
+
+.modalError {
+  padding: 8px 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  color: #C45C40;
+  background: rgba(196, 92, 64, 0.06);
+  border-bottom: 1px solid var(--border);
+}
+
+.modalActions {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancelBtn {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 150ms;
+}
+.cancelBtn:hover { background: var(--surface-2); }
+
+.saveBtn {
+  padding: 8px 20px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.saveBtn:hover:not(:disabled) { background: var(--pine-600); }
+.saveBtn:disabled { opacity: 0.45; cursor: not-allowed; }
