@@ -1,0 +1,652 @@
+/* ═══════════════════════════════════════════════════════════════
+   LAB PARSER — Scoped CSS
+   Follows Divergent Design System: Forest Pine · Warm Bone · Muted Copper
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Page shell ──────────────────────────────────────────────── */
+
+.page {
+  max-width: 900px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.pageGlyph {
+  font-size: 28px;
+  color: var(--copper-500);
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.pageTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0 0 4px;
+  line-height: 1.15;
+}
+
+.pageSubtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ─── Upload card ─────────────────────────────────────────────── */
+
+.uploadCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 560px;
+}
+
+.cardHeader {
+  padding: 14px 20px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.cardTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.cardBody {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Form fields ─────────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.fieldHint {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 11px;
+  color: var(--text-3);
+  font-style: italic;
+}
+
+.select {
+  appearance: none;
+  padding: 10px 36px 10px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239A8A72' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  color: var(--text-1);
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.select:focus {
+  border-color: var(--pine-400);
+  box-shadow: var(--focus-ring);
+}
+
+/* ─── Drop zone ───────────────────────────────────────────────── */
+
+.dropZone {
+  border: 2px dashed var(--border-2);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out);
+  background: var(--bg);
+}
+
+.dropZone:hover {
+  border-color: var(--pine-400);
+  background: var(--pine-100);
+}
+
+.dropZoneDragging {
+  border-color: var(--pine-500);
+  background: var(--pine-100);
+  box-shadow: inset 0 0 0 1px var(--pine-400);
+}
+
+.dropZoneHasFile {
+  border-style: solid;
+  border-color: var(--pine-400);
+  background: var(--pine-100);
+}
+
+.dropZoneIconWrap {
+  color: var(--pine-300);
+  margin-bottom: 4px;
+}
+
+.dropZoneHasFile .dropZoneIconWrap {
+  color: var(--pine-500);
+}
+
+.dropZoneText {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.dropZoneFileName {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pine-700);
+}
+
+.dropZoneHint {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 11px;
+  color: var(--text-3);
+  font-style: italic;
+}
+
+/* ─── Error / loading states ──────────────────────────────────── */
+
+.errorBanner {
+  padding: 10px 14px;
+  background: rgba(176, 72, 72, 0.06);
+  border: 1px solid rgba(176, 72, 72, 0.2);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.loadingNote {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  color: var(--text-3);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ─── Parse button ────────────────────────────────────────────── */
+
+.parseBtn {
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--pine-700), var(--pine-600));
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+  box-shadow: 0 4px 14px rgba(15, 31, 19, 0.2);
+}
+
+.parseBtn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(15, 31, 19, 0.28);
+}
+
+.parseBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.parseBtnInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.parseBtnGlyph {
+  font-size: 16px;
+}
+
+.parseBtnLoading .parseBtnGlyph {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── Results: summary card ───────────────────────────────────── */
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.summaryCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.summaryStats {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.statBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statBlockFlagged .statNumber {
+  color: var(--copper-700);
+}
+
+.statNumber {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--pine-700);
+  line-height: 1;
+}
+
+.statLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.statDivider {
+  width: 1px;
+  height: 32px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.summaryActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.copyForCopilotBtn {
+  padding: 9px 16px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.copyForCopilotBtn:hover { background: var(--copper-600); transform: translateY(-1px); }
+.copyForCopilotBtnCopied { background: var(--pine-500) !important; transform: none !important; }
+
+.parseAnotherBtn {
+  padding: 9px 14px;
+  background: none;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+  white-space: nowrap;
+}
+
+.parseAnotherBtn:hover { background: var(--surface-2); color: var(--text-2); }
+
+/* ─── Section layout ──────────────────────────────────────────── */
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.sectionCount {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  background: var(--surface-3);
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+/* ─── All-optimal banner ──────────────────────────────────────── */
+
+.allOptimalBanner {
+  padding: 16px 20px;
+  background: var(--pine-100);
+  border: 1px solid var(--pine-200);
+  border-radius: var(--radius-lg);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pine-700);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.allOptimalGlyph {
+  font-size: 16px;
+  color: var(--pine-400);
+}
+
+/* ─── Flagged marker cards ────────────────────────────────────── */
+
+.flagGrid {
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.flagCard {
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1px solid transparent;
+}
+
+.flagCardDanger {
+  background: rgba(176, 72, 72, 0.05);
+  border-color: rgba(176, 72, 72, 0.2);
+}
+
+.flagCardWarn {
+  background: rgba(192, 120, 72, 0.06);
+  border-color: rgba(192, 120, 72, 0.22);
+}
+
+.flagCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.flagCardName {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.flagCardValue {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-1);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.flagCardUnit {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 400;
+}
+
+.flagCardRanges {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  color: var(--text-3);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.flagCardRanges strong { color: var(--text-2); font-weight: 700; }
+
+.flagCardNote {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 11px;
+  color: var(--text-3);
+  font-style: italic;
+  line-height: 1.5;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* ─── Status badges ───────────────────────────────────────────── */
+
+.badge {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.badgeOptimal {
+  background: rgba(90, 124, 98, 0.12);
+  color: var(--pine-600);
+  border: 1px solid rgba(90, 124, 98, 0.2);
+}
+
+.badgeSuboptimal {
+  background: var(--copper-100);
+  color: var(--copper-700);
+  border: 1px solid rgba(192, 120, 72, 0.3);
+}
+
+.badgeDanger {
+  background: rgba(176, 72, 72, 0.08);
+  color: #B04848;
+  border: 1px solid rgba(176, 72, 72, 0.22);
+}
+
+.badgeNone {
+  background: transparent;
+  color: var(--text-3);
+  border: none;
+}
+
+/* ─── Markers table ───────────────────────────────────────────── */
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.th {
+  padding: 10px 14px;
+  text-align: left;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+
+.thUnit { width: 72px; }
+
+.tr {
+  border-bottom: 1px solid var(--border);
+  transition: background var(--dur-fast);
+}
+
+.tr:last-child { border-bottom: none; }
+.tr:hover { background: var(--surface-2); }
+
+.trOptimal { /* default, no extra styling */ }
+
+.trWarn {
+  background: rgba(192, 120, 72, 0.03);
+}
+
+.trWarn:hover { background: rgba(192, 120, 72, 0.06); }
+
+.trDanger {
+  background: rgba(176, 72, 72, 0.03);
+}
+
+.trDanger:hover { background: rgba(176, 72, 72, 0.06); }
+
+.td {
+  padding: 10px 14px;
+  font-family: 'Lora', Georgia, serif;
+  color: var(--text-2);
+  vertical-align: middle;
+}
+
+.tdName {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.warnIcon {
+  color: var(--copper-600);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.tdValue {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.tdUnit {
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.tdFunctional {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  color: var(--pine-600);
+}
+
+/* ─── Legend ──────────────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  padding: 14px 4px 4px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendOptimal   { background: var(--pine-300); }
+.legendSuboptimal { background: var(--copper-400); }
+.legendDanger    { background: #B04848; opacity: 0.7; }
+.legendNone      { background: var(--border-2); }
