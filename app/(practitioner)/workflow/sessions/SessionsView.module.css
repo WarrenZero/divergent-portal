@@ -1,0 +1,821 @@
+/* ═══════════════════════════════════════════════════════════════
+   SESSIONS — Scoped CSS
+   Divergent Design System: Forest Pine · Warm Bone · Muted Copper
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Page shell ──────────────────────────────────────────────── */
+
+.page {
+  max-width: 1040px;
+}
+
+/* ─── Page header ─────────────────────────────────────────────── */
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0 0 4px;
+  line-height: 1.15;
+}
+
+.pageSubtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-3);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ─── View toggle ─────────────────────────────────────────────── */
+
+.viewToggle {
+  display: flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.viewToggleBtn {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.viewToggleActive {
+  background: var(--pine-700);
+  color: #fff;
+}
+
+.viewToggleBtn:not(.viewToggleActive):hover {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+/* ─── Schedule button ─────────────────────────────────────────── */
+
+.scheduleBtn {
+  padding: 9px 18px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur-fast), transform var(--dur-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.scheduleBtn:hover {
+  background: var(--pine-600);
+  transform: translateY(-1px);
+}
+
+/* ─── Section header ──────────────────────────────────────────── */
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sectionCount {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  color: var(--text-3);
+}
+
+/* ─── List view ───────────────────────────────────────────────── */
+
+.listView {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── Session card ────────────────────────────────────────────── */
+
+.sessionCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.sessionCard:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.sessionCardCancelled {
+  opacity: 0.6;
+  background: var(--surface-2);
+}
+
+.sessionCardCompleted {
+  border-left: 3px solid var(--pine-400);
+}
+
+.sessionCardLeft {
+  flex: 1;
+  min-width: 0;
+}
+
+.sessionCardClient {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.sessionCardDateTime {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+
+.sessionCardMeta {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sessionCardDot {
+  color: var(--border-2);
+}
+
+.sessionCardNote {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  color: var(--text-3);
+  font-style: italic;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  line-height: 1.5;
+}
+
+.sessionCardRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ─── Status badges ───────────────────────────────────────────── */
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.statusBadge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusScheduled {
+  background: rgba(58, 92, 66, 0.1);
+  color: var(--pine-600);
+  border: 1px solid rgba(58, 92, 66, 0.2);
+}
+
+.statusScheduled::before { background: var(--pine-400); }
+
+.statusCompleted {
+  background: var(--copper-100);
+  color: var(--copper-700);
+  border: 1px solid rgba(192, 120, 72, 0.25);
+}
+
+.statusCompleted::before { background: var(--copper-500); }
+
+.statusCancelled {
+  background: var(--surface-2);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+}
+
+.statusCancelled::before { background: var(--border-2); }
+
+/* ─── Session action buttons ──────────────────────────────────── */
+
+.sessionActions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.actionBtnPine {
+  padding: 6px 12px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur-fast);
+  white-space: nowrap;
+}
+
+.actionBtnPine:hover:not(:disabled) { background: var(--pine-600); }
+.actionBtnPine:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.actionBtnGhost {
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+  white-space: nowrap;
+}
+
+.actionBtnGhost:hover { background: var(--surface-2); color: var(--text-2); }
+
+.actionBtnDanger {
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid rgba(176, 72, 72, 0.25);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #B04848;
+  cursor: pointer;
+  transition: background var(--dur-fast);
+  white-space: nowrap;
+}
+
+.actionBtnDanger:hover { background: rgba(176, 72, 72, 0.06); }
+
+/* ─── Cancel confirmation ─────────────────────────────────────── */
+
+.cancelConfirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(176, 72, 72, 0.05);
+  border: 1px solid rgba(176, 72, 72, 0.2);
+  border-radius: var(--radius-sm);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cancelConfirmText {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-right: 4px;
+}
+
+.cancelConfirmYes {
+  padding: 5px 10px;
+  background: #B04848;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity var(--dur-fast);
+}
+
+.cancelConfirmYes:hover:not(:disabled) { opacity: 0.85; }
+.cancelConfirmYes:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.cancelConfirmNo {
+  padding: 5px 10px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--dur-fast);
+  white-space: nowrap;
+}
+
+.cancelConfirmNo:hover { background: var(--surface-2); }
+
+/* ─── Empty state ─────────────────────────────────────────────── */
+
+.emptyState {
+  padding: 40px 24px;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.emptyGlyph {
+  font-size: 28px;
+  color: var(--pine-200);
+  margin-bottom: 12px;
+}
+
+.emptyTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 8px;
+}
+
+.emptyText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-3);
+  font-style: italic;
+  line-height: 1.65;
+  margin: 0 auto 20px;
+  max-width: 380px;
+}
+
+/* ─── Calendar ────────────────────────────────────────────────── */
+
+.calendar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.calNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.calNavBtn {
+  padding: 7px 14px;
+  background: none;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.calNavBtn:hover { background: var(--surface-3); color: var(--text-2); }
+
+.calNavLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.calDay {
+  border-right: 1px solid var(--border);
+  min-height: 200px;
+}
+
+.calDay:last-child { border-right: none; }
+
+.calDayToday {
+  background: rgba(58, 92, 66, 0.03);
+}
+
+.calDayHeader {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.calDayName {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+.calDayDate {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-2);
+  line-height: 1;
+}
+
+.calDayDateToday {
+  color: var(--pine-600);
+}
+
+.calDayBody {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calAddBtn {
+  width: 100%;
+  padding: 6px;
+  background: none;
+  border: 1px dashed var(--border-2);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  color: var(--border-2);
+  cursor: pointer;
+  transition: border-color var(--dur-fast), color var(--dur-fast), background var(--dur-fast);
+  line-height: 1;
+  text-align: center;
+}
+
+.calAddBtn:hover {
+  border-color: var(--pine-300);
+  color: var(--pine-400);
+  background: var(--pine-100);
+}
+
+.calSessionCard {
+  padding: 7px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity var(--dur-fast);
+}
+
+.calSessionCard:hover { opacity: 0.85; }
+
+.calSessionScheduled {
+  background: rgba(58, 92, 66, 0.08);
+  border: 1px solid rgba(58, 92, 66, 0.18);
+}
+
+.calSessionCompleted {
+  background: var(--copper-100);
+  border: 1px solid rgba(192, 120, 72, 0.22);
+}
+
+.calSessionCancelled {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  opacity: 0.55;
+}
+
+.calSessionTime {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--pine-600);
+  margin-bottom: 2px;
+}
+
+.calSessionCancelled .calSessionTime { color: var(--text-3); }
+.calSessionCompleted .calSessionTime { color: var(--copper-600); }
+
+.calSessionClient {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calSessionType {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 9px;
+  color: var(--text-3);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 4px;
+  /* color classes override background */
+}
+
+/* reuse status classes for dot color */
+.statusDot.statusScheduled { background: var(--pine-400); }
+.statusDot.statusCompleted { background: var(--copper-500); }
+.statusDot.statusCancelled { background: var(--border-2); }
+
+/* ─── Modal overlay ───────────────────────────────────────────── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 31, 19, 0.52);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(15, 31, 19, 0.22);
+  animation: modalIn var(--dur-base) var(--ease-out);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modalHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: var(--text-3);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color var(--dur-fast);
+}
+
+.modalClose:hover { color: var(--text-1); }
+
+.modalBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modalFooter {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ─── Form fields ─────────────────────────────────────────────── */
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.formLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.formLabelOptional {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.formInput,
+.formSelect {
+  padding: 9px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  color: var(--text-1);
+  outline: none;
+  transition: border-color var(--dur-fast);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.formSelect {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239A8A72' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.formInput:focus,
+.formSelect:focus {
+  border-color: var(--pine-400);
+  box-shadow: var(--focus-ring);
+}
+
+.formTextarea {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--dur-fast);
+  box-sizing: border-box;
+}
+
+.formTextarea::placeholder { color: var(--text-3); font-style: italic; }
+.formTextarea:focus { border-color: var(--pine-400); box-shadow: var(--focus-ring); }
+
+.formError {
+  padding: 9px 12px;
+  background: rgba(176, 72, 72, 0.06);
+  border: 1px solid rgba(176, 72, 72, 0.22);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #B04848;
+}
+
+/* ─── Modal action buttons ────────────────────────────────────── */
+
+.cancelBtn {
+  padding: 9px 18px;
+  background: none;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.cancelBtn:hover { background: var(--surface-3); color: var(--text-2); }
+
+.saveBtn {
+  padding: 9px 22px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--dur-fast);
+}
+
+.saveBtn:hover:not(:disabled) { background: var(--pine-600); }
+.saveBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 820px) {
+  .pageHeader { flex-direction: column; align-items: flex-start; }
+  .headerActions { width: 100%; justify-content: flex-start; }
+  .calGrid { min-width: 560px; }
+  .calendar { overflow-x: auto; }
+  .formRow { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 540px) {
+  .sessionCard { flex-direction: column; }
+  .sessionCardRight { align-items: flex-start; }
+  .sessionActions { justify-content: flex-start; }
+}
