@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { anthropic, COPILOT_MODEL } from '@/lib/anthropic/client';
 import { createClient } from '@/lib/supabase/server';
 
@@ -24,6 +25,8 @@ export async function POST(req: NextRequest) {
   }
 
   const { messages, clientId } = body;
+
+  console.log('[summarize] received clientId:', clientId, '| message count:', messages?.length);
 
   if (!Array.isArray(messages) || messages.length < 2) {
     return NextResponse.json({ error: 'At least 2 messages required' }, { status: 400 });
@@ -79,8 +82,15 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (insertError) {
-    console.error('clinical_notes insert error:', insertError.message);
+    console.error('[summarize] clinical_notes insert error:', insertError.message);
     return NextResponse.json({ error: insertError.message }, { status: 500 });
+  }
+
+  console.log('[summarize] note saved, id:', note?.id, '| client_id:', clientId);
+
+  // Revalidate the client profile page so Notes panel shows the new note immediately
+  if (clientId) {
+    revalidatePath(`/clients/${clientId}`);
   }
 
   return NextResponse.json({ note });

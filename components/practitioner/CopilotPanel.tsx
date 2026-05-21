@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { usePathname } from 'next/navigation';
 import styles from './CopilotPanel.module.css';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -105,6 +106,12 @@ export default function CopilotPanel({ clientId }: Props) {
   const lastName = user?.lastName ?? null;
   const initials = userInitials(firstName, lastName);
 
+  // Derive clientId from the current URL when not passed as a prop
+  // e.g. /clients/abc-123-... → 'abc-123-...'
+  const pathname = usePathname();
+  const urlClientId = pathname.match(/\/clients\/([^/]+)/)?.[1] ?? null;
+  const effectiveClientId = clientId ?? urlClientId;
+
   // Dev-only: surface what Clerk actually resolved so missing names are obvious
   useEffect(() => {
     if (isLoaded && process.env.NODE_ENV === 'development') {
@@ -140,7 +147,7 @@ export default function CopilotPanel({ clientId }: Props) {
     void fetch('/api/clinical-notes/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: history, clientId: clientId ?? null }),
+      body: JSON.stringify({ messages: history, clientId: effectiveClientId }),
     });
   }
 
@@ -552,10 +559,10 @@ export default function CopilotPanel({ clientId }: Props) {
             </div>
             <div className={styles.saveSheetActions}>
               <button className={styles.saveSheetYes} onClick={handleSaveAndClose}>
-                Yes, add to My Notes
+                Yes
               </button>
               <button className={styles.saveSheetNo} onClick={handleDismissAndClose}>
-                No, don&rsquo;t save
+                No
               </button>
             </div>
           </div>
