@@ -36,7 +36,7 @@ export default function RootLayout({
       <html lang="en" data-theme="light">
         <body>
           {/* One-tap overlay — shows only when user is signed out and has a Google session */}
-          <GoogleOneTap forceRedirectUrl="/portal" />
+          <GoogleOneTap />
           <a href="#main-content" className="skip-link">
             Skip to main content
           </a>
