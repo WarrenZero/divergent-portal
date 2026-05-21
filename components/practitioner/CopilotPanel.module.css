@@ -256,8 +256,8 @@
 }
 .bubble li:last-child { margin-bottom: 0; }
 
-.bubble strong { font-weight: 700; color: var(--text-1); }
-.bubble em { font-style: italic; }
+.bubble strong { font-weight: 700; color: var(--copper-500); }
+.bubble em { font-style: italic; color: var(--pine-600); }
 
 .bubbleUser {
   background: var(--pine-700);
@@ -457,6 +457,71 @@
   background: var(--surface);
   border-top: 1px solid var(--border);
 }
+
+/* ─── SAVE CONFIRMATION SHEET ────────────────────────────────── */
+
+.saveSheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border-2);
+  padding: 18px 20px 20px;
+  z-index: 10;
+  box-shadow: 0 -8px 24px rgba(15, 31, 19, 0.12);
+  animation: slideUp 200ms var(--ease-out);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.saveSheetTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 12px;
+}
+
+.saveSheetActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.saveSheetYes {
+  padding: 10px 16px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fff;
+  cursor: pointer;
+  transition: background 150ms;
+  text-align: center;
+}
+.saveSheetYes:hover { background: var(--pine-600); }
+
+.saveSheetNo {
+  padding: 9px 16px;
+  background: none;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+  text-align: center;
+}
+.saveSheetNo:hover { background: var(--surface-2); color: var(--text-2); }
 
 /* ─── MOBILE ──────────────────────────────────────────────────── */
 

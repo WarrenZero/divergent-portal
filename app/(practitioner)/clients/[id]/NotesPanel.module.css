@@ -86,6 +86,7 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 6px;
+  position: relative;
 }
 
 .noteIcon {
@@ -117,6 +118,131 @@
   line-height: 1.6;
   white-space: pre-wrap;
 }
+
+/* ─── Hover-reveal action buttons ───────────────────────────── */
+.noteActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.noteRow:hover .noteActions { opacity: 1; }
+
+.noteActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+}
+.noteActionBtn:hover { background: var(--surface-2); color: var(--text-1); }
+.noteActionDanger:hover { background: rgba(196, 92, 64, 0.08); color: #C45C40; }
+
+/* ─── Inline edit ────────────────────────────────────────────── */
+.inlineEdit { margin-top: 2px; }
+
+.inlineTextarea {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  color: var(--text-1);
+  line-height: 1.6;
+  resize: vertical;
+  box-sizing: border-box;
+  outline: none;
+}
+.inlineTextarea:focus { border-color: var(--pine-400); }
+
+.inlineError {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  color: #C45C40;
+  margin-top: 4px;
+}
+
+.inlineActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.inlineSave {
+  padding: 5px 12px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.inlineSave:hover:not(:disabled) { background: var(--pine-600); }
+.inlineSave:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.inlineCancel {
+  padding: 5px 10px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background 150ms;
+}
+.inlineCancel:hover { background: var(--surface-2); }
+
+/* ─── Inline delete confirm ──────────────────────────────────── */
+.deleteConfirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 8px 10px;
+  background: rgba(196, 92, 64, 0.05);
+  border: 1px solid rgba(196, 92, 64, 0.18);
+  border-radius: var(--radius-sm);
+}
+
+.deleteQuestion {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  flex: 1;
+}
+
+.deleteYes {
+  padding: 5px 10px;
+  background: #C45C40;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 150ms;
+  white-space: nowrap;
+}
+.deleteYes:hover:not(:disabled) { opacity: 0.85; }
+.deleteYes:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* ─── Modal overlay ──────────────────────────────────────────── */
 .overlay {

@@ -117,6 +117,7 @@ export default function CopilotPanel({ clientId }: Props) {
   }, [isLoaded, firstName, lastName, user]);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [savePromptOpen, setSavePromptOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
@@ -182,8 +183,32 @@ export default function CopilotPanel({ clientId }: Props) {
     return String(++idCounter.current);
   }
 
+  function requestClose() {
+    if (messages.length >= 2) {
+      setSavePromptOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }
+
   function toggle() {
-    setIsOpen((o) => !o);
+    if (isOpen) {
+      requestClose();
+    } else {
+      setIsOpen(true);
+    }
+  }
+
+  function handleSaveAndClose() {
+    fireSummary(messages);
+    summarizedUpToRef.current = messages.length;
+    setSavePromptOpen(false);
+    setIsOpen(false);
+  }
+
+  function handleDismissAndClose() {
+    setSavePromptOpen(false);
+    setIsOpen(false);
   }
 
   function handleSuggest(text: string) {
@@ -518,6 +543,23 @@ export default function CopilotPanel({ clientId }: Props) {
         <div className={styles.foot}>
           Divergent Clinical Co-Pilot · claude-sonnet-4-6 · 20% guardrail active
         </div>
+
+        {/* ── Save conversation prompt ── */}
+        {savePromptOpen && (
+          <div className={styles.saveSheet}>
+            <div className={styles.saveSheetTitle}>
+              Save this conversation to My Notes?
+            </div>
+            <div className={styles.saveSheetActions}>
+              <button className={styles.saveSheetYes} onClick={handleSaveAndClose}>
+                Yes, add to My Notes
+              </button>
+              <button className={styles.saveSheetNo} onClick={handleDismissAndClose}>
+                No, don&rsquo;t save
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

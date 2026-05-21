@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { addManualNote } from './notes.actions';
+import { addManualNote, editNote, deleteNote } from './notes.actions';
 import styles from './NotesPanel.module.css';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -23,27 +23,19 @@ interface DateGroup {
 
 function groupByDate(notes: NoteRow[]): DateGroup[] {
   const map = new Map<string, NoteRow[]>();
-
   for (const note of notes) {
-    const d = new Date(note.created_at);
-    const key = d.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
+    const key = new Date(note.created_at).toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
     });
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(note);
   }
-
   return Array.from(map.entries()).map(([label, notes]) => ({ label, notes }));
 }
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
+    hour: 'numeric', minute: '2-digit', hour12: true,
   });
 }
 
@@ -57,47 +49,83 @@ interface Props {
 export default function NotesPanel({ clientId, initialNotes }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [modalOpen, setModalOpen] = useState(false);
-  const [noteText, setNoteText] = useState('');
-  const [error, setError] = useState<string | null>(null);
+
+  // Add modal state
+  const [addOpen, setAddOpen] = useState(false);
+  const [addText, setAddText] = useState('');
+  const [addError, setAddError] = useState<string | null>(null);
+
+  // Inline edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const [editError, setEditError] = useState<string | null>(null);
+
+  // Inline delete confirm state
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const groups = groupByDate(initialNotes);
 
-  function openModal() {
-    setNoteText('');
-    setError(null);
-    setModalOpen(true);
-  }
+  // ── Add note ──────────────────────────────────────────────
 
-  function closeModal() {
-    setModalOpen(false);
-    setNoteText('');
-    setError(null);
-  }
+  function openAdd() { setAddText(''); setAddError(null); setAddOpen(true); }
+  function closeAdd() { setAddOpen(false); setAddText(''); setAddError(null); }
 
-  function handleSave() {
-    if (!noteText.trim()) return;
-    setError(null);
-
+  function handleAdd() {
+    if (!addText.trim()) return;
     startTransition(async () => {
-      const result = await addManualNote(clientId, noteText);
-      if (result.error) {
-        setError(result.error);
-      } else {
-        closeModal();
-        router.refresh();
-      }
+      const result = await addManualNote(clientId, addText);
+      if (result.error) { setAddError(result.error); return; }
+      closeAdd();
+      router.refresh();
     });
   }
+
+  // ── Edit note ─────────────────────────────────────────────
+
+  function startEdit(note: NoteRow) {
+    setDeletingId(null);
+    setEditingId(note.id);
+    setEditText(note.content);
+    setEditError(null);
+  }
+
+  function cancelEdit() { setEditingId(null); setEditText(''); setEditError(null); }
+
+  function handleEdit(noteId: string) {
+    if (!editText.trim()) return;
+    startTransition(async () => {
+      const result = await editNote(noteId, clientId, editText);
+      if (result.error) { setEditError(result.error); return; }
+      cancelEdit();
+      router.refresh();
+    });
+  }
+
+  // ── Delete note ───────────────────────────────────────────
+
+  function startDelete(noteId: string) {
+    setEditingId(null);
+    setDeletingId(noteId);
+  }
+
+  function cancelDelete() { setDeletingId(null); }
+
+  function handleDelete(noteId: string) {
+    startTransition(async () => {
+      await deleteNote(noteId, clientId);
+      setDeletingId(null);
+      router.refresh();
+    });
+  }
+
+  // ── Render ────────────────────────────────────────────────
 
   return (
     <>
       <div className={styles.card}>
         <div className={styles.header}>
           <span className={styles.title}>Clinical Notes</span>
-          <button className={styles.addBtn} onClick={openModal}>
-            + Add Note
-          </button>
+          <button className={styles.addBtn} onClick={openAdd}>+ Add Note</button>
         </div>
 
         {groups.length === 0 ? (
@@ -114,8 +142,10 @@ export default function NotesPanel({ clientId, initialNotes }: Props) {
             {groups.map((group) => (
               <div key={group.label} className={styles.dateGroup}>
                 <div className={styles.dateLabel}>{group.label}</div>
+
                 {group.notes.map((note) => (
                   <div key={note.id} className={styles.noteRow}>
+                    {/* Meta row with hover-revealed actions */}
                     <div className={styles.noteMeta}>
                       <span className={styles.noteIcon}>
                         {note.note_type === 'copilot_summary' ? '✦' : '✏'}
@@ -124,8 +154,68 @@ export default function NotesPanel({ clientId, initialNotes }: Props) {
                       <span className={styles.noteType}>
                         {note.note_type === 'copilot_summary' ? 'Co-Pilot Summary' : 'Manual Note'}
                       </span>
+                      <div className={styles.noteActions}>
+                        <button
+                          className={styles.noteActionBtn}
+                          onClick={() => startEdit(note)}
+                          aria-label="Edit note"
+                          title="Edit"
+                        >
+                          {/* Pencil icon */}
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        </button>
+                        <button
+                          className={`${styles.noteActionBtn} ${styles.noteActionDanger}`}
+                          onClick={() => startDelete(note.id)}
+                          aria-label="Delete note"
+                          title="Delete"
+                        >
+                          {/* Trash icon */}
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                            <path d="M10 11v6M14 11v6" />
+                            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                    <div className={styles.noteContent}>{note.content}</div>
+
+                    {/* Inline edit */}
+                    {editingId === note.id ? (
+                      <div className={styles.inlineEdit}>
+                        <textarea
+                          className={styles.inlineTextarea}
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          autoFocus
+                          rows={4}
+                        />
+                        {editError && <div className={styles.inlineError}>{editError}</div>}
+                        <div className={styles.inlineActions}>
+                          <button className={styles.inlineSave} onClick={() => handleEdit(note.id)} disabled={!editText.trim() || isPending}>
+                            {isPending ? 'Saving…' : 'Save'}
+                          </button>
+                          <button className={styles.inlineCancel} onClick={cancelEdit}>Cancel</button>
+                        </div>
+                      </div>
+                    ) : deletingId === note.id ? (
+                      /* Inline delete confirm */
+                      <div className={styles.deleteConfirm}>
+                        <span className={styles.deleteQuestion}>Delete this note?</span>
+                        <div className={styles.inlineActions}>
+                          <button className={styles.deleteYes} onClick={() => handleDelete(note.id)} disabled={isPending}>
+                            {isPending ? 'Deleting…' : 'Yes, delete'}
+                          </button>
+                          <button className={styles.inlineCancel} onClick={cancelDelete}>Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={styles.noteContent}>{note.content}</div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -135,33 +225,25 @@ export default function NotesPanel({ clientId, initialNotes }: Props) {
       </div>
 
       {/* ── Add Note Modal ─────────────────────────────────────── */}
-      {modalOpen && (
-        <div className={styles.overlay} onClick={closeModal}>
+      {addOpen && (
+        <div className={styles.overlay} onClick={closeAdd}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <span className={styles.modalTitle}>Add Clinical Note</span>
-              <button className={styles.modalClose} onClick={closeModal} aria-label="Close">
-                ×
-              </button>
+              <button className={styles.modalClose} onClick={closeAdd} aria-label="Close">×</button>
             </div>
             <textarea
               className={styles.modalTextarea}
               placeholder="Enter your clinical note…"
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
+              value={addText}
+              onChange={(e) => setAddText(e.target.value)}
               autoFocus
               rows={6}
             />
-            {error && <div className={styles.modalError}>{error}</div>}
+            {addError && <div className={styles.modalError}>{addError}</div>}
             <div className={styles.modalActions}>
-              <button className={styles.cancelBtn} onClick={closeModal}>
-                Cancel
-              </button>
-              <button
-                className={styles.saveBtn}
-                onClick={handleSave}
-                disabled={!noteText.trim() || isPending}
-              >
+              <button className={styles.cancelBtn} onClick={closeAdd}>Cancel</button>
+              <button className={styles.saveBtn} onClick={handleAdd} disabled={!addText.trim() || isPending}>
                 {isPending ? 'Saving…' : 'Save Note'}
               </button>
             </div>
