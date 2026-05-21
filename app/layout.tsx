@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider, GoogleOneTap } from '@clerk/nextjs';
 import '../styles/globals.css';
 
 export const metadata: Metadata = {
@@ -35,6 +35,8 @@ export default function RootLayout({
     >
       <html lang="en" data-theme="light">
         <body>
+          {/* One-tap overlay — shows only when user is signed out and has a Google session */}
+          <GoogleOneTap forceRedirectUrl="/portal" />
           <a href="#main-content" className="skip-link">
             Skip to main content
           </a>
