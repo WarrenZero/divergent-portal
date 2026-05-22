@@ -1077,7 +1077,7 @@ values
 
 (
   'Olive Oil & Herb Roasted Fish',
-  'A Mediterranean preparation that perfectly preserves the omega-3 integrity of white fish. Olive oil's high monounsaturated fat content prevents oxidation during cooking. Lemon and herbs provide liver-supportive compounds.',
+  'A Mediterranean preparation that perfectly preserves the omega-3 integrity of white fish. Olive oil''s high monounsaturated fat content prevents oxidation during cooking. Lemon and herbs provide liver-supportive compounds.',
   '{"mediterranean","paleo","gluten-free","dairy-free","anti-inflammatory","aip"}',
   '{"spring","summer"}',
   '[
