@@ -287,6 +287,10 @@ export default async function CheckInPage() {
                   <span className={styles.qaIcon}>🗝</span>
                   Access The Vault
                 </button>
+                <Link href="/meals" className={`${styles.qaBtn} ${styles.qaBtnGhost}`} style={{ display: 'flex', alignItems: 'center' }}>
+                  <span className={styles.qaIcon}>✿</span>
+                  Browse Recipes
+                </Link>
                 <button className={`${styles.qaBtn} ${styles.qaBtnGhost}`}>
                   <span className={styles.qaIcon}>💬</span>
                   Message Your Practitioner
