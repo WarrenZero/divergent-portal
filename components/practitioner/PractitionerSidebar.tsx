@@ -39,7 +39,7 @@ const NAV_SECTIONS = [
         badgeProp: 'naqFlagCount' as const,
       },
       { id: 'labs', icon: '⚗', label: 'Lab Parser', href: '/labs' },
-      { id: 'engage', icon: '⟁', label: 'Engagement Loop', href: '/engage' },
+      { id: 'engage', icon: '⟁', label: 'Engagement Loop', href: '/engagement' },
     ],
   },
   {

@@ -1,0 +1,506 @@
+/* ─── Page ────────────────────────────────────────────────────── */
+.page {
+  max-width: 1100px;
+  position: relative;
+}
+
+/* ─── Toast ───────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--pine-700);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 10px 20px;
+  border-radius: 24px;
+  z-index: 2000;
+  white-space: nowrap;
+  animation: toastIn 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─── Header ──────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.sectionLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pine-400);
+  margin-bottom: 6px;
+}
+
+.title {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--pine-900);
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aiBadge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--pine-700), var(--pine-500));
+  color: var(--pine-100);
+  padding: 3px 8px;
+  border-radius: 10px;
+  vertical-align: middle;
+}
+
+.subtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--bone-600);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, opacity 150ms;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--bone-800);
+  border-color: var(--bone-300);
+}
+.btnGhost:hover:not(:disabled) { background: var(--bone-100); border-color: var(--bone-400); }
+
+.btnCopper {
+  background: var(--copper-500);
+  color: #fff;
+  border-color: var(--copper-500);
+}
+.btnCopper:hover:not(:disabled) { background: var(--copper-700); border-color: var(--copper-700); }
+
+.btnNudge {
+  background: var(--pine-600);
+  color: #fff;
+  border-color: var(--pine-600);
+  font-size: 11px;
+  padding: 7px 12px;
+}
+.btnNudge:hover:not(:disabled) { background: var(--pine-700); }
+
+/* ─── Stats strip ─────────────────────────────────────────────── */
+.statsStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.statItem {
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: 12px;
+  padding: 16px 20px;
+  text-align: center;
+}
+
+.statVal {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--pine-900);
+  line-height: 1;
+}
+
+.statLab {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-600);
+  margin-top: 4px;
+}
+
+.statEngaged { border-color: var(--pine-200); }
+.statEngaged .statVal { color: var(--pine-600); }
+
+.statNudge { border-color: var(--copper-200); }
+.statNudge .statVal { color: var(--copper-500); }
+
+.statRisk { border-color: #F5C0C0; }
+.statRisk .statVal { color: #B04848; }
+
+/* ─── Controls bar ────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.controlsLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--bone-600);
+  letter-spacing: 0.04em;
+}
+
+.sortBtn {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--bone-300);
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  color: var(--bone-800);
+  transition: all 150ms;
+}
+.sortBtn:hover { background: var(--bone-100); }
+.sortBtnActive {
+  background: var(--pine-600);
+  color: #fff;
+  border-color: var(--pine-600);
+}
+
+.clientCount {
+  margin-left: auto;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  color: var(--bone-600);
+}
+
+/* ─── Client list ─────────────────────────────────────────────── */
+.clientList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.empty {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--bone-600);
+  font-style: italic;
+  text-align: center;
+  padding: 60px 0;
+}
+
+/* ─── Client row ──────────────────────────────────────────────── */
+.clientRow {
+  background: var(--bone-50);
+  border: 1px solid var(--bone-300);
+  border-left: 3px solid var(--bone-400);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 44px 1fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+  transition: box-shadow 150ms, transform 150ms;
+}
+.clientRow:hover {
+  box-shadow: 0 2px 12px rgba(15, 31, 19, 0.07);
+  transform: translateX(2px);
+}
+
+/* Status-specific left border colors */
+.statusEngaged { border-left-color: var(--pine-400); }
+.statusNudge   { border-left-color: var(--copper-400); }
+.statusRisk    { border-left-color: #B04848; }
+
+/* ─── Avatar ──────────────────────────────────────────────────── */
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.statusEngaged.avatar,
+.statusEngagedAvatar { background: linear-gradient(135deg, var(--pine-600), var(--pine-400)); }
+.statusNudge.avatar,
+.statusNudgeAvatar   { background: linear-gradient(135deg, var(--copper-600), var(--copper-400)); }
+.statusRisk.avatar,
+.statusRiskAvatar    { background: linear-gradient(135deg, #7A1818, #B04848); }
+
+/* ─── Name block ──────────────────────────────────────────────── */
+.nameBlock {
+  min-width: 0;
+}
+
+.clientName {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pine-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clientEmail {
+  font-size: 11px;
+  color: var(--bone-600);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.protocolLine {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--pine-500);
+  letter-spacing: 0.03em;
+  margin-top: 4px;
+}
+
+.milestones {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.milestoneBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: var(--pine-100);
+  color: var(--pine-700);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+/* ─── Activity stats grid ─────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  gap: 12px;
+}
+
+.statCell {
+  text-align: center;
+}
+
+.statCellVal {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pine-900);
+}
+
+.statCellLab {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-600);
+  margin-top: 2px;
+}
+
+/* ─── Score block ─────────────────────────────────────────────── */
+.scoreBlock {
+  text-align: center;
+  min-width: 70px;
+}
+
+.scoreNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.statusEngaged .scoreNum,
+.statusEngagedScore { color: var(--pine-600); }
+.statusNudge .scoreNum,
+.statusNudgeScore   { color: var(--copper-500); }
+.statusRisk .scoreNum,
+.statusRiskScore    { color: #B04848; }
+
+.scoreSub {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  color: var(--bone-600);
+  margin-top: 1px;
+}
+
+.statusBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
+.statusEngagedBadge { background: var(--pine-100);   color: var(--pine-700); }
+.statusNudgeBadge   { background: var(--copper-100); color: var(--copper-700); }
+.statusRiskBadge    { background: #FEEAEA;             color: #8A2020; }
+
+/* ─── Nudge block ─────────────────────────────────────────────── */
+.nudgeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 90px;
+}
+
+.lastNudge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  color: var(--bone-600);
+  white-space: nowrap;
+}
+
+/* ─── Milestone section ───────────────────────────────────────── */
+.milestoneSection {
+  background: var(--pine-100);
+  border: 1px solid var(--pine-200);
+  border-radius: 14px;
+  padding: 24px;
+  margin-top: 8px;
+}
+
+.milestoneSectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pine-700);
+  margin-bottom: 16px;
+}
+
+.milestoneGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.milestoneCard {
+  background: #fff;
+  border: 1px solid var(--pine-200);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.milestoneCardName {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pine-900);
+  margin-bottom: 8px;
+}
+
+.milestoneCardBadges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1000px) {
+  .statsGrid { grid-template-columns: repeat(2, 64px); }
+}
+
+@media (max-width: 768px) {
+  .statsStrip { grid-template-columns: repeat(2, 1fr); }
+
+  .clientRow {
+    grid-template-columns: 44px 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+  }
+
+  .statsGrid {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .scoreBlock {
+    grid-column: 1 / -1;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nudgeBlock {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid { grid-template-columns: repeat(2, 1fr); }
+  .headerActions { flex-direction: column; width: 100%; }
+  .headerActions .btn { width: 100%; justify-content: center; }
+}
