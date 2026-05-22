@@ -1,0 +1,28 @@
+.main {
+  margin-left: 220px;
+  margin-top: 56px;
+  min-height: calc(100vh - 56px);
+  padding: 28px 32px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.52);
+  z-index: 99; /* sits behind sidebar (z 100) but above everything else */
+  animation: fadeIn 150ms ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+}

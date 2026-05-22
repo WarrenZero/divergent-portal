@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 import { useClerk } from '@clerk/nextjs';
 import styles from './PractitionerSidebar.module.css';
 
@@ -9,6 +10,8 @@ interface Props {
   practitionerName: string;
   clientCount?: number;
   naqFlagCount?: number;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const NAV_SECTIONS = [
@@ -70,9 +73,17 @@ export default function PractitionerSidebar({
   practitionerName,
   clientCount,
   naqFlagCount,
+  isOpen = false,
+  onClose,
 }: Props) {
   const pathname = usePathname();
   const { signOut } = useClerk();
+
+  // Close drawer on navigation (mobile)
+  useEffect(() => {
+    onClose?.();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const badges: Record<string, number | undefined> = {
     clientCount,
@@ -80,7 +91,7 @@ export default function PractitionerSidebar({
   };
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
       {NAV_SECTIONS.map((section, si) => (
         <div key={section.label}>
           {si > 0 && <div className={styles.divider} />}
