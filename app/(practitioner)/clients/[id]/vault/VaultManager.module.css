@@ -1,0 +1,375 @@
+/* ─── Page ────────────────────────────────────────────────────── */
+.page {
+  max-width: 860px;
+}
+
+/* ─── Breadcrumb ──────────────────────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+}
+
+.breadLink {
+  color: var(--pine-500);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 150ms;
+}
+.breadLink:hover { color: var(--pine-700); }
+
+.breadSep { color: var(--bone-400); }
+.breadCurrent { color: var(--bone-600); }
+
+/* ─── Header ──────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--pine-900);
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--bone-600);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 150ms, opacity 150ms;
+  white-space: nowrap;
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btnPine {
+  background: var(--pine-700);
+  color: #fff;
+}
+.btnPine:hover:not(:disabled) { background: var(--pine-600); }
+
+.btnGhost {
+  background: transparent;
+  color: var(--bone-800);
+  border: 1px solid var(--bone-300);
+}
+.btnGhost:hover:not(:disabled) { background: var(--bone-100); }
+
+/* ─── Banners ─────────────────────────────────────────────────── */
+.successBanner {
+  background: var(--pine-100);
+  color: var(--pine-700);
+  border: 1px solid var(--pine-200);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.errorBanner {
+  background: var(--copper-100);
+  color: var(--copper-700);
+  border: 1px solid #e8c8a8;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ─── Add form ────────────────────────────────────────────────── */
+.addForm {
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: 14px;
+  padding: 28px;
+}
+
+.formTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pine-900);
+  margin-bottom: 20px;
+}
+
+/* ─── Type selector ───────────────────────────────────────────── */
+.typeSelector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.typeBtn {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--bone-300);
+  background: transparent;
+  color: var(--bone-800);
+  cursor: pointer;
+  transition: all 150ms;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.typeBtn:hover { background: var(--bone-200); }
+
+.typeBtnActive {
+  background: var(--pine-700);
+  color: #fff;
+  border-color: var(--pine-700);
+}
+
+.typeIcon { font-size: 14px; }
+
+/* ─── Form fields ─────────────────────────────────────────────── */
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.label {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--pine-600);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.labelHint {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--bone-600);
+  margin-left: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  background: var(--bone-50);
+  border: 1px solid var(--bone-300);
+  border-radius: 8px;
+  color: var(--pine-900);
+  outline: none;
+  transition: border-color 150ms;
+  box-sizing: border-box;
+}
+.input:focus { border-color: var(--pine-400); }
+
+.textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  line-height: 1.7;
+  background: var(--bone-50);
+  border: 1px solid var(--bone-300);
+  border-radius: 8px;
+  color: var(--pine-900);
+  outline: none;
+  transition: border-color 150ms;
+  resize: vertical;
+  box-sizing: border-box;
+}
+.textarea:focus { border-color: var(--pine-400); }
+
+/* ─── Form actions ────────────────────────────────────────────── */
+.formActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.emailNote {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--bone-600);
+  margin-left: 4px;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────── */
+.empty {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--bone-600);
+  text-align: center;
+  padding: 60px 20px;
+  border: 1px dashed var(--bone-300);
+  border-radius: 14px;
+}
+
+/* ─── Item list ───────────────────────────────────────────────── */
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bone-50);
+  border: 1px solid var(--bone-300);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: box-shadow 150ms, border-color 150ms;
+}
+.itemRow:hover {
+  box-shadow: 0 2px 8px rgba(15, 31, 19, 0.07);
+  border-color: var(--pine-200);
+}
+
+.itemIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+  color: var(--pine-500);
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pine-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.typePill {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--copper-100);
+  color: var(--copper-700);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.itemDate {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  color: var(--bone-600);
+}
+
+.itemReadTime {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  color: var(--bone-600);
+}
+
+/* ─── Status badges ───────────────────────────────────────────── */
+.itemStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.readBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--pine-100);
+  color: var(--pine-700);
+  padding: 3px 9px;
+  border-radius: 10px;
+}
+
+.unreadBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--copper-100);
+  color: var(--copper-700);
+  padding: 3px 9px;
+  border-radius: 10px;
+}
+
+.bookmarkedBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--copper-500);
+}
+
+/* ─── Delete button ───────────────────────────────────────────── */
+.deleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--bone-400);
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 150ms, background 150ms;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.deleteBtn:hover:not(:disabled) {
+  color: var(--copper-700);
+  background: var(--copper-100);
+}
+.deleteBtn:disabled { opacity: 0.4; cursor: not-allowed; }

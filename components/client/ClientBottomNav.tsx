@@ -11,7 +11,7 @@ const NAV = [
   { href: '/journal',  label: 'Journal',   glyph: '⚘', live: true  },
   { href: '/meals',    label: 'Meals',     glyph: '✿', live: true  },
   { href: '/naq',      label: 'Assessment', glyph: '◉', live: true  },
-  { href: '/vault',    label: 'Vault',     glyph: '✦', live: false },
+  { href: '/vault',    label: 'Vault',     glyph: '✦', live: true  },
 ];
 
 // ─── Component ────────────────────────────────────────────────
