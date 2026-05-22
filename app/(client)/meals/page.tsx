@@ -142,7 +142,7 @@ export default async function MealsPage() {
     is_read: s.is_read,
     shared_at: s.shared_at,
     recipe: Array.isArray(s.recipes) ? s.recipes[0] : s.recipes,
-  })).filter((s: SharedRecipe) => s.recipe);
+  })).filter((s): s is SharedRecipe => s.recipe !== null);
 
   return (
     <MealsClient
