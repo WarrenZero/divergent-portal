@@ -403,6 +403,7 @@ export default async function ClientProfilePage({
             />
           )}
           <button className={styles.btnGhost}>Start NAQ</button>
+          <Link href={`/clients/${client.id}/symptoms`} className={styles.btnGhost}>◎ Symptom Map</Link>
           <button className={styles.btnPrimary}>Open Co-Pilot →</button>
         </div>
       </div>

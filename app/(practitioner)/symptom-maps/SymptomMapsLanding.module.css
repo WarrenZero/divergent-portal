@@ -1,0 +1,138 @@
+.page {
+  padding: 32px 28px;
+  max-width: 860px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.headerGlyph {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--pine-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--pine-200);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-1, #0F1F13);
+  margin: 0 0 2px;
+}
+
+.subtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-3, #9A8A72);
+  margin: 0;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--surface-1, #FDFAF5);
+  border: 1px solid var(--border-1, #E8DECE);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+}
+
+.card:hover {
+  border-color: var(--copper-300, #DFA878);
+  box-shadow: 0 4px 16px rgba(15, 31, 19, 0.08);
+  transform: translateY(-1px);
+}
+
+.cardInitials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pine-100, #DDE8DE);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pine-700, #1E3122);
+  flex-shrink: 0;
+}
+
+.cardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1, #0F1F13);
+}
+
+.cardConcern {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  color: var(--text-3, #9A8A72);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardScore {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cardScoreUnit {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3, #9A8A72);
+  margin-left: 1px;
+}
+
+.cardArrow {
+  font-size: 16px;
+  color: var(--text-3, #9A8A72);
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 32px;
+  text-align: center;
+  color: var(--text-3, #9A8A72);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+}
+
+.emptyGlyph {
+  font-size: 36px;
+  opacity: 0.3;
+}
