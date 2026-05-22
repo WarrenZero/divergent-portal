@@ -2,7 +2,6 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { anthropic } from '@/lib/anthropic/client';
-import { getRecipePhoto } from '@/lib/unsplash';
 import { calculateScores } from '@/app/(client)/naq/data';
 
 interface GenerateBody {
@@ -183,8 +182,27 @@ Return ONLY valid JSON with this exact structure:
     return NextResponse.json({ error: 'Failed to parse AI response', raw: rawContent }, { status: 502 });
   }
 
-  // 6. Fetch food photo
-  const imageUrl = await getRecipePhoto(recipe.image_query ?? recipe.title);
+  // 6. Fetch food photo (inline for debug visibility in Vercel logs)
+  const imageQuery = recipe.image_query ?? recipe.title;
+  const unsplashUrl = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(imageQuery + ' food')}&orientation=landscape&content_filter=high`;
+
+  const photoRes = await fetch(unsplashUrl, {
+    headers: {
+      Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
+    },
+  });
+
+  console.log('Unsplash status:', photoRes.status);
+  console.log('Unsplash key present:', !!process.env.UNSPLASH_ACCESS_KEY);
+
+  let imageUrl: string | null = null;
+  if (photoRes.ok) {
+    const photoData = await photoRes.json();
+    imageUrl = photoData?.urls?.regular || null;
+    console.log('Photo URL:', imageUrl);
+  } else {
+    console.log('Unsplash error:', await photoRes.text());
+  }
 
   // 7. Save to database
   const { data: saved, error: saveError } = await supabase
