@@ -182,26 +182,44 @@ Return ONLY valid JSON with this exact structure:
     return NextResponse.json({ error: 'Failed to parse AI response', raw: rawContent }, { status: 502 });
   }
 
-  // 6. Fetch food photo (inline for debug visibility in Vercel logs)
+  // 6. Fetch food photo
   const imageQuery = recipe.image_query ?? recipe.title;
-  const unsplashUrl = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(imageQuery + ' food')}&orientation=landscape&content_filter=high`;
 
-  const photoRes = await fetch(unsplashUrl, {
-    headers: {
-      Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-    },
-  });
+  // 6a. Cache check — reuse a URL from any existing recipe with the same image_query
+  const { data: cachedRecipe } = await supabase
+    .from('recipes')
+    .select('image_url')
+    .eq('image_query', imageQuery)
+    .not('image_url', 'is', null)
+    .not('image_url', 'like', 'linear-gradient%')
+    .limit(1)
+    .maybeSingle();
 
-  console.log('Unsplash status:', photoRes.status);
-  console.log('Unsplash key present:', !!process.env.UNSPLASH_ACCESS_KEY);
+  let imageUrl: string | null = cachedRecipe?.image_url ?? null;
 
-  let imageUrl: string | null = null;
-  if (photoRes.ok) {
-    const photoData = await photoRes.json();
-    imageUrl = photoData?.urls?.regular || null;
-    console.log('Photo URL:', imageUrl);
-  } else {
-    console.log('Unsplash error:', await photoRes.text());
+  // 6b. Try Unsplash API if no cache hit
+  if (!imageUrl && process.env.UNSPLASH_ACCESS_KEY) {
+    const apiUrl = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(imageQuery + ' food')}&orientation=landscape&content_filter=high`;
+    try {
+      const photoRes = await fetch(apiUrl, {
+        headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}` },
+      });
+      if (photoRes.ok) {
+        const photoData = await photoRes.json();
+        imageUrl = photoData?.urls?.regular ?? null;
+      }
+      // 6c. On 429 rate limit (or any failure) fall back to source URL
+      if (!imageUrl) {
+        imageUrl = `https://source.unsplash.com/featured/800x600/?${encodeURIComponent(imageQuery)},food`;
+      }
+    } catch {
+      imageUrl = `https://source.unsplash.com/featured/800x600/?${encodeURIComponent(imageQuery)},food`;
+    }
+  }
+
+  // 6d. Last resort: source URL (no API key required, no rate limit)
+  if (!imageUrl) {
+    imageUrl = `https://source.unsplash.com/featured/800x600/?${encodeURIComponent(imageQuery)},food`;
   }
 
   // 7. Save to database
