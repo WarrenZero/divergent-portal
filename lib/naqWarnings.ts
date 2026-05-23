@@ -71,39 +71,60 @@ const DOMAIN_RULES: DomainRule[] = [
   },
 ];
 
+// Domain priority for deduplication — lower number = higher clinical relevance.
+// When a flag matches multiple domains, the highest-priority domain's message wins.
+const DOMAIN_PRIORITY: Record<string, number> = {
+  'Immune / Lymph':          0,
+  'GI / Digestion':          1,
+  'Hormonal':                2,
+  'Adrenal / Stress':        3,
+  'Liver / Detox':           4,
+  'Blood Sugar':             5,
+  'Thyroid (via GI pattern)': 6,
+};
+
+function domainPriority(domainName: string): number {
+  return DOMAIN_PRIORITY[domainName] ?? 99;
+}
+
 /**
  * Given a client's NAQ domain scores and a recipe's sensitivity flag array,
  * returns an array of warnings to display on the recipe card or detail modal.
  *
- * Only returns warnings where:
- * 1. The domain burden exceeds the threshold, AND
- * 2. The recipe's sensitivity_flags array contains at least one of the warnFlags
+ * Rules:
+ * 1. Only fires when the domain burden exceeds the rule threshold.
+ * 2. Only fires for flags that are present in recipeSensitivityFlags.
+ * 3. Each flag produces at most ONE warning — the highest-priority domain wins
+ *    when multiple domains would fire for the same ingredient.
  */
 export function getNAQWarnings(
   domainScores: NAQDomainScore[],
   recipeSensitivityFlags: string[],
 ): NAQWarning[] {
   const recipeFlags = new Set(recipeSensitivityFlags.map((f) => f.toLowerCase()));
-  const warnings: NAQWarning[] = [];
-  const seen = new Set<string>(); // de-duplicate flag+domain combos
+
+  // Map from flag → best (lowest priority number) matching rule so far
+  const best = new Map<string, { message: string; domain: string; priority: number }>();
 
   for (const rule of DOMAIN_RULES) {
     const domain = domainScores.find((s) => s.domainId === rule.domainId);
     if (!domain || domain.burden < rule.thresholdPct) continue;
 
+    const priority = domainPriority(rule.domainName);
+
     for (const flag of rule.warnFlags) {
       if (!recipeFlags.has(flag.toLowerCase())) continue;
-      const key = `${flag}|${rule.domainName}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
 
-      warnings.push({
-        flag,
-        message: rule.message,
-        domain: rule.domainName,
-      });
+      const existing = best.get(flag);
+      if (!existing || priority < existing.priority) {
+        best.set(flag, { message: rule.message, domain: rule.domainName, priority });
+      }
     }
   }
 
-  return warnings;
+  return Array.from(best.entries()).map(([flag, { message, domain }]) => ({
+    flag,
+    message,
+    domain,
+  }));
 }
