@@ -55,6 +55,7 @@ const NAV_SECTIONS = [
         label: 'AI Co-Pilot Config',
         href: '/copilot-config',
       },
+      { id: 'vocabulary', icon: '⌘', label: 'Custom Vocabulary', href: '/settings/vocabulary' },
       { id: 'symptom-maps', icon: '◎', label: 'Symptom Maps', href: '/symptom-maps' },
     ],
   },

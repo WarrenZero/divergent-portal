@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   scheduleSession,
   editSessionDetails,
@@ -660,6 +661,16 @@ interface SessionCardProps {
   onCancelDismiss: () => void;
 }
 
+function transcriptionBadge(status: SessionRow['transcription_status']): { label: string; cls: string } | null {
+  if (!status) return null;
+  switch (status) {
+    case 'complete':    return { label: '✦ Transcribed', cls: styles.txBadgeComplete };
+    case 'processing':  return { label: '◌ Processing',  cls: styles.txBadgeProcessing };
+    case 'recording':   return { label: '● Recording',   cls: styles.txBadgeRecording };
+    default:            return null;
+  }
+}
+
 function SessionCard({
   session,
   clientName,
@@ -708,6 +719,19 @@ function SessionCard({
         <span className={`${styles.statusBadge} ${badge.cls}`}>
           {badge.label}
         </span>
+
+        {/* Transcription badge + link */}
+        {(() => {
+          const txBadge = transcriptionBadge(session.transcription_status);
+          return (
+            <Link
+              href={`/workflow/sessions/${session.id}/transcription`}
+              className={txBadge ? `${styles.txBadge} ${txBadge.cls}` : styles.txStartBtn}
+            >
+              {txBadge ? txBadge.label : '✦ Transcribe'}
+            </Link>
+          );
+        })()}
 
         {/* Action buttons — only for upcoming scheduled sessions */}
         {isUpcoming && cancelConfirmId !== session.id && (

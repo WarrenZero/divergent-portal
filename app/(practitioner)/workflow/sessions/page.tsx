@@ -16,6 +16,7 @@ export interface SessionRow {
   session_type: string;
   status: string;
   soap_note: string | null;
+  transcription_status: 'recording' | 'processing' | 'complete' | null;
 }
 
 export interface ClientOption {
@@ -33,7 +34,7 @@ export default async function SessionsPage() {
   // Fetch sessions: all future + last 90 days past
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [sessionsRes, clientsRes] = await Promise.all([
+  const [sessionsRes, clientsRes, transcriptionsRes] = await Promise.all([
     supabase
       .from('sessions')
       .select('id, client_id, scheduled_at, duration_minutes, session_type, status, soap_note')
@@ -46,11 +47,27 @@ export default async function SessionsPage() {
       .select('id, first_name, last_name')
       .eq('practitioner_id', practitioner.id)
       .order('last_name', { ascending: true }),
+
+    supabase
+      .from('session_transcriptions')
+      .select('session_id, status')
+      .eq('practitioner_id', practitioner.id),
   ]);
+
+  // Map transcription status onto each session
+  const txMap = new Map<string, string>();
+  for (const tx of transcriptionsRes.data ?? []) {
+    txMap.set(tx.session_id, tx.status);
+  }
+
+  const sessions: SessionRow[] = (sessionsRes.data ?? []).map((s) => ({
+    ...(s as Omit<SessionRow, 'transcription_status'>),
+    transcription_status: (txMap.get(s.id) as SessionRow['transcription_status']) ?? null,
+  }));
 
   return (
     <SessionsView
-      sessions={(sessionsRes.data ?? []) as SessionRow[]}
+      sessions={sessions}
       clients={(clientsRes.data ?? []) as ClientOption[]}
     />
   );

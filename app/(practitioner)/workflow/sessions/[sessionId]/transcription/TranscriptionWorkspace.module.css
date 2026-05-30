@@ -1,0 +1,988 @@
+/* ═══════════════════════════════════════════════════════════════
+   TRANSCRIPTION WORKSPACE — Scoped CSS
+   Divergent Design System: Forest Pine · Warm Bone · Muted Copper
+═══════════════════════════════════════════════════════════════ */
+
+/* ─── Recording Overlay (Phase 1) ────────────────────────────── */
+
+.recordingOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--pine-800);
+  z-index: var(--z-drawer);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.recTopBar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(90, 124, 98, 0.2);
+  flex-shrink: 0;
+}
+
+.recBackBtn {
+  background: none;
+  border: none;
+  color: var(--pine-300);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: color var(--dur-fast), background var(--dur-fast);
+}
+
+.recBackBtn:hover {
+  color: var(--pine-100);
+  background: rgba(90, 124, 98, 0.15);
+}
+
+.recClientName {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pine-100);
+  flex: 1;
+}
+
+.recSessionType {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--pine-300);
+}
+
+/* ─── Recording center stage ─────────────────────────────────── */
+
+.recStage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 32px 24px;
+}
+
+.recGlyphWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+}
+
+.recGlyph {
+  font-size: 56px;
+  color: var(--copper-400);
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  animation: glyphPulse 1.6s ease-in-out infinite;
+}
+
+.recGlyphIdle {
+  font-size: 56px;
+  color: var(--pine-400);
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.recRing {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 2px solid var(--copper-500);
+  animation: ringExpand 1.6s ease-out infinite;
+}
+
+@keyframes glyphPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(0.96); }
+}
+
+@keyframes ringExpand {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.recTimer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--pine-100);
+  letter-spacing: 4px;
+  line-height: 1;
+}
+
+.recWaveform {
+  width: 480px;
+  max-width: 90vw;
+  height: 80px;
+  border-radius: var(--radius);
+  background: rgba(15, 31, 19, 0.4);
+}
+
+/* ─── Speaker toggle ─────────────────────────────────────────── */
+
+.speakerToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.speakerLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pine-300);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.speakerBtn {
+  padding: 8px 18px;
+  background: rgba(90, 124, 98, 0.15);
+  border: 1px solid rgba(90, 124, 98, 0.3);
+  border-radius: 20px;
+  color: var(--pine-200);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+
+.speakerBtn:hover {
+  background: rgba(90, 124, 98, 0.25);
+  color: var(--pine-100);
+}
+
+.speakerBtnActive {
+  background: var(--copper-500);
+  border-color: var(--copper-400);
+  color: #fff;
+}
+
+/* ─── Record / End buttons ───────────────────────────────────── */
+
+.recStartBtn {
+  padding: 16px 40px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-base);
+  box-shadow: var(--shadow-copper);
+  letter-spacing: 0.03em;
+}
+
+.recStartBtn:hover {
+  background: var(--copper-400);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(192, 120, 72, 0.35);
+}
+
+.recEndBtn {
+  padding: 16px 40px;
+  background: rgba(176, 72, 72, 0.15);
+  border: 1.5px solid rgba(176, 72, 72, 0.5);
+  border-radius: var(--radius-lg);
+  color: #E88A8A;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-base);
+}
+
+.recEndBtn:hover {
+  background: rgba(176, 72, 72, 0.25);
+  border-color: rgba(176, 72, 72, 0.7);
+}
+
+.recError {
+  background: rgba(176, 72, 72, 0.15);
+  border: 1px solid rgba(176, 72, 72, 0.3);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  color: #E88A8A;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  max-width: 480px;
+  text-align: center;
+}
+
+/* ─── Live transcript panel ──────────────────────────────────── */
+
+.liveTranscriptPanel {
+  width: 100%;
+  max-width: 680px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(90, 124, 98, 0.2);
+  max-height: 220px;
+  display: flex;
+  flex-direction: column;
+}
+
+.liveTranscriptLabel {
+  padding: 10px 24px 6px;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pine-400);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.liveTranscriptScroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pine-600) transparent;
+}
+
+.liveSegment {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.liveSegmentSpeaker {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--copper-400);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  padding-top: 2px;
+  min-width: 60px;
+}
+
+.liveSegmentText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--pine-200);
+  line-height: 1.5;
+}
+
+.liveSegmentInterim {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--pine-400);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.recNotice {
+  padding: 10px 24px;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--pine-500);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ─── Processing Overlay (Phase 2) ──────────────────────────── */
+
+.processingOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--pine-900);
+  z-index: var(--z-drawer);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.procGlyph {
+  font-size: 64px;
+  color: var(--copper-400);
+  animation: glyphPulse 1.8s ease-in-out infinite;
+}
+
+.procTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--pine-100);
+  margin: 0;
+  text-align: center;
+}
+
+.procSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+}
+
+.procStep {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0.35;
+  transition: opacity var(--dur-base);
+}
+
+.procStepActive {
+  opacity: 1;
+}
+
+.procStepDone {
+  opacity: 0.7;
+}
+
+.procStepIndicator {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--copper-400);
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.procStepDone .procStepIndicator {
+  color: var(--pine-300);
+}
+
+.procStepLabel {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15px;
+  color: var(--pine-200);
+  font-style: italic;
+}
+
+.procError {
+  background: rgba(176, 72, 72, 0.15);
+  border: 1px solid rgba(176, 72, 72, 0.4);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  color: #E88A8A;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  max-width: 400px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.procRetryBtn {
+  padding: 10px 24px;
+  background: rgba(176, 72, 72, 0.2);
+  border: 1px solid rgba(176, 72, 72, 0.5);
+  border-radius: var(--radius-sm);
+  color: #E88A8A;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+
+.procRetryBtn:hover {
+  background: rgba(176, 72, 72, 0.3);
+}
+
+/* ─── Three-Lens Page (Phase 3) ──────────────────────────────── */
+
+.lensPage {
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Lens header ────────────────────────────────────────────── */
+
+.lensHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lensHeaderLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.lensBackBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  transition: all var(--dur-fast);
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+.lensBackBtn:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+.lensTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0 0 4px;
+}
+
+.lensSubtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-3);
+  margin: 0;
+}
+
+/* ─── Verification banner ────────────────────────────────────── */
+
+.verifyBanner {
+  background: var(--copper-100);
+  border: 1.5px solid var(--copper-300);
+  border-radius: var(--radius);
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.verifyBannerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.verifyBannerTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--copper-700);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.verifyProgress {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--copper-600);
+  white-space: nowrap;
+}
+
+.verifyItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.verifyItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.verifyCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--copper-500);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.verifyItemContent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.verifyItemLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.verifyItemValue {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.verifyPriorityHigh {
+  padding: 2px 8px;
+  background: rgba(180, 72, 16, 0.12);
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--copper-700);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.verifyComplete {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: rgba(90, 124, 98, 0.12);
+  border: 1px solid var(--pine-300);
+  border-radius: var(--radius);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pine-600);
+}
+
+.verifyCompleteIcon {
+  font-size: 18px;
+  color: var(--pine-400);
+}
+
+/* ─── Main lens layout ───────────────────────────────────────── */
+
+.lensLayout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .lensLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Lens tabs ──────────────────────────────────────────────── */
+
+.lensMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lensTabs {
+  display: flex;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0;
+}
+
+.lensTab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color var(--dur-fast), border-color var(--dur-fast);
+}
+
+.lensTab:hover {
+  color: var(--text-1);
+}
+
+.lensTabActive {
+  color: var(--pine-700);
+  border-bottom-color: var(--pine-600);
+}
+
+/* ─── LENS 1: Transcript ─────────────────────────────────────── */
+
+.transcriptLens {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transcriptControls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.transcriptToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+}
+
+.transcriptToggle input {
+  accent-color: var(--pine-500);
+}
+
+.transcriptMetaNote {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.transcriptBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-height: 560px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
+}
+
+.transcriptLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--surface-2);
+  position: relative;
+}
+
+.transcriptLine:last-child {
+  border-bottom: none;
+}
+
+.transcriptSpeaker {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  min-width: 64px;
+  padding-top: 3px;
+}
+
+.transcriptWarren .transcriptSpeaker {
+  color: var(--pine-500);
+}
+
+.transcriptClient .transcriptSpeaker {
+  color: var(--copper-500);
+}
+
+.transcriptText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.65;
+  flex: 1;
+}
+
+.acousticChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: var(--surface-2);
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  flex-shrink: 0;
+  margin-left: 8px;
+  align-self: center;
+}
+
+/* ─── LENS 2: Clinical Matrix ────────────────────────────────── */
+
+.matrixLens {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.matrixSection {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.matrixSectionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: var(--surface-2);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--dur-fast);
+}
+
+.matrixSectionHeader:hover {
+  background: var(--surface-3);
+}
+
+.matrixArrow {
+  font-size: 13px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+.matrixSectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.matrixSectionBody {
+  padding: 16px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.matrixSectionBody p {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ─── LENS 3: Client Roadmap ─────────────────────────────────── */
+
+.roadmapLens {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.roadmapCard {
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.roadmapSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.roadmapSectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--copper-600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.roadmapSectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.roadmapPara {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.roadmapBullet {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+.roadmapBulletDot {
+  color: var(--copper-500);
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.roadmapActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.roadmapSendBtn {
+  padding: 14px 32px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-base);
+  box-shadow: var(--shadow-copper);
+}
+
+.roadmapSendBtn:hover:not(:disabled) {
+  background: var(--copper-400);
+  transform: translateY(-1px);
+}
+
+.roadmapSendBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.roadmapSentConfirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: rgba(90, 124, 98, 0.12);
+  border: 1px solid var(--pine-300);
+  border-radius: var(--radius);
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pine-500);
+}
+
+/* ─── Trendline sidebar ──────────────────────────────────────── */
+
+.trendSidebar {
+  position: sticky;
+  top: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.trendSidebarTitle {
+  padding: 14px 18px;
+  background: var(--surface-2);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border);
+}
+
+.trendList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 520px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
+}
+
+.trendItem {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.trendItem:last-child {
+  border-bottom: none;
+}
+
+.trendItemHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.trendArrow {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.trendUp .trendArrow    { color: var(--pine-400); }
+.trendDown .trendArrow  { color: var(--danger); }
+.trendStable .trendArrow { color: var(--warn); }
+
+.trendSymptom {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.trendQuote {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-3);
+  margin: 0 0 6px;
+  padding: 0;
+  line-height: 1.5;
+  border-left: 2px solid var(--border);
+  padding-left: 10px;
+}
+
+.trendConfidence {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

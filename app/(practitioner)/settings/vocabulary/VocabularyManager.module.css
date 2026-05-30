@@ -1,0 +1,308 @@
+/* ═══════════════════════════════════════════════════════════════
+   VOCABULARY MANAGER — Scoped CSS
+   Divergent Design System: Forest Pine · Warm Bone · Muted Copper
+═══════════════════════════════════════════════════════════════ */
+
+.page {
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0 0 6px;
+}
+
+.pageSubtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-3);
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.addBtn {
+  padding: 9px 18px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--dur-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.addBtn:hover { background: var(--pine-600); }
+
+/* ─── Add / edit form ────────────────────────────────────────── */
+
+.addForm {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.formFieldFull {
+  grid-column: 1 / -1;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.formLabelOptional {
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-3);
+  opacity: 0.7;
+}
+
+.formInput {
+  padding: 9px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-1);
+  transition: border-color var(--dur-fast);
+  outline: none;
+}
+
+.formInput:focus {
+  border-color: var(--pine-400);
+}
+
+.formError {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.formActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.formActionsRight {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.saveBtn {
+  padding: 9px 20px;
+  background: var(--pine-700);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--dur-fast);
+}
+
+.saveBtn:hover:not(:disabled) { background: var(--pine-600); }
+.saveBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.cancelBtn {
+  padding: 9px 18px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+
+.cancelBtn:hover {
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.dangerBtn {
+  padding: 9px 18px;
+  background: none;
+  border: 1px solid rgba(176, 72, 72, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--danger);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+
+.dangerBtn:hover {
+  background: rgba(176, 72, 72, 0.08);
+}
+
+/* ─── Terms list ─────────────────────────────────────────────── */
+
+.termsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.emptyState {
+  padding: 32px 24px;
+  text-align: center;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+.termRow {
+  background: var(--surface);
+  border-bottom: 1px solid var(--surface-2);
+}
+
+.termRow:last-child {
+  border-bottom: none;
+}
+
+.termView {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  gap: 16px;
+}
+
+.termLeft {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.termAbbrev {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pine-600);
+  background: var(--pine-100);
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.termDef {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.termPhonetic {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.phoneticChip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.editBtn {
+  padding: 6px 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  flex-shrink: 0;
+}
+
+.editBtn:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+.termEditForm {
+  padding: 16px 18px;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Footnote ───────────────────────────────────────────────── */
+
+.footNote {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-3);
+  margin: 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .formGrid { grid-template-columns: 1fr; }
+  .formFieldFull { grid-column: 1; }
+}
