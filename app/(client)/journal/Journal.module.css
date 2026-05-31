@@ -275,6 +275,41 @@
   margin-bottom: 4px;
 }
 
+/* ─── Yes / No bowel movement toggle ────────────────────────── */
+.yesNoRow {
+  display: flex;
+  gap: 10px;
+}
+
+.yesNoBtn {
+  flex: 1;
+  min-height: 60px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-2);
+  background: var(--surface);
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, color 150ms, box-shadow 150ms;
+  margin-bottom: 4px;
+}
+
+.yesNoBtn:hover {
+  background: var(--copper-100);
+  border-color: var(--copper-300);
+  color: var(--copper-700);
+}
+
+.yesNoBtnActive {
+  background: var(--copper-500) !important;
+  border-color: var(--copper-500) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(192, 120, 72, 0.25);
+}
+
 /* ─── Bristol scale ──────────────────────────────────────────── */
 .bristolRow {
   display: flex;

@@ -37,8 +37,8 @@ const BRISTOL_COLOR: Record<number, string> = {
   6: 'var(--warn)', 7: 'var(--danger)',
 };
 
-const MOOD_LABEL: Record<number, string> = {
-  1: 'Low', 2: 'Fair', 3: 'Okay', 4: 'Good', 5: 'Great',
+const SYMPTOM_LABEL: Record<number, string> = {
+  1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'Good', 5: 'Great',
 };
 
 function formatEntryDate(iso: string): string {
@@ -65,18 +65,18 @@ function formatEntryTime(iso: string): string {
   });
 }
 
-function moodDots(before: number | null, after: number | null) {
+function symptomDots(before: number | null, after: number | null) {
   if (!before && !after) return null;
   return (
     <span className={styles.moodPills}>
       {before ? (
         <span className={styles.moodPill}>
-          Before: <strong>{MOOD_LABEL[before]}</strong>
+          Sx Before: <strong>{SYMPTOM_LABEL[before]}</strong>
         </span>
       ) : null}
       {after ? (
         <span className={styles.moodPill}>
-          After: <strong>{MOOD_LABEL[after]}</strong>
+          Sx After: <strong>{SYMPTOM_LABEL[after]}</strong>
         </span>
       ) : null}
     </span>
@@ -171,7 +171,7 @@ export default async function JournalPage() {
                       )}
                     </div>
                     <div className={styles.entryRight}>
-                      {moodDots(entry.mood_before, entry.mood_after)}
+                      {symptomDots(entry.mood_before, entry.mood_after)}
                       {entry.bowel_rating && (
                         <span
                           className={styles.bristolTag}
@@ -195,17 +195,17 @@ export default async function JournalPage() {
                     <div className={styles.entryMeta}>
                       {entry.mood_before && (
                         <div className={styles.entryMetaItem}>
-                          <span className={styles.entryMetaLabel}>Mood Before</span>
+                          <span className={styles.entryMetaLabel}>Symptoms Before</span>
                           <span className={styles.entryMetaVal}>
-                            {entry.mood_before} — {MOOD_LABEL[entry.mood_before]}
+                            {entry.mood_before} — {SYMPTOM_LABEL[entry.mood_before]}
                           </span>
                         </div>
                       )}
                       {entry.mood_after && (
                         <div className={styles.entryMetaItem}>
-                          <span className={styles.entryMetaLabel}>Mood After</span>
+                          <span className={styles.entryMetaLabel}>Symptoms After</span>
                           <span className={styles.entryMetaVal}>
-                            {entry.mood_after} — {MOOD_LABEL[entry.mood_after]}
+                            {entry.mood_after} — {SYMPTOM_LABEL[entry.mood_after]}
                           </span>
                         </div>
                       )}

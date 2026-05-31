@@ -9,9 +9,8 @@ export interface JournalFields {
   meal_time: string;
   time_eaten: string;   // HH:MM — stored as logged_at on the row
   foods_eaten: string;
-  mood_before: number;
-  mood_after: number;
-  symptoms: string;
+  mood_before: number;  // "Symptoms Before Eating" (1-5)
+  mood_after: number;   // "Symptoms After Eating" (1-5)
   bowel_rating: number;
   notes: string;
 }
@@ -48,7 +47,6 @@ export async function logJournalEntry(
     foods_eaten: fields.foods_eaten.trim(),
     mood_before: fields.mood_before || null,
     mood_after: fields.mood_after || null,
-    symptoms: fields.symptoms.trim() || null,
     bowel_rating: fields.bowel_rating || null,
     notes: fields.notes.trim() || null,
     ...(loggedAt ? { logged_at: loggedAt } : {}),
