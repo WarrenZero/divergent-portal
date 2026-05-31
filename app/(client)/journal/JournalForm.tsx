@@ -10,11 +10,11 @@ import styles from './Journal.module.css';
 const MEAL_TIMES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
 const SYMPTOM_LABELS: Record<number, string> = {
-  1: 'Very Low',
-  2: 'Low',
+  1: 'None',
+  2: 'Mild',
   3: 'Moderate',
-  4: 'Good',
-  5: 'Great',
+  4: 'Significant',
+  5: 'Severe',
 };
 
 const BRISTOL_LABELS: Record<number, { short: string; color: string }> = {
@@ -27,12 +27,17 @@ const BRISTOL_LABELS: Record<number, { short: string; color: string }> = {
   7: { short: 'Watery', color: 'var(--danger)' },
 };
 
+const SYMPTOM_NOTE_PLACEHOLDER =
+  'e.g. bloating, cramping, fatigue, brain fog, reflux, nausea, heartburn…';
+
 const EMPTY_FORM = {
   meal_time: '',
   time_eaten: '',
   foods_eaten: '',
-  mood_before: 0,   // DB column: stores "Symptoms Before" (1-5)
-  mood_after: 0,    // DB column: stores "Symptoms After" (1-5)
+  mood_before: 0,             // DB column: stores "Symptoms Before" score (1-5)
+  mood_after: 0,              // DB column: stores "Symptoms After" score (1-5)
+  symptom_before_note: '',
+  symptom_after_note: '',
   bowel_rating: 0,
   notes: '',
 };
@@ -57,9 +62,19 @@ export default function JournalForm() {
     setSaved(false);
   }
 
+  function handleSymptomScore(field: 'mood_before' | 'mood_after', score: number) {
+    const noteField = field === 'mood_before' ? 'symptom_before_note' : 'symptom_after_note';
+    setForm((prev) => ({
+      ...prev,
+      [field]: score,
+      // Clear the note when selecting "None" (1)
+      ...(score <= 1 ? { [noteField]: '' } : {}),
+    }));
+    setSaved(false);
+  }
+
   function handleBowelToggle(value: boolean) {
     setHadBowelMovement(value);
-    // Clear Bristol selection when toggling to NO
     if (!value) setForm((prev) => ({ ...prev, bowel_rating: 0 }));
     setSaved(false);
   }
@@ -69,10 +84,19 @@ export default function JournalForm() {
     setError(null);
     setSaved(false);
 
+    // Require symptom note when score > 1
+    if (form.mood_before > 1 && !form.symptom_before_note.trim()) {
+      setError('Please describe your symptoms before eating.');
+      return;
+    }
+    if (form.mood_after > 1 && !form.symptom_after_note.trim()) {
+      setError('Please describe your symptoms after eating.');
+      return;
+    }
+
     startTransition(async () => {
       const result = await logJournalEntry({
         ...form,
-        // Only submit bowel_rating if they confirmed a bowel movement
         bowel_rating: hadBowelMovement === true ? form.bowel_rating : 0,
       });
       if (result.error) {
@@ -92,7 +116,7 @@ export default function JournalForm() {
   return (
     <form onSubmit={handleSubmit} className={styles.formCard}>
 
-      {/* ── Meal time + Time eaten (same row) ─────────────── */}
+      {/* ── Meal time + Time eaten ─────────────────────────── */}
       <div className={styles.mealTimeRow}>
         <div className={styles.mealPillsGroup}>
           <div className={styles.fieldLabel}>Meal Time</div>
@@ -140,55 +164,90 @@ export default function JournalForm() {
         />
       </div>
 
-      {/* ── Symptoms before + after ────────────────────────── */}
-      <div className={styles.moodRow}>
-        <div className={styles.formSection}>
-          <div className={styles.fieldLabel}>Symptoms Before Eating</div>
-          <div className={styles.scaleRow}>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                className={`${styles.scaleBtn} ${form.mood_before === n ? styles.scaleBtnActive : ''}`}
-                onClick={() => set('mood_before', n)}
-                disabled={isPending}
-                title={SYMPTOM_LABELS[n]}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          {form.mood_before > 0 && (
-            <div className={styles.scaleCaption}>{SYMPTOM_LABELS[form.mood_before]}</div>
-          )}
-          <div className={styles.scaleRange}>
-            <span>Symptomatic</span><span>Well</span>
-          </div>
+      {/* ── Symptoms before ────────────────────────────────── */}
+      <div className={styles.formSection}>
+        <div className={styles.fieldLabel}>Symptoms Before Eating</div>
+        <div className={styles.scaleRow}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`${styles.scaleBtn} ${form.mood_before === n ? styles.scaleBtnActive : ''}`}
+              onClick={() => handleSymptomScore('mood_before', n)}
+              disabled={isPending}
+              title={SYMPTOM_LABELS[n]}
+            >
+              {n}
+            </button>
+          ))}
         </div>
+        {form.mood_before > 0 && (
+          <div className={styles.scaleCaption}>
+            {form.mood_before} · {SYMPTOM_LABELS[form.mood_before]}
+          </div>
+        )}
+        <div className={styles.scaleRange}>
+          <span>None</span><span>Severe</span>
+        </div>
+        {form.mood_before > 1 && (
+          <div className={styles.symptomNoteWrap}>
+            <label className={styles.symptomNoteLabel} htmlFor="j-sx-before">
+              Describe your symptoms
+            </label>
+            <textarea
+              id="j-sx-before"
+              className={styles.textarea}
+              placeholder={SYMPTOM_NOTE_PLACEHOLDER}
+              rows={2}
+              value={form.symptom_before_note}
+              onChange={(e) => set('symptom_before_note', e.target.value)}
+              disabled={isPending}
+            />
+          </div>
+        )}
+      </div>
 
-        <div className={styles.formSection}>
-          <div className={styles.fieldLabel}>Symptoms After Eating</div>
-          <div className={styles.scaleRow}>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                className={`${styles.scaleBtn} ${form.mood_after === n ? styles.scaleBtnActive : ''}`}
-                onClick={() => set('mood_after', n)}
-                disabled={isPending}
-                title={SYMPTOM_LABELS[n]}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          {form.mood_after > 0 && (
-            <div className={styles.scaleCaption}>{SYMPTOM_LABELS[form.mood_after]}</div>
-          )}
-          <div className={styles.scaleRange}>
-            <span>Symptomatic</span><span>Well</span>
-          </div>
+      {/* ── Symptoms after ─────────────────────────────────── */}
+      <div className={styles.formSection}>
+        <div className={styles.fieldLabel}>Symptoms After Eating</div>
+        <div className={styles.scaleRow}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`${styles.scaleBtn} ${form.mood_after === n ? styles.scaleBtnActive : ''}`}
+              onClick={() => handleSymptomScore('mood_after', n)}
+              disabled={isPending}
+              title={SYMPTOM_LABELS[n]}
+            >
+              {n}
+            </button>
+          ))}
         </div>
+        {form.mood_after > 0 && (
+          <div className={styles.scaleCaption}>
+            {form.mood_after} · {SYMPTOM_LABELS[form.mood_after]}
+          </div>
+        )}
+        <div className={styles.scaleRange}>
+          <span>None</span><span>Severe</span>
+        </div>
+        {form.mood_after > 1 && (
+          <div className={styles.symptomNoteWrap}>
+            <label className={styles.symptomNoteLabel} htmlFor="j-sx-after">
+              Describe your symptoms
+            </label>
+            <textarea
+              id="j-sx-after"
+              className={styles.textarea}
+              placeholder={SYMPTOM_NOTE_PLACEHOLDER}
+              rows={2}
+              value={form.symptom_after_note}
+              onChange={(e) => set('symptom_after_note', e.target.value)}
+              disabled={isPending}
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Bowel movement YES / NO ────────────────────────── */}

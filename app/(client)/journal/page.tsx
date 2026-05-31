@@ -14,6 +14,8 @@ interface JournalEntry {
   mood_before: number | null;
   mood_after: number | null;
   symptoms: string | null;
+  symptom_before_note: string | null;
+  symptom_after_note: string | null;
   bowel_rating: number | null;
   notes: string | null;
   logged_at: string;
@@ -38,7 +40,7 @@ const BRISTOL_COLOR: Record<number, string> = {
 };
 
 const SYMPTOM_LABEL: Record<number, string> = {
-  1: 'Very Low', 2: 'Low', 3: 'Moderate', 4: 'Good', 5: 'Great',
+  1: 'None', 2: 'Mild', 3: 'Moderate', 4: 'Significant', 5: 'Severe',
 };
 
 function formatEntryDate(iso: string): string {
@@ -95,7 +97,7 @@ export default async function JournalPage() {
     const { data } = await supabase
       .from('journal_entries')
       .select(
-        'id, meal_time, foods_eaten, mood_before, mood_after, symptoms, bowel_rating, notes, logged_at',
+        'id, meal_time, foods_eaten, mood_before, mood_after, symptoms, symptom_before_note, symptom_after_note, bowel_rating, notes, logged_at',
       )
       .eq('client_id', client.id)
       .order('logged_at', { ascending: false })
@@ -199,6 +201,11 @@ export default async function JournalPage() {
                           <span className={styles.entryMetaVal}>
                             {entry.mood_before} — {SYMPTOM_LABEL[entry.mood_before]}
                           </span>
+                          {entry.symptom_before_note && (
+                            <span className={styles.symptomNote}>
+                              {entry.symptom_before_note}
+                            </span>
+                          )}
                         </div>
                       )}
                       {entry.mood_after && (
@@ -207,6 +214,11 @@ export default async function JournalPage() {
                           <span className={styles.entryMetaVal}>
                             {entry.mood_after} — {SYMPTOM_LABEL[entry.mood_after]}
                           </span>
+                          {entry.symptom_after_note && (
+                            <span className={styles.symptomNote}>
+                              {entry.symptom_after_note}
+                            </span>
+                          )}
                         </div>
                       )}
                       {entry.bowel_rating && (
