@@ -134,8 +134,8 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
       {/* Header */}
       <div className={styles.header}>
         <div>
-          <div className={styles.sectionLabel}>Your Library</div>
-          <h1 className={styles.title}>The Vault <span className={styles.glyph}>🗝</span></h1>
+          <div className={styles.sectionLabel}>My Library</div>
+          <h1 className={styles.title}>My Library <span className={styles.glyph}>🗝</span></h1>
           <p className={styles.subtitle}>
             Curated by {practitionerName} · Resources to help you understand your symptoms and your protocol
           </p>
@@ -182,7 +182,7 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
             ? 'No resources match your search.'
             : filter !== 'all'
             ? `No ${TYPE_LABELS[filter as VaultItem['contentType']].toLowerCase()}s in your vault yet.`
-            : `Your vault is empty — Warren will add resources as your protocol progresses.`}
+            : `Your library is empty — Warren will add resources as your protocol progresses. Each piece is chosen specifically for where you are in your healing journey.`}
         </div>
       ) : (
         <div className={styles.grid}>

@@ -6,7 +6,7 @@
 
 -- ─── Session Transcriptions ──────────────────────────────────────
 
-CREATE TABLE session_transcriptions (
+CREATE TABLE IF NOT EXISTS session_transcriptions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id uuid REFERENCES sessions(id) ON DELETE CASCADE,
   client_id uuid REFERENCES clients(id),
@@ -38,17 +38,20 @@ CREATE TABLE session_transcriptions (
 
 ALTER TABLE session_transcriptions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Practitioners see own transcriptions"
-  ON session_transcriptions FOR ALL USING (
-    practitioner_id = (
-      SELECT id FROM practitioners WHERE clerk_user_id = auth.jwt() ->> 'sub'
-    )
-  );
+DO $$ BEGIN
+  CREATE POLICY "Practitioners see own transcriptions"
+    ON session_transcriptions FOR ALL USING (
+      practitioner_id = (
+        SELECT id FROM practitioners WHERE clerk_user_id = auth.jwt() ->> 'sub'
+      )
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE INDEX idx_transcriptions_session_id    ON session_transcriptions(session_id);
-CREATE INDEX idx_transcriptions_practitioner  ON session_transcriptions(practitioner_id);
-CREATE INDEX idx_transcriptions_client        ON session_transcriptions(client_id);
-CREATE INDEX idx_transcriptions_status        ON session_transcriptions(status);
+CREATE INDEX IF NOT EXISTS idx_transcriptions_session_id    ON session_transcriptions(session_id);
+CREATE INDEX IF NOT EXISTS idx_transcriptions_practitioner  ON session_transcriptions(practitioner_id);
+CREATE INDEX IF NOT EXISTS idx_transcriptions_client        ON session_transcriptions(client_id);
+CREATE INDEX IF NOT EXISTS idx_transcriptions_status        ON session_transcriptions(status);
 
 -- ─── Auto-update updated_at ──────────────────────────────────────
 
@@ -60,13 +63,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS transcriptions_updated_at ON session_transcriptions;
 CREATE TRIGGER transcriptions_updated_at
   BEFORE UPDATE ON session_transcriptions
   FOR EACH ROW EXECUTE FUNCTION handle_transcription_updated_at();
 
 -- ─── Practitioner Vocabulary ─────────────────────────────────────
 
-CREATE TABLE practitioner_vocabulary (
+CREATE TABLE IF NOT EXISTS practitioner_vocabulary (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   practitioner_id uuid REFERENCES practitioners(id) ON DELETE CASCADE,
   term text NOT NULL,
@@ -77,11 +81,14 @@ CREATE TABLE practitioner_vocabulary (
 
 ALTER TABLE practitioner_vocabulary ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Practitioners manage own vocabulary"
-  ON practitioner_vocabulary FOR ALL USING (
-    practitioner_id = (
-      SELECT id FROM practitioners WHERE clerk_user_id = auth.jwt() ->> 'sub'
-    )
-  );
+DO $$ BEGIN
+  CREATE POLICY "Practitioners manage own vocabulary"
+    ON practitioner_vocabulary FOR ALL USING (
+      practitioner_id = (
+        SELECT id FROM practitioners WHERE clerk_user_id = auth.jwt() ->> 'sub'
+      )
+    );
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
-CREATE INDEX idx_vocabulary_practitioner ON practitioner_vocabulary(practitioner_id);
+CREATE INDEX IF NOT EXISTS idx_vocabulary_practitioner ON practitioner_vocabulary(practitioner_id);

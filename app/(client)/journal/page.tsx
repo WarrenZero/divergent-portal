@@ -143,6 +143,16 @@ export default async function JournalPage() {
                 Consistent logging — even on simple days — gives your practitioner
                 the clearest picture of how your body responds.
               </p>
+              <p style={{
+                fontFamily: "'Lora', Georgia, serif",
+                fontStyle: 'italic',
+                fontSize: '13px',
+                color: 'var(--pine-400)',
+                marginTop: '12px',
+                lineHeight: 1.55,
+              }}>
+                — I read every entry before our sessions. What you eat and how you feel after is some of the most valuable clinical data I have.
+              </p>
             </div>
           ) : (
             <div className={styles.historyList}>

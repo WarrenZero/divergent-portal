@@ -1,0 +1,175 @@
+/* ─── MILESTONE CARD ─────────────────────────────────────────── */
+
+.card {
+  width: 100%;
+  background: linear-gradient(160deg, var(--pine-800), var(--pine-900));
+  border: 1px solid rgba(192, 120, 72, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+  animation: fadeUp var(--dur-slow) var(--ease-out);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Glyph + ring ───────────────────────────────────────────── */
+
+.ringWrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.glyph {
+  font-size: 36px;
+  color: var(--copper-400);
+  position: relative;
+  z-index: 1;
+  animation: glyphPulse 2s ease-in-out infinite;
+}
+
+@keyframes glyphPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--copper-500);
+  animation: ringExpand 2s ease-out infinite;
+}
+
+@keyframes ringExpand {
+  0%   { transform: scale(0.7); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* ─── Day number ─────────────────────────────────────────────── */
+
+.dayNum {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 64px;
+  font-weight: 500;
+  color: var(--pine-100);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.dayLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pine-400);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+}
+
+/* ─── Headline ───────────────────────────────────────────────── */
+
+.headline {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--pine-100);
+  margin: 0 0 24px;
+  line-height: 1.25;
+}
+
+/* ─── Score block ────────────────────────────────────────────── */
+
+.scoreBlock {
+  background: rgba(90, 124, 98, 0.15);
+  border: 1px solid rgba(90, 124, 98, 0.25);
+  border-radius: var(--radius);
+  padding: 14px 24px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.scoreNum {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 36px;
+  font-weight: 500;
+  color: var(--copper-300);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.scoreLab {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--pine-400);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.scoreBar {
+  height: 3px;
+  background: rgba(90, 124, 98, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.scoreBarFill {
+  height: 100%;
+  background: var(--copper-500);
+  border-radius: 2px;
+  transition: width 1s var(--ease-out);
+}
+
+/* ─── Warren's note ──────────────────────────────────────────── */
+
+.note {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--copper-300);
+  line-height: 1.65;
+  margin: 0 0 4px;
+  max-width: 320px;
+}
+
+.noteAttr {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pine-400);
+  margin: 0 0 28px;
+}
+
+/* ─── CTA ────────────────────────────────────────────────────── */
+
+.continueBtn {
+  padding: 12px 32px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  box-shadow: 0 4px 16px rgba(192, 120, 72, 0.3);
+}
+
+.continueBtn:hover {
+  background: var(--copper-400);
+  transform: translateY(-1px);
+}

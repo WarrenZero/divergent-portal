@@ -21,28 +21,37 @@ create index if not exists idx_vault_items_practitioner on vault_items(practitio
 alter table vault_items enable row level security;
 
 -- Clients see only their own items
-create policy "Clients see own vault items"
-  on vault_items for select using (
-    client_id = (
-      select id from clients where clerk_user_id = auth.jwt() ->> 'sub'
-    )
-  );
+do $$ begin
+  create policy "Clients see own vault items"
+    on vault_items for select using (
+      client_id = (
+        select id from clients where clerk_user_id = auth.jwt() ->> 'sub'
+      )
+    );
+exception when duplicate_object then null;
+end $$;
 
 -- Clients can update read/bookmark status on their own items
-create policy "Clients update own vault items"
-  on vault_items for update using (
-    client_id = (
-      select id from clients where clerk_user_id = auth.jwt() ->> 'sub'
-    )
-  );
+do $$ begin
+  create policy "Clients update own vault items"
+    on vault_items for update using (
+      client_id = (
+        select id from clients where clerk_user_id = auth.jwt() ->> 'sub'
+      )
+    );
+exception when duplicate_object then null;
+end $$;
 
 -- Practitioners see items they created for their clients
-create policy "Practitioners manage vault items"
-  on vault_items for all using (
-    practitioner_id = (
-      select id from practitioners where clerk_user_id = auth.jwt() ->> 'sub'
-    )
-  );
+do $$ begin
+  create policy "Practitioners manage vault items"
+    on vault_items for all using (
+      practitioner_id = (
+        select id from practitioners where clerk_user_id = auth.jwt() ->> 'sub'
+      )
+    );
+exception when duplicate_object then null;
+end $$;
 
 
 -- ─── Seed: ENS Signal-to-Noise Protocol resources ─────────────────

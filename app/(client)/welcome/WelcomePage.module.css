@@ -1,0 +1,151 @@
+/* ═══════════════════════════════════════════════════════════════
+   WELCOME PAGE — Full-screen Forest Pine first-login experience
+═══════════════════════════════════════════════════════════════ */
+
+.page {
+  position: fixed;
+  inset: 0;
+  background: var(--pine-900);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 40px 20px calc(40px + env(safe-area-inset-bottom));
+}
+
+.inner {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  text-align: center;
+}
+
+/* ─── Glyph ──────────────────────────────────────────────────── */
+
+.glyph {
+  font-size: 48px;
+  color: var(--copper-400);
+  margin-bottom: 24px;
+  animation: glow 2.4s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ─── Greeting ───────────────────────────────────────────────── */
+
+.heading {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 8vw, 48px);
+  font-weight: 800;
+  color: var(--pine-50, #FDFAF5);
+  margin: 0 0 20px;
+  line-height: 1.1;
+}
+
+/* ─── Warren's note ──────────────────────────────────────────── */
+
+.note {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--copper-300);
+  line-height: 1.65;
+  margin: 0 0 36px;
+  max-width: 360px;
+}
+
+/* ─── Step cards ─────────────────────────────────────────────── */
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 36px;
+}
+
+.stepCard {
+  background: var(--pine-800);
+  border: 1px solid rgba(90, 124, 98, 0.25);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  text-align: left;
+  transition: border-color var(--dur-fast);
+}
+
+.stepCard:hover {
+  border-color: rgba(192, 120, 72, 0.3);
+}
+
+.stepIcon {
+  font-size: 20px;
+  color: var(--copper-400);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.stepTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--pine-100);
+  margin-bottom: 4px;
+}
+
+.stepBody {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--pine-300);
+  line-height: 1.5;
+}
+
+/* ─── CTA ────────────────────────────────────────────────────── */
+
+.cta {
+  width: 100%;
+  padding: 18px 32px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all var(--dur-base) var(--ease-out);
+  box-shadow: 0 8px 32px rgba(192, 120, 72, 0.35);
+  margin-bottom: 24px;
+}
+
+.cta:hover {
+  background: var(--copper-400);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(192, 120, 72, 0.45);
+}
+
+.cta:active {
+  transform: translateY(0);
+}
+
+/* ─── Footer credential ──────────────────────────────────────── */
+
+.footer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--pine-500);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.6;
+}

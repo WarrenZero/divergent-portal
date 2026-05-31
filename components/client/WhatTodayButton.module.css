@@ -1,0 +1,183 @@
+/* ─── WHAT SHOULD I DO TODAY — Floating button + sheet ───────── */
+
+/* ── FAB ─────────────────────────────────────────────────────── */
+
+.fab {
+  position: fixed;
+  bottom: calc(72px + env(safe-area-inset-bottom) + 16px);
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--pine-700);
+  border: 1px solid rgba(90, 124, 98, 0.4);
+  color: var(--pine-200);
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow);
+  transition: all var(--dur-fast);
+}
+
+.fab:hover {
+  background: var(--pine-600);
+  transform: scale(1.05);
+}
+
+/* ── Backdrop ────────────────────────────────────────────────── */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 31, 19, 0.4);
+  z-index: 950;
+  animation: fadeIn var(--dur-base) var(--ease-out);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Sheet ───────────────────────────────────────────────────── */
+
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 20px 24px calc(32px + env(safe-area-inset-bottom));
+  z-index: 960;
+  animation: slideUp var(--dur-base) var(--ease-out);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.sheetHandle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-2);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: var(--text-3);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color var(--dur-fast);
+}
+
+.closeBtn:hover { color: var(--text-1); }
+
+.sheetLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 16px;
+}
+
+/* ── Action button ───────────────────────────────────────────── */
+
+.actionBtn {
+  display: block;
+  width: 100%;
+  padding: 16px 18px;
+  background: var(--pine-700);
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  transition: background var(--dur-fast);
+  margin-bottom: 20px;
+}
+
+.actionBtn:hover { background: var(--pine-600); }
+
+/* ── All done state ──────────────────────────────────────────── */
+
+.allDone {
+  text-align: center;
+  padding: 12px 0 20px;
+}
+
+.allDoneGlyph {
+  font-size: 28px;
+  color: var(--copper-400);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.allDoneText {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+
+.allDoneSub {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* ── Loading ─────────────────────────────────────────────────── */
+
+.loading {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-3);
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* ── Quick links ─────────────────────────────────────────────── */
+
+.quickLinks {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  padding-top: 4px;
+  border-top: 1px solid var(--surface-2);
+}
+
+.quickLink {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-decoration: none;
+  padding: 10px 4px;
+  transition: color var(--dur-fast);
+}
+
+.quickLink:hover { color: var(--text-1); }

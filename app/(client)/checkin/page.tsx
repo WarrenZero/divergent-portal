@@ -2,6 +2,7 @@ import { getCurrentClient } from '@/lib/clerk';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import DailyPulseCard from '@/components/client/DailyPulseCard';
+import MilestoneCard from '@/components/client/MilestoneCard';
 import styles from './Checkin.module.css';
 
 export const metadata = { title: 'Daily Check-In · Divergent' };
@@ -156,6 +157,11 @@ export default async function CheckInPage() {
 
   const protocolDay = protocol ? protocolDayLabel(protocol.startDate) : null;
 
+  // Compute protocol day number for milestone detection
+  const protocolDayNum = protocol?.startDate
+    ? Math.max(1, Math.floor((Date.now() - new Date(protocol.startDate).getTime()) / 86400000) + 1)
+    : null;
+
   return (
     <div className={styles.page}>
 
@@ -231,8 +237,8 @@ export default async function CheckInPage() {
         </div>
         {protocol && (
           <div className={styles.statItem}>
-            <div className={styles.statVal}>Phase {protocol.phase}</div>
-            <div className={styles.statLab}>Current Phase</div>
+            <div className={styles.statVal}>Week {protocol.phase}</div>
+            <div className={styles.statLab}>Current Week</div>
           </div>
         )}
       </div>
@@ -243,9 +249,31 @@ export default async function CheckInPage() {
         {/* ── Main column ──────────────────────────────────── */}
         <div className={styles.mainCol}>
 
+          {/* Milestone celebration (milestone days only) */}
+          {protocolDayNum && (
+            <MilestoneCard
+              day={protocolDayNum}
+              wellnessScore={wellnessScore}
+            />
+          )}
+
+          {/* Warren's voice micro-copy */}
+          <p style={{
+            fontFamily: "'Lora', Georgia, serif",
+            fontStyle: 'italic',
+            fontSize: '13px',
+            color: 'var(--pine-400)',
+            margin: '0 0 12px',
+            lineHeight: 1.55,
+          }}>
+            {protocol
+              ? `${firstName}, each check-in adds a data point I use to adjust your protocol — even the small shifts matter.`
+              : `Your first step, ${firstName}. A quick daily check-in tells me more than any lab ever could about how you're feeling day to day.`}
+          </p>
+
           {/* Daily Pulse card */}
           <div>
-            <div className={styles.sectionLabel}>Daily Check-In · 20 seconds</div>
+            <div className={styles.sectionLabel}>How Are You Feeling? · 20 seconds</div>
             <DailyPulseCard firstName={firstName} />
           </div>
 

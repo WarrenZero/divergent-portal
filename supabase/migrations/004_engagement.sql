@@ -16,9 +16,12 @@ create index if not exists idx_nudge_log_sent_at      on nudge_log(sent_at desc)
 
 alter table nudge_log enable row level security;
 
-create policy "Practitioners manage own nudge logs"
-  on nudge_log for all using (
-    practitioner_id = (
-      select id from practitioners where clerk_user_id = auth.jwt() ->> 'sub'
-    )
-  );
+do $$ begin
+  create policy "Practitioners manage own nudge logs"
+    on nudge_log for all using (
+      practitioner_id = (
+        select id from practitioners where clerk_user_id = auth.jwt() ->> 'sub'
+      )
+    );
+exception when duplicate_object then null;
+end $$;

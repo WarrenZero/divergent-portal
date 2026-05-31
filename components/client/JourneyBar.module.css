@@ -1,0 +1,90 @@
+/* ─── JOURNEY BAR ────────────────────────────────────────────── */
+
+.bar {
+  width: 100%;
+  background: var(--pine-800);
+  border-bottom: 1px solid rgba(90, 124, 98, 0.2);
+  padding: 8px 16px;
+}
+
+.inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ─── Day label ──────────────────────────────────────────────── */
+
+.left {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.dayNum {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--copper-300);
+}
+
+.sep {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--pine-400);
+}
+
+.week {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pine-400);
+}
+
+/* ─── Track ──────────────────────────────────────────────────── */
+
+.trackWrap {
+  flex: 1;
+  min-width: 80px;
+}
+
+.track {
+  height: 3px;
+  background: rgba(90, 124, 98, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--copper-500);
+  border-radius: 2px;
+  transition: width 0.6s var(--ease-out);
+}
+
+/* ─── Milestone label ────────────────────────────────────────── */
+
+.milestone {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 10px;
+  font-style: italic;
+  color: var(--pine-400);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── No protocol state ──────────────────────────────────────── */
+
+.notReady {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--pine-400);
+  text-align: center;
+  padding: 2px 0;
+}
