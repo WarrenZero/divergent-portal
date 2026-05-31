@@ -210,39 +210,6 @@ export default async function CheckInPage() {
         </div>
       </div>
 
-      {/* ── Stats strip ──────────────────────────────────────── */}
-      <div className={styles.statsStrip}>
-        <div className={styles.statItem}>
-          <div className={styles.statVal}>{protocolDay ?? '—'}</div>
-          <div className={styles.statLab}>On Protocol</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statVal}>{wellnessScore}</div>
-          <div className={styles.statLab}>Wellness Score</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statVal}>
-            {nextSession
-              ? new Date(nextSession.scheduled_at).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                })
-              : '—'}
-          </div>
-          <div className={styles.statLab}>Next Session</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statVal}>{supplements.length || '—'}</div>
-          <div className={styles.statLab}>Active Supplements</div>
-        </div>
-        {protocol && (
-          <div className={styles.statItem}>
-            <div className={styles.statVal}>Week {protocol.phase}</div>
-            <div className={styles.statLab}>Current Week</div>
-          </div>
-        )}
-      </div>
-
       {/* ── Content grid ─────────────────────────────────────── */}
       <div className={styles.contentGrid}>
 

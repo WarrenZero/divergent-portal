@@ -96,7 +96,7 @@ export default function MilestoneCard({ day, wellnessScore, onContinue }: Props)
 
       {/* CTA */}
       <button className={styles.continueBtn} onClick={handleContinue}>
-        Continue →
+        Daily Check-In →
       </button>
     </div>
   );
