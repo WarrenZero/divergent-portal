@@ -224,23 +224,21 @@ export default async function CheckInPage() {
             />
           )}
 
-          {/* Warren's voice micro-copy */}
-          <p style={{
-            fontFamily: "'Lora', Georgia, serif",
-            fontStyle: 'italic',
-            fontSize: '13px',
-            color: 'var(--pine-400)',
-            margin: '0 0 12px',
-            lineHeight: 1.55,
-          }}>
-            {protocol
-              ? `${firstName}, each check-in adds a data point I use to adjust your protocol — even the small shifts matter.`
-              : `Your first step, ${firstName}. A quick daily check-in tells me more than any lab ever could about how you're feeling day to day.`}
-          </p>
-
           {/* Daily Pulse card */}
           <div>
             <div className={styles.sectionLabel}>How Are You Feeling? · 20 seconds</div>
+            <p style={{
+              fontFamily: "'Lora', Georgia, serif",
+              fontStyle: 'italic',
+              fontSize: '13px',
+              color: 'var(--pine-400)',
+              margin: '0 0 12px',
+              lineHeight: 1.55,
+            }}>
+              {protocol
+                ? `${firstName}, each check-in adds a data point I use to adjust your protocol — even the small shifts matter.`
+                : `Your first step, ${firstName}. A quick daily check-in tells me more than any lab ever could about how you're feeling day to day.`}
+            </p>
             <DailyPulseCard firstName={firstName} />
           </div>
 

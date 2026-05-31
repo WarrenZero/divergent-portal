@@ -224,7 +224,7 @@
   gap: 14px;
   padding: 16px 18px;
   background: linear-gradient(135deg, var(--copper-100), var(--bone-100));
-  border: 1px solid var(--copper-300);
+  border: 2px solid var(--pine-700);
   border-radius: var(--radius-lg);
   text-decoration: none;
   transition: border-color 150ms, box-shadow 150ms, transform 150ms;
