@@ -41,7 +41,7 @@ export default function NAQClient({ firstName }: Props) {
   const [didRevealBranches, setDidRevealBranches] = useState(false);
   const [showRequired, setShowRequired] = useState(false);
 
-  const [phase, setPhase] = useState<'assessment' | 'complete'>('assessment');
+  const [phase, setPhase] = useState<'intro' | 'assessment' | 'complete'>('intro');
   const [domainScores, setDomainScores] = useState<NAQDomainScore[]>([]);
   const [wellnessScore, setWellnessScore] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -155,6 +155,47 @@ export default function NAQClient({ firstName }: Props) {
         setError(err instanceof Error ? err.message : 'Failed to save. Please try again.');
       }
     });
+  }
+
+  // ── Intro screen ─────────────────────────────────────────────
+  if (phase === 'intro') {
+    return (
+      <div className={styles.page}>
+        <div className={styles.main} style={{ maxWidth: 560, margin: '0 auto', paddingTop: 48 }}>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--pine-400)', marginBottom: 12 }}>
+              ✦ Health Assessment
+            </div>
+            <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 8px', lineHeight: 1.15 }}>
+              Your Health Assessment
+            </h1>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--pine-100)', color: 'var(--pine-600)', fontFamily: "'Syne', sans-serif", fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: 20, marginTop: 4 }}>
+              ⏱ 10 min
+            </span>
+          </div>
+
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '28px 28px 24px', marginBottom: 20 }}>
+            <p style={{ fontFamily: "'Lora', Georgia, serif", fontSize: '15px', color: 'var(--text-1)', lineHeight: 1.7, margin: '0 0 16px' }}>
+              This 10-minute assessment helps Warren see exactly where your body needs support. He reviews every answer before building your personal plan.
+            </p>
+            <p style={{ fontFamily: "'Lora', Georgia, serif", fontSize: '15px', color: 'var(--text-1)', lineHeight: 1.7, margin: 0 }}>
+              There are no right or wrong answers — just answer honestly based on how you&rsquo;ve been feeling over the last 30 days.
+            </p>
+          </div>
+
+          <div style={{ background: 'var(--pine-100)', border: '1px solid var(--pine-200)', borderRadius: 'var(--radius)', padding: '12px 16px', marginBottom: 32, fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '13px', color: 'var(--pine-600)', lineHeight: 1.5 }}>
+            You can pause and return anytime — your answers are saved as you go.
+          </div>
+
+          <button
+            className={styles.continueBtn}
+            onClick={() => setPhase('assessment')}
+          >
+            Begin Assessment →
+          </button>
+        </div>
+      </div>
+    );
   }
 
   // ── Completion screen ────────────────────────────────────────

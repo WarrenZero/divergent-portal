@@ -101,12 +101,33 @@ async function getCheckinData(clientId: string): Promise<CheckinData> {
 // ─── Helpers ───────────────────────────────────────────────────
 
 function protocolDayLabel(startDate: string): string {
-  if (!startDate) return 'Day 1';
+  if (!startDate) return 'Day 1 of 90';
   const start = new Date(startDate);
   const today = new Date();
   const diff = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
   const day = Math.max(1, diff + 1);
-  return `Day ${day}`;
+  return `Day ${day} of 90`;
+}
+
+function phaseLabel(phase: number): string {
+  switch (phase) {
+    case 1: return 'Week 1–4 · Building Your Foundation';
+    case 2: return 'Week 5–8 · Deepening the Protocol';
+    case 3: return 'Week 9–12 · Integration & Refinement';
+    default: return 'Week 13+ · Sustained Healing';
+  }
+}
+
+const SUPPLEMENT_WHY: Record<string, string> = {
+  'Liquid Ionic Boron':              "Supports your nervous system's electrical balance",
+  'Boron Glycinate':                 "A gentle form of boron for deeper cellular support",
+  'Boron Glycinate Encapsulations':  "A gentle form of boron for deeper cellular support",
+  'Magnesium Malate':                "Helps your muscles relax and your energy stabilize",
+  'Magnesium':                       "Helps your muscles relax and your energy stabilize",
+};
+
+function supplementWhy(name: string): string {
+  return SUPPLEMENT_WHY[name] ?? 'Added by Warren for your protocol';
 }
 
 function formatSessionDate(iso: string): string {
@@ -130,12 +151,12 @@ function aiNudgeText(
   supplementCount: number,
 ): string {
   if (!protocol && supplementCount === 0) {
-    return `Your clinical journey begins with today's check-in, ${firstName}. Once your practitioner assigns a protocol, the Co-Pilot will begin tracking patterns across your check-ins and food journal entries — surfacing insights before your next session.`;
+    return `Your journey begins with today's check-in, ${firstName}. Once Warren assigns your plan, patterns will start emerging across your check-ins and food journal entries — surfacing insights before your next session.`;
   }
   if (protocol) {
-    return `Pattern snapshot for ${firstName}: Your daily pulse entries are being analyzed alongside your ${protocol.name} protocol progress. Continue logging consistently — the Co-Pilot identifies meaningful shifts after 5–7 consecutive entries. Any patterns flagged will be shared with your practitioner before your next session.`;
+    return `Pattern snapshot for ${firstName}: Your daily pulse entries are being analyzed alongside your wellness plan progress. Continue logging consistently — meaningful shifts show up after 5–7 consecutive entries. Any patterns flagged will be shared with Warren before your next session.`;
   }
-  return `Your daily check-in responses are being tracked for patterns, ${firstName}. Consistent logging — even on good days — gives your practitioner the clearest picture of how your body is responding over time.`;
+  return `Your daily check-in responses are being tracked for patterns, ${firstName}. Consistent logging — even on good days — gives Warren the clearest picture of how your body is responding over time.`;
 }
 
 // ─── Page ─────────────────────────────────────────────────────
@@ -180,9 +201,12 @@ export default async function CheckInPage() {
           {protocol && (
             <div className={styles.protocolBadge}>
               <span className={styles.protocolDot} />
-              {protocol.name}
-              {protocolDay ? ` · ${protocolDay}` : ''}
-              {` · Phase ${protocol.phase}`}
+              <div>
+                <div>Your Wellness Plan{protocolDay ? ` · ${protocolDay}` : ''}</div>
+                <div style={{ fontSize: '9px', opacity: 0.6, marginTop: '2px', fontWeight: 400 }}>
+                  {protocol.name} · {phaseLabel(protocol.phase)}
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -256,7 +280,7 @@ export default async function CheckInPage() {
 
           {/* AI pattern nudge */}
           <div className={styles.aiNudge}>
-            <div className={styles.aiNudgeLabel}>✦ AI Pattern Note</div>
+            <div className={styles.aiNudgeLabel}>✦ A NOTE FROM YOUR DATA</div>
             <p className={styles.aiNudgeText}>
               {aiNudgeText(firstName, protocol, supplements.length)}
             </p>
@@ -342,6 +366,9 @@ export default async function CheckInPage() {
                     <div key={s.id} className={styles.suppItem}>
                       <div>
                         <div className={styles.suppName}>{s.name}</div>
+                        <div style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '11px', color: 'var(--pine-400)', marginTop: '2px', lineHeight: 1.4 }}>
+                          {supplementWhy(s.name)}
+                        </div>
                         {s.brand && (
                           <div className={styles.suppDose}>{s.brand}</div>
                         )}

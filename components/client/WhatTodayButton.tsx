@@ -65,14 +65,14 @@ export default function WhatTodayButton() {
 
   return (
     <>
-      {/* Floating ? button */}
+      {/* Floating help button */}
       <button
         className={styles.fab}
         onClick={handleOpen}
         aria-label="What should I do today?"
         aria-expanded={open}
       >
-        ?
+        Need help?
       </button>
 
       {/* Backdrop */}

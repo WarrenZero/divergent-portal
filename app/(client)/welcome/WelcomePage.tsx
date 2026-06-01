@@ -49,6 +49,11 @@ export default function WelcomePage({ firstName }: Props) {
           a day — and every entry helps me help you better.
         </p>
 
+        {/* Slogan */}
+        <p className={styles.slogan}>
+          Your body has answers. We help you hear them.
+        </p>
+
         {/* Step cards */}
         <div className={styles.steps}>
           {STEPS.map((step) => (

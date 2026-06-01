@@ -252,12 +252,17 @@
 /* ─── SUCCESS STATE ──────────────────────────────────────────── */
 
 .successBox {
-  background: var(--pine-100);
-  border: 1px solid var(--pine-200);
+  background: var(--pine-800);
+  border: 1px solid var(--pine-700);
   border-radius: var(--radius-sm);
   padding: 20px;
   text-align: center;
-  animation: fadeUp var(--dur-base) var(--ease-out);
+  animation: fadeUp var(--dur-base) var(--ease-out), fadeOut 380ms var(--ease-in-out) 2.62s forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 @keyframes fadeUp {
@@ -269,13 +274,14 @@
   font-size: 22px;
   display: block;
   margin-bottom: 6px;
+  color: var(--copper-400);
 }
 
 .successTitle {
   font-family: 'Syne', sans-serif;
   font-size: 13px;
   font-weight: 700;
-  color: var(--pine-700);
+  color: var(--bone-100, #F8F2E8);
 }
 
 /* ─── ERROR STATE ────────────────────────────────────────────── */

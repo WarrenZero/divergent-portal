@@ -282,6 +282,9 @@ export default function JournalForm() {
             Bristol Scale
             <span className={styles.fieldHint}> — bowel movement type</span>
           </div>
+          <p style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '12px', color: 'var(--pine-400)', margin: '4px 0 8px', lineHeight: 1.5 }}>
+            This tells Warren how well your body is digesting — tap the number that best matches today.
+          </p>
           <div className={styles.bristolRow}>
             {[1, 2, 3, 4, 5, 6, 7].map((n) => {
               const info = BRISTOL_LABELS[n];

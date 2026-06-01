@@ -57,8 +57,20 @@
   font-size: 16px;
   color: var(--copper-300);
   line-height: 1.65;
-  margin: 0 0 36px;
+  margin: 0 0 16px;
   max-width: 360px;
+}
+
+/* ─── Slogan ─────────────────────────────────────────────────── */
+
+.slogan {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--copper-500);
+  text-align: center;
+  margin: 0 0 16px;
+  line-height: 1.55;
 }
 
 /* ─── Step cards ─────────────────────────────────────────────── */

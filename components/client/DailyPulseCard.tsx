@@ -42,10 +42,10 @@ export default function DailyPulseCard({ firstName }: Props) {
     [],
   );
 
-  // Auto-dismiss success after 2 seconds
+  // Auto-dismiss success after 3 seconds
   useEffect(() => {
     if (status !== 'success') return;
-    const t = setTimeout(() => setStatus('idle'), 2000);
+    const t = setTimeout(() => setStatus('idle'), 3000);
     return () => clearTimeout(t);
   }, [status]);
 
@@ -76,7 +76,7 @@ export default function DailyPulseCard({ firstName }: Props) {
       <div className={styles.card}>
         <div className={styles.successBox}>
           <span className={styles.successGlyph}>✦</span>
-          <div className={styles.successTitle}>✓ Logged · Warren will see this</div>
+          <div className={styles.successTitle}>✓ Logged · Warren will see this before your next session</div>
         </div>
       </div>
     );
