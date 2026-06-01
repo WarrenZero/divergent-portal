@@ -87,7 +87,7 @@ interface AccordionProps {
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
-  accordionRef?: React.RefObject<HTMLDivElement | null>;
+  accordionRef?: React.RefObject<HTMLDivElement>;
   isHighlighted?: boolean;
 }
 
@@ -152,7 +152,7 @@ export default function CheckinClient({
     supplements: false,
   });
   const [highlighted, setHighlighted] = useState(false);
-  const checkinRef = useRef<HTMLDivElement | null>(null);
+  const checkinRef = useRef<HTMLDivElement>(null);
 
   // Restore section state from localStorage on mount
   useEffect(() => {
