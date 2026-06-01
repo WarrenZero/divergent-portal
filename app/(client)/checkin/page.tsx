@@ -1,50 +1,21 @@
 import { getCurrentClient } from '@/lib/clerk';
 import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
-import DailyPulseCard from '@/components/client/DailyPulseCard';
-import MilestoneCard from '@/components/client/MilestoneCard';
-import styles from './Checkin.module.css';
+import CheckinClient from './CheckinClient';
+import type { ProtocolInfo, SupplementRow, SessionRow } from './CheckinClient';
 
 export const metadata = { title: 'Daily Check-In · Divergent' };
 
-// ─── Types ────────────────────────────────────────────────────
+// ─── Data fetching ─────────────────────────────────────────────
 
-interface SupplementRow {
-  id: string;
-  name: string;
-  dose: string | null;
-  timing: string | null;
-  brand: string | null;
-}
-
-interface SessionRow {
-  id: string;
-  scheduled_at: string;
-  duration_minutes: number;
-  session_type: string;
-  status: string;
-}
-
-interface ProtocolInfo {
-  name: string;
-  phase: number;
-  startDate: string;
-}
-
-interface CheckinData {
+async function getCheckinData(clientId: string): Promise<{
   protocol: ProtocolInfo | null;
   supplements: SupplementRow[];
   nextSession: SessionRow | null;
-}
-
-// ─── Data fetching ─────────────────────────────────────────────
-
-async function getCheckinData(clientId: string): Promise<CheckinData> {
+}> {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
   const [protocolRes, supplementsRes, sessionRes] = await Promise.all([
-    // Active protocol assignment joined to protocol name
     supabase
       .from('client_protocols')
       .select('current_phase, start_date, protocols(name)')
@@ -54,7 +25,6 @@ async function getCheckinData(clientId: string): Promise<CheckinData> {
       .limit(1)
       .maybeSingle(),
 
-    // Active supplements ordered by timing
     supabase
       .from('supplements')
       .select('id, name, dose, timing, brand')
@@ -63,7 +33,6 @@ async function getCheckinData(clientId: string): Promise<CheckinData> {
       .order('timing')
       .limit(6),
 
-    // Next upcoming session
     supabase
       .from('sessions')
       .select('id, scheduled_at, duration_minutes, session_type, status')
@@ -78,10 +47,7 @@ async function getCheckinData(clientId: string): Promise<CheckinData> {
   let protocol: ProtocolInfo | null = null;
   if (protocolRes.data) {
     const row = protocolRes.data;
-    // Supabase returns joined table as object or array depending on relationship
-    const protocolRecord = Array.isArray(row.protocols)
-      ? row.protocols[0]
-      : row.protocols;
+    const protocolRecord = Array.isArray(row.protocols) ? row.protocols[0] : row.protocols;
     if (protocolRecord?.name) {
       protocol = {
         name: protocolRecord.name,
@@ -118,30 +84,7 @@ function phaseLabel(phase: number): string {
   }
 }
 
-const SUPPLEMENT_WHY: Record<string, string> = {
-  'Liquid Ionic Boron':              "Supports your nervous system's electrical balance",
-  'Boron Glycinate':                 "A gentle form of boron for deeper cellular support",
-  'Boron Glycinate Encapsulations':  "A gentle form of boron for deeper cellular support",
-  'Magnesium Malate':                "Helps your muscles relax and your energy stabilize",
-  'Magnesium':                       "Helps your muscles relax and your energy stabilize",
-};
-
-function supplementWhy(name: string): string {
-  return SUPPLEMENT_WHY[name] ?? 'Added by Warren for your protocol';
-}
-
-function formatSessionDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
-}
-
 function wellnessDashOffset(score: number): number {
-  // SVG circle r=45 → circumference ≈ 283
   return 283 * (1 - Math.max(0, Math.min(100, score)) / 100);
 }
 
@@ -151,12 +94,12 @@ function aiNudgeText(
   supplementCount: number,
 ): string {
   if (!protocol && supplementCount === 0) {
-    return `Your journey begins with today's check-in, ${firstName}. Once Warren assigns your plan, patterns will start emerging across your check-ins and food journal entries — surfacing insights before your next session.`;
+    return `Your journey begins with today's check-in, ${firstName}. Once Warren assigns your plan, patterns will start emerging across your check-ins and journal entries.`;
   }
   if (protocol) {
-    return `Pattern snapshot for ${firstName}: Your daily pulse entries are being analyzed alongside your wellness plan progress. Continue logging consistently — meaningful shifts show up after 5–7 consecutive entries. Any patterns flagged will be shared with Warren before your next session.`;
+    return `Logging consistently unlocks the pattern — meaningful shifts show up after 5–7 entries. Warren reviews these before every session.`;
   }
-  return `Your daily check-in responses are being tracked for patterns, ${firstName}. Consistent logging — even on good days — gives Warren the clearest picture of how your body is responding over time.`;
+  return `Consistent logging — even on good days — gives Warren the clearest picture of how your body is responding over time.`;
 }
 
 // ─── Page ─────────────────────────────────────────────────────
@@ -164,11 +107,7 @@ function aiNudgeText(
 export default async function CheckInPage() {
   const client = await getCurrentClient();
 
-  // Layout guarantees client is non-null; fallback names are safety nets only
   const firstName = client?.first_name ?? 'there';
-  const fullName = client
-    ? `${client.first_name} ${client.last_name}`
-    : 'Client';
   const wellnessScore = client?.wellness_score ?? 0;
   const dashOffset = wellnessDashOffset(wellnessScore);
 
@@ -178,216 +117,25 @@ export default async function CheckInPage() {
 
   const protocolDay = protocol ? protocolDayLabel(protocol.startDate) : null;
 
-  // Compute protocol day number for milestone detection
   const protocolDayNum = protocol?.startDate
     ? Math.max(1, Math.floor((Date.now() - new Date(protocol.startDate).getTime()) / 86400000) + 1)
     : null;
 
+  const phaseText = protocol ? phaseLabel(protocol.phase) : null;
+  const aiNote = aiNudgeText(firstName, protocol, supplements.length);
+
   return (
-    <div className={styles.page}>
-
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <div className={styles.hero}>
-        <div className={styles.heroLeft}>
-          <div className={styles.welcome}>Welcome back</div>
-          <h1 className={styles.name}>
-            Hello, <em className={styles.nameEm}>{firstName}</em> ✦
-          </h1>
-          <p className={styles.tagline}>
-            You&rsquo;re doing something remarkable for yourself. Let&rsquo;s keep it
-            simple and steady.
-          </p>
-
-          {protocol && (
-            <div className={styles.protocolBadge}>
-              <span className={styles.protocolDot} />
-              <div>
-                <div>Your Wellness Plan{protocolDay ? ` · ${protocolDay}` : ''}</div>
-                <div style={{ fontSize: '9px', opacity: 0.6, marginTop: '2px', fontWeight: 400 }}>
-                  {protocol.name} · {phaseLabel(protocol.phase)}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Wellness score ring */}
-        <div className={styles.scoreRing}>
-          <svg className={styles.scoreSvg} viewBox="0 0 100 100" aria-label={`Wellness score: ${wellnessScore} out of 100`}>
-            <circle className={styles.scoreTrack} cx="50" cy="50" r="45" />
-            <circle
-              className={styles.scoreFill}
-              cx="50"
-              cy="50"
-              r="45"
-              transform="rotate(-90 50 50)"
-              style={{ strokeDashoffset: dashOffset }}
-            />
-            <text className={styles.scoreText} x="50" y="46">
-              {wellnessScore}
-            </text>
-            <text className={styles.scoreSub} x="50" y="60">
-              / 100
-            </text>
-          </svg>
-          <div className={styles.scoreLabel}>Wellness Score</div>
-        </div>
-      </div>
-
-      {/* ── Content grid ─────────────────────────────────────── */}
-      <div className={styles.contentGrid}>
-
-        {/* ── Main column ──────────────────────────────────── */}
-        <div className={styles.mainCol}>
-
-          {/* Milestone celebration (milestone days only) */}
-          {protocolDayNum && (
-            <MilestoneCard
-              day={protocolDayNum}
-              wellnessScore={wellnessScore}
-            />
-          )}
-
-          {/* Daily Pulse card */}
-          <div>
-            <div className={styles.sectionLabel}>How Are You Feeling? · 20 seconds</div>
-            <p style={{
-              fontFamily: "'Lora', Georgia, serif",
-              fontStyle: 'italic',
-              fontSize: '13px',
-              color: 'var(--pine-400)',
-              margin: '0 0 12px',
-              lineHeight: 1.55,
-            }}>
-              {protocol
-                ? `${firstName}, each check-in adds a data point I use to adjust your protocol — even the small shifts matter.`
-                : `Your first step, ${firstName}. A quick daily check-in tells me more than any lab ever could about how you're feeling day to day.`}
-            </p>
-            <DailyPulseCard firstName={firstName} />
-          </div>
-
-          {/* Journal shortcut */}
-          <Link href="/journal" className={styles.journalCard}>
-            <div className={styles.journalCardGlyph}>⚘</div>
-            <div className={styles.journalCardBody}>
-              <div className={styles.journalCardTitle}>Food + Mood Journal</div>
-              <div className={styles.journalCardSub}>
-                Log today&rsquo;s meals, mood, and symptoms — reviewed before every session
-              </div>
-            </div>
-            <div className={styles.journalCardArrow}>→</div>
-          </Link>
-
-          {/* AI pattern nudge */}
-          <div className={styles.aiNudge}>
-            <div className={styles.aiNudgeLabel}>✦ A NOTE FROM YOUR DATA</div>
-            <p className={styles.aiNudgeText}>
-              {aiNudgeText(firstName, protocol, supplements.length)}
-            </p>
-          </div>
-
-        </div>
-
-        {/* ── Side column ──────────────────────────────────── */}
-        <div className={styles.sideCol}>
-
-          {/* Quick actions */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>Quick Actions</div>
-            <div className={styles.cardPad}>
-              <div className={styles.qaList}>
-                <Link href="/naq" className={`${styles.qaBtn} ${styles.qaBtnPine}`} style={{ display: 'flex', alignItems: 'center' }}>
-                  <span className={styles.qaIcon}>✦</span>
-                  Start NAQ Assessment
-                </Link>
-                <button className={`${styles.qaBtn} ${styles.qaBtnGhost}`}>
-                  <span className={styles.qaIcon}>🗝</span>
-                  Access The Vault
-                </button>
-                <Link href="/meals" className={`${styles.qaBtn} ${styles.qaBtnGhost}`} style={{ display: 'flex', alignItems: 'center' }}>
-                  <span className={styles.qaIcon}>✿</span>
-                  Browse Recipes
-                </Link>
-                <button className={`${styles.qaBtn} ${styles.qaBtnGhost}`}>
-                  <span className={styles.qaIcon}>💬</span>
-                  Message Your Practitioner
-                </button>
-                <button className={`${styles.qaBtn} ${styles.qaBtnCopper}`}>
-                  <span className={styles.qaIcon}>📋</span>
-                  Generate Physician Report
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Next session */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>Next Session</div>
-            <div className={styles.cardPad}>
-              {nextSession ? (
-                <div className={styles.sessionBlock}>
-                  <div className={styles.sessionDate}>
-                    {formatSessionDate(nextSession.scheduled_at)}
-                  </div>
-                  <div className={styles.sessionType}>
-                    {nextSession.session_type === 'telehealth'
-                      ? 'Telehealth Session'
-                      : nextSession.session_type}
-                  </div>
-                  <div className={styles.sessionDuration}>
-                    {nextSession.duration_minutes} min
-                  </div>
-                  <a href="#" className={styles.joinBtn}>
-                    Join Session →
-                  </a>
-                </div>
-              ) : (
-                <div className={styles.sessionEmpty}>
-                  No upcoming sessions scheduled. Book one via your practitioner.
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Supplement schedule */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              Active Supplements
-              {supplements.length > 0 ? ` · ${supplements.length}` : ''}
-            </div>
-            <div className={styles.cardPad}>
-              {supplements.length === 0 ? (
-                <div className={styles.suppEmpty}>
-                  Your supplement protocol will appear here once your practitioner assigns it.
-                </div>
-              ) : (
-                <div className={styles.suppList}>
-                  {supplements.map((s) => (
-                    <div key={s.id} className={styles.suppItem}>
-                      <div>
-                        <div className={styles.suppName}>{s.name}</div>
-                        <div style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '11px', color: 'var(--pine-400)', marginTop: '2px', lineHeight: 1.4 }}>
-                          {supplementWhy(s.name)}
-                        </div>
-                        {s.brand && (
-                          <div className={styles.suppDose}>{s.brand}</div>
-                        )}
-                        {s.dose && (
-                          <div className={styles.suppDose}>{s.dose}</div>
-                        )}
-                        {s.timing && (
-                          <div className={styles.suppTiming}>{s.timing}</div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
+    <CheckinClient
+      firstName={firstName}
+      wellnessScore={wellnessScore}
+      dashOffset={dashOffset}
+      protocol={protocol}
+      protocolDay={protocolDay}
+      protocolDayNum={protocolDayNum}
+      phaseText={phaseText}
+      supplements={supplements}
+      nextSession={nextSession}
+      aiNote={aiNote}
+    />
   );
 }

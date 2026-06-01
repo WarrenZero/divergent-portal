@@ -507,16 +507,293 @@
   margin-top: 3px;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   FEATURED HERO CARD
+═══════════════════════════════════════════════════════════════ */
+
+.heroCard {
+  background: var(--pine-900);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(134,178,146,0.10) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 60% at 0% 100%, rgba(90,124,98,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.heroCardInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px 28px;
+  padding: 28px 40px;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ─── Day counter block ──────────────────────────────────────── */
+
+.heroDayBlock {
+  text-align: center;
+  min-width: 80px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+.heroDayNum {
+  font-family: 'Syne', sans-serif;
+  font-size: 56px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.heroDayLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-top: 5px;
+}
+
+.heroDayGlyph {
+  font-size: 36px;
+  color: var(--copper-400);
+}
+
+/* ─── Text content ───────────────────────────────────────────── */
+
+.heroCardContent {
+  min-width: 0;
+}
+
+.heroWelcome {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-bottom: 6px;
+}
+
+.heroPhase {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.heroNote {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--pine-300);
+  line-height: 1.65;
+  margin: 0 0 18px;
+}
+
+.heroCheckinBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 22px;
+  background: var(--copper-500);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  box-shadow: 0 4px 16px rgba(192, 120, 72, 0.35);
+}
+
+.heroCheckinBtn:hover {
+  background: var(--copper-400);
+  transform: translateY(-1px);
+}
+
+.heroCheckinBtn:active {
+  transform: translateY(0);
+}
+
+/* ─── Score ring in hero ─────────────────────────────────────── */
+
+.heroRing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTIONS CONTAINER
+═══════════════════════════════════════════════════════════════ */
+
+.sections {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 40px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCORDION
+═══════════════════════════════════════════════════════════════ */
+
+.accordion {
+  border-radius: 8px;
+}
+
+/* ─── Copper glow highlight ──────────────────────────────────── */
+@keyframes copperGlow {
+  0%   { box-shadow: none; }
+  20%  { box-shadow: 0 0 0 3px rgba(192, 120, 72, 0.5), 0 0 24px rgba(192, 120, 72, 0.20); }
+  80%  { box-shadow: 0 0 0 2px rgba(192, 120, 72, 0.3), 0 0 12px rgba(192, 120, 72, 0.10); }
+  100% { box-shadow: none; }
+}
+
+.accordionHighlight {
+  animation: copperGlow 1.6s ease-out;
+  border-radius: 8px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--dur-fast), border-radius var(--dur-base);
+  width: 100%;
+  text-align: left;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.accordionHeader:hover {
+  background: var(--bone-200);
+}
+
+.accordionHeaderOpen {
+  border-radius: 8px 8px 0 0;
+  border-bottom-color: var(--bone-200);
+}
+
+/* ─── Title row ──────────────────────────────────────────────── */
+
+.accordionTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.accordionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pine-900);
+}
+
+.accordionBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--copper-500);
+  background: var(--copper-100);
+  padding: 2px 9px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ─── Chevron ────────────────────────────────────────────────── */
+
+.accordionChevron {
+  font-size: 10px;
+  color: var(--copper-500);
+  transition: transform 200ms ease;
+  flex-shrink: 0;
+  display: block;
+  line-height: 1;
+}
+
+.accordionChevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ─── Content panel — grid-rows trick for smooth expand ─────── */
+
+.accordionContent {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+}
+
+.accordionContentOpen {
+  grid-template-rows: 1fr;
+}
+
+.accordionInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.accordionPad {
+  padding: 16px;
+  background: var(--bone-50);
+  border: 1px solid var(--bone-300);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
+  /* Legacy hero (kept for backward compat) */
   .hero {
     padding: 24px 20px;
     grid-template-columns: 1fr 110px;
   }
 
-  .statsStrip {
-    padding: 12px 20px;
-    gap: 20px;
+  /* New hero card */
+  .heroCardInner {
+    padding: 24px 20px;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px 20px;
+  }
+
+  .heroDayNum { font-size: 44px; }
+
+  .sections {
+    padding: 16px 20px 40px;
   }
 
   .contentGrid {
@@ -532,15 +809,21 @@
 }
 
 @media (max-width: 560px) {
-  .hero {
-    grid-template-columns: 1fr;
+  /* Legacy hero */
+  .hero { grid-template-columns: 1fr; }
+  .scoreRing { display: none; }
+  .sideCol { grid-template-columns: 1fr; }
+
+  /* New hero card — stack to 2-column, hide ring */
+  .heroCardInner {
+    grid-template-columns: auto 1fr;
+    gap: 14px 16px;
   }
 
-  .scoreRing {
+  .heroRing {
     display: none;
   }
 
-  .sideCol {
-    grid-template-columns: 1fr;
-  }
+  .heroDayNum { font-size: 40px; }
+  .heroDayBlock { min-width: 64px; padding: 10px 12px; }
 }

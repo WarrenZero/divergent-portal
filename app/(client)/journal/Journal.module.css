@@ -466,6 +466,126 @@
   gap: 8px;
 }
 
+/* ─── Date group accordion ───────────────────────────────────── */
+
+.dateGroup {
+  border-radius: 8px;
+}
+
+.dateGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--dur-fast, 150ms), border-radius 200ms;
+  width: 100%;
+  text-align: left;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.dateGroupHeader:hover {
+  background: var(--bone-200);
+}
+
+.dateGroupHeaderOpen {
+  border-radius: 8px 8px 0 0;
+  border-bottom-color: var(--bone-200);
+}
+
+.dateGroupTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dateGroupTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pine-900, #0F1F13);
+}
+
+.dateGroupBadge {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--copper-500);
+  background: var(--copper-100);
+  padding: 2px 9px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.dateGroupChevron {
+  font-size: 10px;
+  color: var(--copper-500);
+  transition: transform 200ms ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.dateGroupChevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Grid-rows smooth expand */
+.dateGroupContent {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+}
+
+.dateGroupContentOpen {
+  grid-template-rows: 1fr;
+}
+
+.dateGroupInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.dateGroupPad {
+  background: var(--bone-50, #FDFAF5);
+  border: 1px solid var(--bone-300);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Entry detail inside date group — no outer border-radius */
+.dateGroupPad .entry {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.dateGroupPad .entry:last-child {
+  border-bottom: none;
+}
+
+/* ─── Foods preview in collapsed entry summary ───────────────── */
+.entryFoodsPreview {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--text-3);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
 /* ─── Entry accordion ────────────────────────────────────────── */
 .entry {
   background: var(--surface);
