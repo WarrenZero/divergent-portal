@@ -130,6 +130,9 @@ export default function CopilotPanel({ clientId }: Props) {
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [attachment, setAttachment] = useState<{ name: string; base64: string } | null>(null);
+  const [expandedDepthIds, setExpandedDepthIds] = useState<Set<string>>(new Set());
+  const [depthContent, setDepthContent] = useState<Map<string, string>>(new Map());
+  const [depthLoading, setDepthLoading] = useState<Set<string>>(new Set());
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -150,6 +153,56 @@ export default function CopilotPanel({ clientId }: Props) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: history, clientId: effectiveClientId }),
     });
+  }
+
+  // ─── Go Deeper ───────────────────────────────────────────────
+
+  async function handleGoDeeper(msgId: string, msgContent: string) {
+    setDepthLoading((prev) => new Set(prev).add(msgId));
+    setExpandedDepthIds((prev) => new Set(prev).add(msgId));
+
+    const depthPrompt = 'Expand on the clinical and biochemical mechanisms behind your previous response. Include relevant mineral ratios, pathway interactions, and research context. Write for a knowledgeable practitioner or health-literate client.';
+
+    const history = [
+      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      { role: 'user' as const, content: msgContent }, // anchor context
+      { role: 'user' as const, content: depthPrompt },
+    ];
+
+    try {
+      const res = await fetch('/api/copilot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, clientId: effectiveClientId }),
+      });
+
+      if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let accumulated = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          let event: { type: string; content?: string };
+          try { event = JSON.parse(line.slice(6)); } catch { continue; }
+          if (event.type === 'delta' && event.content) accumulated += event.content;
+        }
+      }
+      setDepthContent((prev) => new Map(prev).set(msgId, accumulated));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to load clinical depth.';
+      setDepthContent((prev) => new Map(prev).set(msgId, msg));
+    } finally {
+      setDepthLoading((prev) => { const next = new Set(prev); next.delete(msgId); return next; });
+    }
   }
 
   // ─── Copy individual message ──────────────────────────────────
@@ -496,6 +549,39 @@ export default function CopilotPanel({ clientId }: Props) {
                         </svg>
                       )}
                     </button>
+                  )}
+                  {!msg.streaming && !expandedDepthIds.has(msg.id) && (
+                    <button
+                      onClick={() => handleGoDeeper(msg.id, msg.content)}
+                      style={{
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        fontSize: '11px', color: 'var(--pine-400)',
+                        fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic',
+                        padding: '4px 0', display: 'block', textAlign: 'left',
+                      }}
+                    >
+                      ↓ Clinical science behind this →
+                    </button>
+                  )}
+                  {expandedDepthIds.has(msg.id) && (
+                    <div style={{
+                      background: 'var(--pine-100)', borderLeft: '2px solid var(--pine-400)',
+                      padding: '10px 12px', marginTop: '6px',
+                    }}>
+                      <div style={{
+                        fontFamily: "'Syne', sans-serif", fontWeight: 700,
+                        fontSize: '10px', color: 'var(--pine-500)', marginBottom: '6px',
+                      }}>
+                        ✦ Clinical depth
+                      </div>
+                      {depthLoading.has(msg.id) ? (
+                        <span style={{ fontSize: '11px', color: 'var(--pine-400)', fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic' }}>
+                          Reasoning…
+                        </span>
+                      ) : (
+                        <div dangerouslySetInnerHTML={{ __html: renderMarkdown(depthContent.get(msg.id) ?? '') }} />
+                      )}
+                    </div>
                   )}
                 </div>
               ) : (

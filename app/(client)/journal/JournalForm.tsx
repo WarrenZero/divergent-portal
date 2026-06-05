@@ -17,14 +17,14 @@ const SYMPTOM_LABELS: Record<number, string> = {
   5: 'Severe',
 };
 
-const BRISTOL_LABELS: Record<number, { short: string; color: string }> = {
-  1: { short: 'Hard lumps', color: 'var(--warn)' },
-  2: { short: 'Lumpy', color: 'var(--warn)' },
-  3: { short: 'Cracked', color: 'var(--pine-500)' },
-  4: { short: 'Smooth · Ideal', color: 'var(--pine-500)' },
-  5: { short: 'Soft blobs', color: 'var(--pine-400)' },
-  6: { short: 'Mushy', color: 'var(--warn)' },
-  7: { short: 'Watery', color: 'var(--danger)' },
+const BRISTOL_LABELS: Record<number, { short: string; color: string; hint?: string; hintColor?: string }> = {
+  1: { short: 'Hard lumps',     color: 'var(--warn)',    hint: 'may indicate constipation', hintColor: 'var(--bone-600)' },
+  2: { short: 'Lumpy sausage',  color: 'var(--warn)',    hint: 'may indicate constipation', hintColor: 'var(--bone-600)' },
+  3: { short: 'Cracked sausage',color: 'var(--pine-500)',hint: 'optimal',                   hintColor: 'var(--pine-500)' },
+  4: { short: 'Smooth sausage', color: 'var(--pine-500)',hint: 'optimal',                   hintColor: 'var(--pine-500)' },
+  5: { short: 'Soft blobs',     color: 'var(--pine-400)' },
+  6: { short: 'Fluffy pieces',  color: 'var(--warn)',    hint: 'may indicate inflammation', hintColor: 'var(--bone-600)' },
+  7: { short: 'Watery',         color: 'var(--danger)',  hint: 'may indicate inflammation', hintColor: 'var(--bone-600)' },
 };
 
 const SYMPTOM_NOTE_PLACEHOLDER =
@@ -253,7 +253,7 @@ export default function JournalForm() {
       {/* ── Bowel movement YES / NO ────────────────────────── */}
       <div className={styles.formSection}>
         <div className={styles.fieldLabel}>
-          Did you have a bowel movement after this meal?
+          Any changes in digestion after eating?
         </div>
         <div className={styles.yesNoRow}>
           <button
@@ -278,10 +278,7 @@ export default function JournalForm() {
       {/* ── Bristol Scale (only if YES) ────────────────────── */}
       {hadBowelMovement === true && (
         <div className={styles.formSection}>
-          <div className={styles.fieldLabel}>
-            Bristol Scale
-            <span className={styles.fieldHint}> — bowel movement type</span>
-          </div>
+          <div className={styles.fieldLabel}>What type?</div>
           <p style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '12px', color: 'var(--pine-400)', margin: '4px 0 8px', lineHeight: 1.5 }}>
             This tells Warren how well your body is digesting — tap the number that best matches today.
           </p>
@@ -304,8 +301,15 @@ export default function JournalForm() {
             })}
           </div>
           {bristolInfo && (
-            <div className={styles.bristolCaption} style={{ color: bristolInfo.color }}>
-              Type {form.bowel_rating} — {bristolInfo.short}
+            <div>
+              <div style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '12px', color: 'var(--pine-400)', marginTop: 6 }}>
+                Type {form.bowel_rating} — {bristolInfo.short}
+              </div>
+              {bristolInfo.hint && (
+                <div style={{ fontFamily: "'Lora', Georgia, serif", fontStyle: 'italic', fontSize: '11px', color: bristolInfo.hintColor, marginTop: 2 }}>
+                  {bristolInfo.hint}
+                </div>
+              )}
             </div>
           )}
           <div className={styles.scaleRange}>

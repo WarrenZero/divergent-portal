@@ -54,6 +54,18 @@ export default function WelcomePage({ firstName }: Props) {
           Your body has answers. We help you hear them.
         </p>
 
+        <p style={{
+          fontFamily: "'Lora', Georgia, serif",
+          fontStyle: 'italic',
+          color: 'var(--pine-300)',
+          fontSize: '13px',
+          textAlign: 'center',
+          marginBottom: '20px',
+          lineHeight: 1.6,
+        }}>
+          In 90 days you&rsquo;ll have a complete picture of what your body has been trying to tell you &mdash; in plain language, with Warren guiding every step.
+        </p>
+
         {/* Step cards */}
         <div className={styles.steps}>
           {STEPS.map((step) => (

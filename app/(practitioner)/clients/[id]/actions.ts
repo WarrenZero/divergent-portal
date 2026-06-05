@@ -54,6 +54,63 @@ export async function assignProtocol(
   return {};
 }
 
+// ─── Auto-Add Protocol Supplements ───────────────────────────
+
+const PROTOCOL_SUPPLEMENT_TEMPLATES: Record<string, Array<{ name: string; dose: string; timing: string }>> = {
+  'ENS Signal-to-Noise Protocol': [
+    { name: 'Liquid Ionic Boron', dose: '3mg',   timing: 'WITH BREAKFAST' },
+    { name: 'Magnesium Malate',   dose: '400mg', timing: 'WITH BREAKFAST' },
+    { name: 'Boron Glycinate',    dose: '3mg',   timing: 'WITH DINNER' },
+  ],
+  'ENS Restoration Protocol': [
+    { name: 'Liquid Ionic Boron', dose: '2mg',   timing: 'WITH BREAKFAST' },
+    { name: 'Magnesium Malate',   dose: '200mg', timing: 'WITH BREAKFAST' },
+  ],
+};
+
+export async function autoAddProtocolSupplements(
+  clientId: string,
+  protocolName: string,
+): Promise<{ error?: string; count?: number }> {
+  const { userId } = await auth();
+  if (!userId) return { error: 'Not authenticated' };
+
+  const templates = PROTOCOL_SUPPLEMENT_TEMPLATES[protocolName];
+  if (!templates || templates.length === 0) return { count: 0 };
+
+  const supabase = await createServiceClient();
+
+  const { data: practitioner } = await supabase
+    .from('practitioners')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .single();
+
+  if (!practitioner) return { error: 'Practitioner not found' };
+
+  const { data: client } = await supabase
+    .from('clients')
+    .select('id')
+    .eq('id', clientId)
+    .eq('practitioner_id', practitioner.id)
+    .single();
+
+  if (!client) return { error: 'Client not found' };
+
+  const { error } = await supabase.from('supplements').insert(
+    templates.map((t) => ({
+      client_id: clientId,
+      name: t.name,
+      dose: t.dose,
+      timing: t.timing,
+      is_active: true,
+    })),
+  );
+
+  if (error) return { error: error.message };
+  return { count: templates.length };
+}
+
 // ─── Add Supplement ───────────────────────────────────────────
 
 export interface SupplementFields {
@@ -191,14 +248,19 @@ export async function inviteClient(
           Hello, ${firstName}.
         </td></tr>
 
-        <!-- Companion line -->
-        <tr><td style="font-family:Georgia,serif;font-style:italic;font-size:15px;color:#B0C8B4;line-height:1.65;padding-bottom:16px;">
-          This is your personal wellness companion — it takes less than 2 minutes a day and helps Warren give you better care between every session.
+        <!-- Intro -->
+        <tr><td style="font-family:Georgia,serif;font-size:16px;color:#FDFAF5;line-height:1.65;padding-bottom:20px;">
+          ${firstName}, your private wellness space is ready.
         </td></tr>
 
-        <!-- Body -->
-        <tr><td style="font-family:Georgia,serif;font-size:15px;color:#DDE8DE;line-height:1.7;padding-bottom:28px;">
-          Your portal is ready. Click below to create your account and get started.
+        <!-- Plain English explanation -->
+        <tr><td style="font-family:Georgia,serif;font-style:italic;font-size:14px;color:#B0C8B4;line-height:1.65;padding-bottom:16px;">
+          Think of it as your personal health journal and direct line to Warren — all in one place. Warren will guide you through every step of your 90-day journey here.
+        </td></tr>
+
+        <!-- 90-day promise -->
+        <tr><td style="font-family:Georgia,serif;font-size:14px;color:#DDE8DE;line-height:1.7;padding-bottom:28px;">
+          In 90 days, you&apos;ll have a complete picture of what your body has been trying to tell you — in plain language, with Warren&apos;s guidance every step of the way.
         </td></tr>
 
         <!-- Button -->

@@ -68,6 +68,21 @@ interface NAQResponseRow {
   responded_at: string;
 }
 
+interface SessionEventRow {
+  id: string;
+  scheduled_at: string;
+  status: string;
+  session_type: string;
+  duration_minutes: number;
+}
+
+interface ProtocolEventRow {
+  id: string;
+  assigned_at: string;
+  start_date: string | null;
+  protocols: { name: string } | null;
+}
+
 interface ProfileData {
   client: ClientRow;
   pulseEntries: PulseRow[];
@@ -78,6 +93,11 @@ interface ProfileData {
   sessionsCompleted: number;
   naqResponses: NAQResponseRow[];
   notes: NoteRow[];
+  // Timeline extras
+  allPulseEntries: PulseRow[];
+  allJournalEntries: JournalRow[];
+  clientSessions: SessionEventRow[];
+  protocolHistory: ProtocolEventRow[];
 }
 
 // ─── Data fetching ─────────────────────────────────────────────
@@ -99,7 +119,7 @@ async function getProfileData(
   if (clientError || !client) return null;
 
   // Parallel fetch of all related data
-  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes, notesRes] = await Promise.all([
+  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes, notesRes, allPulseRes, allJournalRes, clientSessionsRes, protocolHistoryRes] = await Promise.all([
     supabase
       .from('daily_pulse')
       .select('id, digestion_score, sleep_score, stress_score, logged_at')
@@ -153,6 +173,36 @@ async function getProfileData(
       .select('id, note_type, content, created_at')
       .eq('client_id', clientId)
       .order('created_at', { ascending: false }),
+
+    // Timeline: all pulse entries
+    supabase
+      .from('daily_pulse')
+      .select('id, digestion_score, sleep_score, stress_score, logged_at')
+      .eq('client_id', clientId)
+      .order('logged_at', { ascending: false })
+      .limit(90),
+
+    // Timeline: all journal entries
+    supabase
+      .from('journal_entries')
+      .select('id, meal_time, foods_eaten, notes, logged_at')
+      .eq('client_id', clientId)
+      .order('logged_at', { ascending: false })
+      .limit(60),
+
+    // Timeline: all sessions
+    supabase
+      .from('sessions')
+      .select('id, scheduled_at, status, session_type, duration_minutes')
+      .eq('client_id', clientId)
+      .order('scheduled_at', { ascending: false }),
+
+    // Timeline: protocol history
+    supabase
+      .from('client_protocols')
+      .select('id, assigned_at, start_date, protocols(name)')
+      .eq('client_id', clientId)
+      .order('assigned_at', { ascending: false }),
   ]);
 
   let protocol: ProtocolAssignment | null = null;
@@ -178,6 +228,20 @@ async function getProfileData(
     sessionsCompleted: sessionRes.count ?? 0,
     naqResponses: (naqRes.data ?? []) as NAQResponseRow[],
     notes: (notesRes.data ?? []) as NoteRow[],
+    allPulseEntries: (allPulseRes.data ?? []) as PulseRow[],
+    allJournalEntries: (allJournalRes.data ?? []) as JournalRow[],
+    clientSessions: (clientSessionsRes.data ?? []) as SessionEventRow[],
+    protocolHistory: ((protocolHistoryRes.data ?? []) as Array<{
+      id: string;
+      assigned_at: string;
+      start_date: string | null;
+      protocols: { name: string } | { name: string }[] | null;
+    }>).map((r) => ({
+      id: r.id,
+      assigned_at: r.assigned_at,
+      start_date: r.start_date,
+      protocols: Array.isArray(r.protocols) ? (r.protocols[0] ?? null) : r.protocols,
+    })),
   };
 }
 
@@ -302,10 +366,13 @@ export async function generateMetadata({
 
 export default async function ClientProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
-  const { id } = await params;
+  const [{ id }, { tab }] = await Promise.all([params, searchParams]);
+  const activeTab = tab === 'timeline' ? 'timeline' : 'overview';
 
   const practitioner = await getCurrentPractitioner();
   if (!practitioner) redirect('/login');
@@ -313,7 +380,7 @@ export default async function ClientProfilePage({
   const data = await getProfileData(id, practitioner.id);
   if (!data) notFound();
 
-  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses, notes } = data;
+  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses, notes, allPulseEntries, allJournalEntries, clientSessions, protocolHistory } = data;
 
   const age = clientAge(client.date_of_birth);
   const days = protocol ? protocolDays(protocol.start_date) : 0;
@@ -404,6 +471,7 @@ export default async function ClientProfilePage({
           )}
           <button className={styles.btnGhost}>Start NAQ</button>
           <Link href={`/clients/${client.id}/symptoms`} className={styles.btnGhost}>◎ Symptom Map</Link>
+          <Link href={`/clients/${client.id}/report`} className={styles.btnGhost} target="_blank">↗ Report</Link>
           <button className={styles.btnPrimary}>Open Co-Pilot →</button>
         </div>
       </div>
@@ -448,8 +516,194 @@ export default async function ClientProfilePage({
         </div>
       </div>
 
+      {/* ── Tab nav ──────────────────────────────────────────── */}
+      <div style={{
+        display: 'flex',
+        gap: 4,
+        borderBottom: '1px solid var(--bone-300)',
+        marginBottom: 24,
+        marginTop: 8,
+      }}>
+        {(['overview', 'timeline'] as const).map((t) => (
+          <Link
+            key={t}
+            href={t === 'overview' ? `/clients/${client.id}` : `/clients/${client.id}?tab=timeline`}
+            style={{
+              fontFamily: "'Syne', sans-serif",
+              fontWeight: 700,
+              fontSize: 12,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase' as const,
+              padding: '8px 16px',
+              textDecoration: 'none',
+              color: activeTab === t ? 'var(--pine-900)' : 'var(--bone-600)',
+              borderBottom: activeTab === t ? '2px solid var(--copper-500)' : '2px solid transparent',
+              marginBottom: -1,
+              transition: 'color 150ms',
+            }}
+          >
+            {t === 'overview' ? 'Overview' : 'Timeline'}
+          </Link>
+        ))}
+      </div>
+
+      {/* ── Timeline tab ─────────────────────────────────────── */}
+      {activeTab === 'timeline' && (() => {
+        type TimelineEvent = {
+          key: string;
+          date: Date;
+          type: 'joined' | 'naq' | 'protocol' | 'session' | 'pulse' | 'journal';
+          label: string;
+          detail?: string;
+          color: string;
+          icon: string;
+        };
+
+        const events: TimelineEvent[] = [];
+
+        // Client joined
+        events.push({
+          key: 'joined',
+          date: new Date(client.created_at),
+          type: 'joined',
+          label: 'Client enrolled',
+          detail: client.primary_concern ? `Chief concern: ${client.primary_concern}` : undefined,
+          color: 'var(--pine-500)',
+          icon: '✦',
+        });
+
+        // NAQ completion (last responded_at)
+        if (naqResponses.length > 0) {
+          const lastNaq = naqResponses[naqResponses.length - 1];
+          events.push({
+            key: 'naq-' + lastNaq.responded_at,
+            date: new Date(lastNaq.responded_at),
+            type: 'naq',
+            label: 'NAQ assessment completed',
+            detail: `Wellness score: ${wellnessScore}/100`,
+            color: '#C07848',
+            icon: '◈',
+          });
+        }
+
+        // Protocol assignments
+        for (const ph of protocolHistory) {
+          events.push({
+            key: 'proto-' + ph.id,
+            date: new Date(ph.assigned_at),
+            type: 'protocol',
+            label: `Protocol assigned: ${ph.protocols?.name ?? 'Unknown'}`,
+            detail: ph.start_date ? `Start date: ${new Date(ph.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : undefined,
+            color: '#3A5C42',
+            icon: '⊕',
+          });
+        }
+
+        // Session events
+        for (const s of clientSessions) {
+          const statusLabel = s.status === 'completed' ? 'Session completed' : s.status === 'cancelled' ? 'Session cancelled' : 'Session scheduled';
+          events.push({
+            key: 'session-' + s.id,
+            date: new Date(s.scheduled_at),
+            type: 'session',
+            label: statusLabel,
+            detail: `${s.duration_minutes} min · ${s.session_type === 'telehealth' ? 'Telehealth' : s.session_type}`,
+            color: s.status === 'completed' ? '#3A5C42' : s.status === 'cancelled' ? '#9A8A72' : '#C07848',
+            icon: s.status === 'completed' ? '✓' : s.status === 'cancelled' ? '✕' : '○',
+          });
+        }
+
+        // Daily pulse entries
+        for (const p of allPulseEntries) {
+          const avg = Math.round((p.digestion_score + p.sleep_score + (11 - p.stress_score)) / 3);
+          events.push({
+            key: 'pulse-' + p.id,
+            date: new Date(p.logged_at),
+            type: 'pulse',
+            label: 'Daily check-in',
+            detail: `Digestion ${p.digestion_score} · Sleep ${p.sleep_score} · Stress ${p.stress_score} · Avg ${avg}/10`,
+            color: avg >= 7 ? '#3A5C42' : avg >= 4 ? '#D97706' : '#DC2626',
+            icon: '◉',
+          });
+        }
+
+        // Journal entries
+        for (const j of allJournalEntries) {
+          events.push({
+            key: 'journal-' + j.id,
+            date: new Date(j.logged_at),
+            type: 'journal',
+            label: `Food journal${j.meal_time ? ` · ${j.meal_time}` : ''}`,
+            detail: j.foods_eaten ? j.foods_eaten.slice(0, 80) + (j.foods_eaten.length > 80 ? '…' : '') : undefined,
+            color: '#5A7C62',
+            icon: '⚘',
+          });
+        }
+
+        // Sort descending
+        events.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+        return (
+          <div style={{ maxWidth: 640 }}>
+            {events.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--bone-600)', fontFamily: "'Syne', sans-serif", fontSize: 13 }}>
+                No events yet — the timeline will fill as {client.first_name} engages with the portal.
+              </div>
+            ) : (
+              <div style={{ position: 'relative', paddingLeft: 28 }}>
+                {/* Vertical line */}
+                <div style={{ position: 'absolute', left: 8, top: 4, bottom: 4, width: 1, background: 'var(--bone-300)' }} />
+                {events.map((ev) => (
+                  <div key={ev.key} style={{ position: 'relative', marginBottom: 20 }}>
+                    {/* Dot */}
+                    <div style={{
+                      position: 'absolute',
+                      left: -24,
+                      top: 3,
+                      width: 14,
+                      height: 14,
+                      borderRadius: '50%',
+                      background: ev.color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 7,
+                      color: '#fff',
+                      fontWeight: 700,
+                      zIndex: 1,
+                    }}>
+                      {ev.icon}
+                    </div>
+                    <div style={{
+                      background: 'var(--bone-100)',
+                      border: '1px solid var(--bone-300)',
+                      borderRadius: 10,
+                      padding: '10px 14px',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: ev.detail ? 4 : 0 }}>
+                        <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 13, color: 'var(--pine-900)' }}>
+                          {ev.label}
+                        </span>
+                        <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 10, color: 'var(--bone-600)', letterSpacing: '0.04em', marginLeft: 'auto', whiteSpace: 'nowrap' as const }}>
+                          {ev.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </div>
+                      {ev.detail && (
+                        <div style={{ fontFamily: "'Lora', Georgia, serif", fontSize: 12, color: 'var(--bone-600)', lineHeight: 1.5 }}>
+                          {ev.detail}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* ── Main grid ────────────────────────────────────────── */}
-      <div className={styles.mainGrid}>
+      {activeTab === 'overview' && <div className={styles.mainGrid}>
 
         {/* ── Left column ────────────────────────────────────── */}
         <div className={styles.leftCol}>
@@ -652,7 +906,7 @@ export default async function ClientProfilePage({
           />
 
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

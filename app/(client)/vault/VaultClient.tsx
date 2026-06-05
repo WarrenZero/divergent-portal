@@ -8,7 +8,7 @@ import styles from './Vault.module.css';
 export interface VaultItem {
   id: string;
   title: string;
-  contentType: 'article' | 'document' | 'protocol_resource';
+  contentType: 'article' | 'document' | 'protocol_resource' | 'clinical_science';
   body: string | null;
   fileUrl: string | null;
   estimatedReadMinutes: number;
@@ -23,7 +23,7 @@ interface Props {
   practitionerName: string;
 }
 
-type FilterTab = 'all' | 'article' | 'document' | 'protocol_resource';
+type FilterTab = 'all' | 'article' | 'document' | 'protocol_resource' | 'clinical_science';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -31,24 +31,28 @@ const TYPE_LABELS: Record<VaultItem['contentType'], string> = {
   article: 'Article',
   document: 'Document',
   protocol_resource: 'Protocol',
+  clinical_science: 'Clinical Science',
 };
 
 const TYPE_ICONS: Record<VaultItem['contentType'], string> = {
   article: '⚘',
   document: '◈',
   protocol_resource: '✦',
+  clinical_science: '⚗',
 };
 
 const TYPE_GRADIENT: Record<VaultItem['contentType'], string> = {
   article:            'linear-gradient(135deg, var(--pine-100), var(--pine-200))',
   document:           'linear-gradient(135deg, var(--copper-100), var(--copper-200))',
   protocol_resource:  'linear-gradient(135deg, var(--pine-800), var(--pine-600))',
+  clinical_science:   'linear-gradient(135deg, #1E3122, #3A5C42)',
 };
 
 const TYPE_ICON_COLOR: Record<VaultItem['contentType'], string> = {
   article:           'var(--pine-600)',
   document:          'var(--copper-600)',
   protocol_resource: 'var(--pine-100)',
+  clinical_science:  'var(--copper-300)',
 };
 
 function formatDate(iso: string): string {
@@ -157,7 +161,7 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className={styles.tabs}>
-          {(['all', 'article', 'document', 'protocol_resource'] as FilterTab[]).map((tab) => {
+          {(['all', 'article', 'document', 'protocol_resource', 'clinical_science'] as FilterTab[]).map((tab) => {
             const count = tab === 'all'
               ? items.length
               : items.filter((i) => i.contentType === tab).length;
@@ -181,7 +185,7 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
           {search
             ? 'No resources match your search.'
             : filter !== 'all'
-            ? `No ${TYPE_LABELS[filter as VaultItem['contentType']].toLowerCase()}s in your vault yet.`
+            ? `No ${TYPE_LABELS[filter as VaultItem['contentType']].toLowerCase()} resources in your vault yet.`
             : `Warren will add resources here as your protocol progresses — articles, guides, and tools chosen just for you.`}
         </div>
       ) : (

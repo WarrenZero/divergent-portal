@@ -2,9 +2,21 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { assignProtocol } from './actions';
+import { assignProtocol, autoAddProtocolSupplements } from './actions';
 import styles from './ClientProfile.module.css';
 import modalStyles from './ProtocolModal.module.css';
+
+const SUPPLEMENT_PRESETS: Record<string, string[]> = {
+  'ENS Signal-to-Noise Protocol': [
+    'Liquid Ionic Boron · 3mg · WITH BREAKFAST',
+    'Magnesium Malate · 400mg · WITH BREAKFAST',
+    'Boron Glycinate · 3mg · WITH DINNER',
+  ],
+  'ENS Restoration Protocol': [
+    'Liquid Ionic Boron · 2mg · WITH BREAKFAST',
+    'Magnesium Malate · 200mg · WITH BREAKFAST',
+  ],
+};
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -44,6 +56,7 @@ export default function ProtocolPanel({ clientId, initialProtocol, protocols, da
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [supplementConfirm, setSupplementConfirm] = useState<{ protocolName: string; supplements: string[] } | null>(null);
   const router = useRouter();
 
   const protocol = initialProtocol;
@@ -57,11 +70,36 @@ export default function ProtocolPanel({ clientId, initialProtocol, protocols, da
       if (result.error) {
         setError(result.error);
       } else {
-        setOpen(false);
-        setSelected(null);
-        router.refresh();
+        const selectedProtocol = protocols.find((p) => p.id === selected);
+        const protocolName = selectedProtocol?.name ?? '';
+        const knownSupps = SUPPLEMENT_PRESETS[protocolName];
+        if (knownSupps && knownSupps.length > 0) {
+          setSupplementConfirm({ protocolName, supplements: knownSupps });
+        } else {
+          setOpen(false);
+          setSelected(null);
+          router.refresh();
+        }
       }
     });
+  }
+
+  async function handleYesSupplements() {
+    if (!supplementConfirm) return;
+    startTransition(async () => {
+      await autoAddProtocolSupplements(clientId, supplementConfirm.protocolName);
+      setSupplementConfirm(null);
+      setOpen(false);
+      setSelected(null);
+      router.refresh();
+    });
+  }
+
+  function handleSkipSupplements() {
+    setSupplementConfirm(null);
+    setOpen(false);
+    setSelected(null);
+    router.refresh();
   }
 
   return (
@@ -170,22 +208,41 @@ export default function ProtocolPanel({ clientId, initialProtocol, protocols, da
               {error && <div className={modalStyles.error}>{error}</div>}
             </div>
 
-            <div className={modalStyles.footer}>
-              <button
-                className={styles.btnGhost}
-                onClick={() => setOpen(false)}
-                disabled={isPending}
-              >
-                Cancel
-              </button>
-              <button
-                className={styles.btnPine}
-                onClick={handleAssign}
-                disabled={!selected || isPending}
-              >
-                {isPending ? 'Assigning…' : 'Assign Protocol'}
-              </button>
-            </div>
+            {supplementConfirm ? (
+              <div className={modalStyles.footer} style={{ flexDirection: 'column', alignItems: 'stretch', gap: 12 }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 12, fontWeight: 700, color: 'var(--pine-900)' }}>
+                  Add standard supplements for this protocol?
+                </div>
+                <ul style={{ fontSize: 12, fontFamily: "'Lora', Georgia, serif", color: 'var(--bone-800)', margin: '0 0 4px', paddingLeft: 18 }}>
+                  {supplementConfirm.supplements.map((s) => <li key={s}>{s}</li>)}
+                </ul>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className={styles.btnPine} onClick={handleYesSupplements} disabled={isPending}>
+                    {isPending ? 'Adding…' : 'Yes, Add All'}
+                  </button>
+                  <button className={styles.btnGhost} onClick={handleSkipSupplements} disabled={isPending}>
+                    Skip
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className={modalStyles.footer}>
+                <button
+                  className={styles.btnGhost}
+                  onClick={() => setOpen(false)}
+                  disabled={isPending}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={styles.btnPine}
+                  onClick={handleAssign}
+                  disabled={!selected || isPending}
+                >
+                  {isPending ? 'Assigning…' : 'Assign Protocol'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

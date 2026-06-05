@@ -97,9 +97,45 @@ function aiNudgeText(
     return `Your journey begins with today's check-in, ${firstName}. Once Warren assigns your plan, patterns will start emerging across your check-ins and journal entries.`;
   }
   if (protocol) {
-    return `Logging consistently unlocks the pattern — meaningful shifts show up after 5–7 entries. Warren reviews these before every session.`;
+    return `Based on your recent check-ins, Warren's system has noticed: consistent logging unlocks patterns — meaningful shifts show up after 5–7 entries. Warren reviews these before every session.`;
   }
-  return `Consistent logging — even on good days — gives Warren the clearest picture of how your body is responding over time.`;
+  return `Based on your recent check-ins, Warren's system has noticed: consistent logging — even on good days — gives Warren the clearest picture of how your body is responding over time.`;
+}
+
+function weeklyFocusItems(phase: number, dayNum: number): string[] {
+  if (phase === 1 && dayNum <= 7) {
+    return [
+      'Take your supplements with breakfast every morning',
+      'Log your daily check-in — tap one emoji, takes 15 seconds',
+      'Notice how you feel before and after meals',
+    ];
+  }
+  if (phase === 1 && dayNum <= 14) {
+    return [
+      'Stay consistent with your supplements',
+      'Log at least one meal in your journal',
+      'Notice any changes in your energy or digestion',
+    ];
+  }
+  if (phase === 1 && dayNum <= 30) {
+    return [
+      'Your body is adjusting — stay the course',
+      'Log your meals and any symptoms you notice',
+      "Complete your Health Assessment if you haven't yet",
+    ];
+  }
+  if (phase === 2 && dayNum <= 60) {
+    return [
+      "You're in the deepening phase — supplements are now building on each other",
+      'Pay attention to your sleep quality',
+      "Share anything you're noticing with Warren in your journal",
+    ];
+  }
+  return [
+    "You're in the final phase — the work is compounding now",
+    'Keep logging — your Day 90 report is being built from this data',
+    "Think about what's changed since Day 1",
+  ];
 }
 
 // ─── Page ─────────────────────────────────────────────────────
@@ -123,6 +159,28 @@ export default async function CheckInPage() {
 
   const phaseText = protocol ? phaseLabel(protocol.phase) : null;
   const aiNote = aiNudgeText(firstName, protocol, supplements.length);
+  const weeklyFocus = protocol && protocolDayNum
+    ? weeklyFocusItems(protocol.phase, protocolDayNum)
+    : null;
+
+  // Fetch weekly voice note from Supabase storage
+  let voiceNoteUrl: string | null = null;
+  if (client) {
+    try {
+      const now = new Date();
+      const startOfYear = new Date(now.getFullYear(), 0, 1);
+      const weekNum = Math.ceil(((now.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7);
+      const weekKey = `${now.getFullYear()}-${String(weekNum).padStart(2, '0')}`;
+      const voiceSupabase = await createClient();
+      const { data: voiceData } = await voiceSupabase
+        .storage
+        .from('weekly-messages')
+        .createSignedUrl(`${weekKey}.mp3`, 3600);
+      voiceNoteUrl = voiceData?.signedUrl ?? null;
+    } catch {
+      // Non-fatal — storage bucket may not exist yet
+    }
+  }
 
   return (
     <CheckinClient
@@ -136,6 +194,8 @@ export default async function CheckInPage() {
       supplements={supplements}
       nextSession={nextSession}
       aiNote={aiNote}
+      weeklyFocus={weeklyFocus}
+      voiceNoteUrl={voiceNoteUrl}
     />
   );
 }

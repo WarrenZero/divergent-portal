@@ -41,20 +41,22 @@ export interface CheckinClientProps {
   supplements: SupplementRow[];
   nextSession: SessionRow | null;
   aiNote: string;
+  weeklyFocus: string[] | null;
+  voiceNoteUrl: string | null;
 }
 
 // ─── Constants ────────────────────────────────────────────────
 
 const SUPPLEMENT_WHY: Record<string, string> = {
-  'Liquid Ionic Boron':             "Supports your nervous system's electrical balance",
-  'Boron Glycinate':                "A gentle form of boron for deeper cellular support",
-  'Boron Glycinate Encapsulations': "A gentle form of boron for deeper cellular support",
-  'Magnesium Malate':               "Helps your muscles relax and your energy stabilize",
-  'Magnesium':                      "Helps your muscles relax and your energy stabilize",
+  'Liquid Ionic Boron':             "Helps your nervous system send clearer signals — supports focus, mood, and digestion",
+  'Boron Glycinate':                "A gentle form of boron that supports calm, clear thinking and steady digestion",
+  'Boron Glycinate Encapsulations': "A gentle form of boron that supports calm, clear thinking and steady digestion",
+  'Magnesium Malate':               "Helps your muscles relax and your energy feel more even throughout the day",
+  'Magnesium':                      "Supports restful sleep, muscle ease, and a calmer nervous system",
 };
 
 function supplementWhy(name: string): string {
-  return SUPPLEMENT_WHY[name] ?? 'Added by Warren for your protocol';
+  return SUPPLEMENT_WHY[name] ?? 'Added by Warren specifically for your protocol';
 }
 
 type SectionKey = 'checkin' | 'quickactions' | 'nextsession' | 'supplements';
@@ -144,6 +146,8 @@ export default function CheckinClient({
   supplements,
   nextSession,
   aiNote,
+  weeklyFocus,
+  voiceNoteUrl,
 }: CheckinClientProps) {
   const [open, setOpen] = useState<Record<SectionKey, boolean>>({
     checkin: false,
@@ -251,6 +255,54 @@ export default function CheckinClient({
         </div>
       </div>
 
+      {/* ── Warren's Weekly Message ───────────────────────────── */}
+      <div style={{
+        background: 'var(--pine-900)',
+        borderRadius: 12,
+        padding: '16px 18px',
+        marginBottom: 12,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+          <span style={{ color: 'var(--copper-300)', fontSize: 14 }}>✦</span>
+          <span style={{
+            fontFamily: "'Syne', sans-serif",
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase' as const,
+            color: 'var(--copper-500)',
+          }}>
+            From Warren This Week
+          </span>
+        </div>
+        <p style={{
+          fontFamily: "'Lora', Georgia, serif",
+          fontStyle: 'italic',
+          fontSize: 13,
+          color: 'var(--pine-200)',
+          margin: '0 0 6px',
+          lineHeight: 1.5,
+        }}>
+          Warren&rsquo;s weekly message
+        </p>
+        {voiceNoteUrl ? (
+          <audio controls style={{ width: '100%', borderRadius: 6 }} src={voiceNoteUrl}>
+            Your browser does not support audio.
+          </audio>
+        ) : (
+          <p style={{
+            fontFamily: "'Lora', Georgia, serif",
+            fontStyle: 'italic',
+            fontSize: 12,
+            color: 'var(--pine-400)',
+            margin: 0,
+            lineHeight: 1.5,
+          }}>
+            Warren will record his first message this week
+          </p>
+        )}
+      </div>
+
       {/* ── Accordion sections ─────────────────────────────────── */}
       <div className={styles.sections}>
 
@@ -294,9 +346,44 @@ export default function CheckinClient({
           <div className={styles.journalCardArrow}>→</div>
         </Link>
 
+        {/* ── This Week's Focus ────────────────────────────────── */}
+        {weeklyFocus && (
+          <div style={{
+            background: 'var(--pine-100)',
+            border: '1px solid var(--pine-300)',
+            borderRadius: 12,
+            padding: '16px 18px',
+            marginBottom: 12,
+          }}>
+            <div style={{
+              fontFamily: "'Syne', sans-serif",
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase' as const,
+              color: 'var(--copper-500)',
+              marginBottom: 12,
+            }}>
+              This week with Warren
+            </div>
+            <ol style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+              {weeklyFocus.map((item, i) => (
+                <li key={i} style={{ display: 'flex', gap: 10, marginBottom: 10, alignItems: 'flex-start' }}>
+                  <span style={{ color: 'var(--copper-500)', fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 13, minWidth: 16 }}>
+                    {i + 1}.
+                  </span>
+                  <span style={{ fontFamily: "'Lora', Georgia, serif", fontSize: 13, color: 'var(--pine-800)', lineHeight: 1.55 }}>
+                    {item}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
         {/* ── AI Pattern Note ──────────────────────────────────── */}
         <div className={styles.aiNudge}>
-          <div className={styles.aiNudgeLabel}>✦ A NOTE FROM YOUR DATA</div>
+          <div className={styles.aiNudgeLabel}>✦ WHAT YOUR DATA IS SHOWING</div>
           <p className={styles.aiNudgeText}>{aiNote}</p>
         </div>
 

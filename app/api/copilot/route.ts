@@ -66,6 +66,45 @@ export async function POST(req: NextRequest) {
 
   const practitionerId = practitioner?.id ?? null;
 
+  // 3b. Fetch recent session transcriptions for context (if clientId present)
+  let sessionContext = '';
+  if (clientId) {
+    try {
+      const { data: transcriptions } = await supabase
+        .from('session_transcriptions')
+        .select('created_at, lens_clinical_matrix, lens_client_roadmap')
+        .eq('client_id', clientId)
+        .eq('status', 'complete')
+        .not('lens_clinical_matrix', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (transcriptions && transcriptions.length > 0) {
+        const lines: string[] = ['RECENT SESSION HISTORY:'];
+        for (const t of transcriptions) {
+          const date = new Date(t.created_at).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric',
+          });
+          const matrix = t.lens_clinical_matrix as Record<string, unknown> | null;
+          const roadmap = t.lens_client_roadmap as Record<string, unknown> | null;
+          const updates = typeof matrix?.protocol_updates === 'string'
+            ? matrix.protocol_updates.slice(0, 200) : '';
+          const concerns = typeof roadmap?.presenting_concerns === 'string'
+            ? roadmap.presenting_concerns.slice(0, 200) : '';
+          const detail = [updates, concerns].filter(Boolean).join(' | ');
+          if (detail) lines.push(`[Session — ${date}]: ${detail}`);
+        }
+        if (lines.length > 1) sessionContext = lines.join('\n');
+      }
+    } catch {
+      // Non-fatal — proceed without session context
+    }
+  }
+
+  const systemPromptWithContext = sessionContext
+    ? `${COPILOT_SYSTEM_PROMPT}\n\n${sessionContext}`
+    : COPILOT_SYSTEM_PROMPT;
+
   // 4. Log the last user message immediately
   const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
   if (practitionerId && lastUserMsg) {
@@ -120,7 +159,7 @@ export async function POST(req: NextRequest) {
         const anthropicStream = anthropic.messages.stream({
           model: COPILOT_MODEL,
           max_tokens: COPILOT_MAX_TOKENS,
-          system: COPILOT_SYSTEM_PROMPT,
+          system: systemPromptWithContext,
           messages: anthropicMessages,
         });
 

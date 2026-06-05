@@ -5,6 +5,40 @@ import MacroBar, { type Macros } from '@/components/shared/MacroBar';
 import type { RecipeRow, ClientOption, RatingRow } from './page';
 import styles from './MealPlanBrowser.module.css';
 
+// ─── Therapeutic profile labels ───────────────────────────────
+
+function getTherapeuticLabels(recipe: RecipeRow): string[] {
+  const labels: string[] = [];
+  const tags = recipe.dietary_tags.map((t) => t.toLowerCase());
+  const ingredients = (recipe.ingredients ?? []).map((i) => i.name.toLowerCase());
+
+  if (ingredients.some((i) => ['pumpkin seed', 'black bean', 'dark leafy', 'swiss chard', 'spinach seed', 'hemp seed'].some((k) => i.includes(k)))) {
+    labels.push('High in magnesium');
+  }
+  if (ingredients.some((i) => ['broccoli', 'cauliflower', 'cabbage', 'brussel', 'kale', 'beet', 'garlic', 'watercress', 'radish', 'arugula'].some((k) => i.includes(k)))) {
+    labels.push('Supports liver detox');
+  }
+  if (ingredients.some((i) => ['bone broth', 'collagen', 'gelatin', 'marshmallow root'].some((k) => i.includes(k)))) {
+    labels.push('Gut-healing');
+  }
+  if (tags.includes('anti-inflammatory') && !tags.some((t) => ['dessert', 'high sugar'].includes(t))) {
+    labels.push('Anti-Candida');
+  }
+  if (!ingredients.some((i) => ['spinach', 'almond', 'chocolate', 'rhubarb'].some((k) => i.includes(k)))) {
+    labels.push('Low oxalate');
+  }
+  if (tags.some((t) => t.includes('aip'))) {
+    labels.push('AIP-safe');
+  }
+  if (tags.some((t) => t.includes('ens-protocol') || t.includes('ens protocol'))) {
+    labels.push('ENS Protocol Phase 1 appropriate');
+  }
+  if (ingredients.some((i) => ['raisin', 'prune', 'avocado', 'chickpea', 'peach', 'pear', 'grape'].some((k) => i.includes(k)))) {
+    labels.push('High boron');
+  }
+  return labels;
+}
+
 // ─── Constants ────────────────────────────────────────────────
 
 const LIFESTYLE_FILTERS = [
@@ -132,6 +166,37 @@ function RecipeDetailModal({ recipe, ratings, clients, onClose }: DetailModalPro
               </div>
             </div>
           )}
+
+          {/* Therapeutic profile */}
+          {(() => {
+            const tLabels = getTherapeuticLabels(recipe);
+            return tLabels.length > 0 ? (
+              <div style={{ marginBottom: 14 }}>
+                <div className={styles.sectionLabel} style={{ fontSize: 9, letterSpacing: '0.12em' }}>
+                  Therapeutic Profile
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
+                  {tLabels.map((label) => (
+                    <span
+                      key={label}
+                      style={{
+                        fontFamily: "'Syne', sans-serif",
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: 'var(--copper-500)',
+                        border: '1px solid var(--copper-400)',
+                        borderRadius: 20,
+                        padding: '2px 8px',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null;
+          })()}
 
           {recipe.description && (
             <p className={styles.description}>{recipe.description}</p>

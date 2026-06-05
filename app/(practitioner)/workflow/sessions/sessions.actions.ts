@@ -163,6 +163,46 @@ function buildConfirmationHtml(opts: {
 </html>`;
 }
 
+function buildPostSessionHtml(opts: {
+  firstName: string;
+  keyTakeaway: string | null;
+}): string {
+  const { firstName, keyTakeaway } = opts;
+
+  const takeawayBlock = keyTakeaway
+    ? `<tr><td style="background:#F8F2E8;border:1px solid #E8DECE;border-radius:12px;padding:20px 24px;margin-bottom:24px;display:block;">
+        <p style="font-family:'Georgia',serif;font-size:15px;font-style:italic;color:#0F1F13;margin:0;line-height:1.65;">&ldquo;${keyTakeaway}&rdquo;</p>
+      </td></tr>`
+    : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A note from today's session</title>
+</head>
+<body style="margin:0;padding:0;background:#0F1F13;font-family:'Georgia',serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0F1F13;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+        <tr><td align="center" style="padding-bottom:20px;"><span style="font-size:32px;color:#D08C5C;">✦</span></td></tr>
+        <tr><td style="font-size:15px;color:#FDFAF5;line-height:1.65;padding-bottom:12px;">Hi ${firstName},</td></tr>
+        <tr><td style="font-size:15px;color:#FDFAF5;line-height:1.65;padding-bottom:${keyTakeaway ? '12px' : '20px'};">Great work in today&apos;s session.</td></tr>
+        ${keyTakeaway ? `
+        <tr><td style="font-size:14px;color:#B0C8B4;font-style:italic;line-height:1.5;padding-bottom:10px;">The key thing I want you to hold onto this week:</td></tr>
+        ${takeawayBlock}
+        <tr><td style="padding-bottom:0;height:16px;"></td></tr>` : ''}
+        <tr><td style="font-size:14px;color:#DDE8DE;line-height:1.65;padding-bottom:20px;">Keep logging your daily check-ins — I&apos;ll be watching your progress before we meet again.</td></tr>
+        <tr><td style="font-style:italic;font-size:14px;color:#D08C5C;padding-bottom:24px;">— Warren</td></tr>
+        <tr><td align="center" style="font-family:monospace;font-size:10px;color:#3A5C42;letter-spacing:0.06em;text-transform:uppercase;">Warren Hennon, NTP · Divergent Nutritional Therapy</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
 function buildCancellationHtml(opts: {
   firstName: string;
   sessionDate: string;
@@ -382,8 +422,8 @@ export async function updateSessionStatus(
 
   const supabase = await createClient();
 
-  // Fetch session + client before updating (need details for cancellation email)
-  const { data: session } = status === 'cancelled'
+  // Fetch session + client before updating (needed for cancellation or completion emails)
+  const { data: session } = (status === 'cancelled' || status === 'completed')
     ? await supabase
         .from('sessions')
         .select('client_id, scheduled_at, duration_minutes, session_type')
@@ -400,6 +440,45 @@ export async function updateSessionStatus(
 
   if (error) return { error: error.message };
   revalidateAll();
+
+  // Send post-session email on completion (non-fatal)
+  if (status === 'completed' && session?.client_id) {
+    try {
+      const { data: transcription } = await supabase
+        .from('session_transcriptions')
+        .select('lens_clinical_matrix, lens_client_roadmap')
+        .eq('session_id', sessionId)
+        .eq('status', 'complete')
+        .not('lens_clinical_matrix', 'is', null)
+        .maybeSingle();
+
+      const { data: client } = await supabase
+        .from('clients')
+        .select('first_name, email')
+        .eq('id', session.client_id)
+        .single();
+
+      if (client?.email) {
+        let keyTakeaway: string | null = null;
+        if (transcription?.lens_clinical_matrix) {
+          const matrix = typeof transcription.lens_clinical_matrix === 'string'
+            ? JSON.parse(transcription.lens_clinical_matrix)
+            : transcription.lens_clinical_matrix as Record<string, unknown>;
+          const updates = matrix?.protocol_updates;
+          if (typeof updates === 'string') keyTakeaway = updates.slice(0, 200);
+          else if (Array.isArray(updates) && updates[0]) keyTakeaway = String(updates[0]).slice(0, 200);
+        }
+
+        await sendSessionEmail({
+          to: client.email,
+          subject: `A note from today's session, ${client.first_name}`,
+          html: buildPostSessionHtml({ firstName: client.first_name, keyTakeaway }),
+        });
+      }
+    } catch (err) {
+      console.error('[sessions/post-session-email] Error:', err);
+    }
+  }
 
   // Send cancellation email (non-fatal)
   if (status === 'cancelled' && session?.client_id) {
