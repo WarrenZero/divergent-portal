@@ -457,9 +457,26 @@
   margin-bottom: 16px;
 }
 
+.completionRingWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .completionRingSvg {
-  width: 130px;
-  height: 130px;
+  width: 160px;
+  height: 160px;
+  display: block;
+}
+
+.completionScoreOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
 
 .completionRingTrack {
@@ -479,18 +496,10 @@
 
 .completionScoreNum {
   font-family: 'Syne', sans-serif;
-  font-size: 28px;
+  font-size: 64px;
   font-weight: 800;
-  fill: #fff;
-  text-anchor: middle;
-}
-
-.completionScoreSub {
-  font-family: 'Syne', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  fill: var(--pine-300);
-  text-anchor: middle;
+  color: var(--copper-400);
+  line-height: 1;
 }
 
 .completionScoreLabel {
@@ -500,7 +509,36 @@
   letter-spacing: 0.10em;
   text-transform: uppercase;
   color: var(--pine-300);
+  margin-top: 12px;
+}
+
+.completionScoreSubtitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--pine-400);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+.completionReviewNote {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--copper-300);
   margin-top: 10px;
+}
+
+.completionInterpretation {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--bone-600);
+  line-height: 1.6;
+  text-align: center;
+  max-width: 480px;
+  margin: 20px auto 8px;
+  padding: 0 20px;
 }
 
 .completionTitle {

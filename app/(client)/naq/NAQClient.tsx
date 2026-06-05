@@ -14,6 +14,12 @@ interface Props {
 
 // ─── Helpers ──────────────────────────────────────────────────
 
+function wellnessInterpretation(score: number): string {
+  if (score <= 33) return "Your body is showing significant burden — this assessment gives Warren exactly what he needs to begin supporting you.";
+  if (score <= 66) return "Your body is showing moderate burden across several systems — a good starting point for your protocol.";
+  return "Your body is showing good foundational health — Warren will focus on the areas that need the most support.";
+}
+
 function burdenColor(burden: number): string {
   if (burden <= 25) return 'var(--pine-500)';
   if (burden <= 55) return '#D08C5C'; // copper-400
@@ -208,28 +214,32 @@ export default function NAQClient({ firstName }: Props) {
           <div className={styles.completionGlyph}>✦ Assessment Complete</div>
 
           <div className={styles.completionScoreRing}>
-            <svg
-              className={styles.completionRingSvg}
-              viewBox="0 0 100 100"
-              aria-label={`Wellness score: ${wellnessScore} out of 100`}
-            >
-              <circle className={styles.completionRingTrack} cx="50" cy="50" r="45" />
-              <circle
-                className={styles.completionRingFill}
-                cx="50"
-                cy="50"
-                r="45"
-                transform="rotate(-90 50 50)"
-                style={{ strokeDashoffset: dashOffset }}
-              />
-              <text className={styles.completionScoreNum} x="50" y="47">
-                {wellnessScore}
-              </text>
-              <text className={styles.completionScoreSub} x="50" y="62">
-                / 100
-              </text>
-            </svg>
-            <div className={styles.completionScoreLabel}>Wellness Score</div>
+            <div className={styles.completionRingWrap}>
+              <svg
+                className={styles.completionRingSvg}
+                viewBox="0 0 100 100"
+                aria-hidden="true"
+              >
+                <circle className={styles.completionRingTrack} cx="50" cy="50" r="45" />
+                <circle
+                  className={styles.completionRingFill}
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  transform="rotate(-90 50 50)"
+                  style={{ strokeDashoffset: dashOffset }}
+                />
+              </svg>
+              <div
+                className={styles.completionScoreOverlay}
+                aria-label={`Wellness score: ${wellnessScore} out of 100`}
+              >
+                <span className={styles.completionScoreNum}>{wellnessScore}</span>
+              </div>
+            </div>
+            <div className={styles.completionScoreLabel}>Your Wellness Score</div>
+            <div className={styles.completionScoreSubtitle}>out of 100 · based on your 10-domain assessment</div>
+            <div className={styles.completionReviewNote}>Warren will review this before your next session</div>
           </div>
 
           <h1 className={styles.completionTitle}>
@@ -240,6 +250,10 @@ export default function NAQClient({ firstName }: Props) {
             all 10 systems. These findings will shape every protocol decision.
           </p>
         </div>
+
+        <p className={styles.completionInterpretation}>
+          {wellnessInterpretation(wellnessScore)}
+        </p>
 
         <button
           type="button"
