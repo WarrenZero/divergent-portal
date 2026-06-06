@@ -473,6 +473,14 @@ export default function CheckinClient({
               <span className={styles.qaIcon}>🗝</span>
               My Library →
             </Link>
+            <Link
+              href="/sessions"
+              className={`${styles.qaBtn} ${styles.qaBtnGhost}`}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <span className={styles.qaIcon}>◉</span>
+              Book a Session →
+            </Link>
             <a
               href="mailto:warren@divergentportal.com"
               className={`${styles.qaBtn} ${styles.qaBtnGhost}`}
@@ -510,7 +518,24 @@ export default function CheckinClient({
             </div>
           ) : (
             <div className={styles.sessionEmpty}>
-              No upcoming sessions scheduled. Book one via your practitioner.
+              <div style={{ marginBottom: 14 }}>No upcoming sessions scheduled.</div>
+              <Link
+                href="/sessions"
+                style={{
+                  display: 'inline-block',
+                  background: 'var(--copper-500)',
+                  color: '#fff',
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: '0.04em',
+                  padding: '9px 18px',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                }}
+              >
+                Book your next session →
+              </Link>
             </div>
           )}
         </Accordion>

@@ -1,0 +1,283 @@
+/* ─── SESSIONS PAGE ─────────────────────────────────────────── */
+
+.page {
+  padding: 0 0 80px;
+  max-width: 680px;
+}
+
+/* ─── PAGE HEADER ────────────────────────────────────────────── */
+
+.pageHeader {
+  text-align: center;
+  padding: 24px 0 20px;
+  margin-bottom: 16px;
+}
+
+.pageGlyph {
+  font-size: 24px;
+  color: var(--copper-400);
+  margin-bottom: 8px;
+}
+
+.pageTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--pine-900);
+  margin: 0 0 8px;
+}
+
+.pageSubtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--pine-400);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+/* ─── NEXT SESSION BANNER ────────────────────────────────────── */
+
+.nextBanner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, var(--pine-800), var(--pine-700));
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.nextBannerGlyph {
+  font-size: 20px;
+  color: var(--copper-400);
+  flex-shrink: 0;
+}
+
+.nextBannerLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pine-300);
+  margin-bottom: 4px;
+}
+
+.nextBannerDate {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ─── TRUST SIGNAL ───────────────────────────────────────────── */
+
+.trustRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+.trustIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.trustText {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--pine-600);
+  line-height: 1.5;
+}
+
+/* ─── CARDS ──────────────────────────────────────────────────── */
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: var(--surface, var(--bone-100));
+  border: 1px solid var(--border, var(--bone-300));
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.card:not(.cardLocked):hover {
+  box-shadow: 0 4px 20px rgba(15, 31, 19, 0.08);
+}
+
+.cardLocked {
+  opacity: 0.65;
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardGlyph {
+  font-size: 18px;
+  color: var(--copper-500);
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.cardTitleRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--pine-900);
+}
+
+.lockBadge {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--bone-600);
+}
+
+.cardPriceBlock {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cardPrice {
+  display: block;
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--copper-500);
+}
+
+.cardDuration {
+  display: block;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-3, var(--bone-600));
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.cardDesc {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--pine-700);
+  line-height: 1.65;
+  margin: 0 0 16px;
+}
+
+/* ─── CTA BUTTON ─────────────────────────────────────────────── */
+
+.ctaBtn {
+  display: inline-block;
+  background: var(--copper-500);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  box-shadow: 0 3px 12px rgba(192, 120, 72, 0.22);
+}
+
+.ctaBtn:hover {
+  background: var(--copper-400);
+  transform: translateY(-1px);
+}
+
+.ctaBtnActive {
+  background: var(--pine-700);
+  box-shadow: none;
+}
+
+.ctaBtnActive:hover {
+  background: var(--pine-600);
+  transform: none;
+}
+
+/* ─── CALENDLY EMBED ─────────────────────────────────────────── */
+
+.calendlyWrap {
+  margin-top: 16px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--bone-300);
+  animation: fadeDown var(--dur-base) var(--ease-out);
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.calendlyFrame {
+  width: 100%;
+  height: 680px;
+  border: none;
+  display: block;
+}
+
+/* ─── CANCELLATION POLICY ────────────────────────────────────── */
+
+.policy {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--bone-100);
+  border: 1px solid var(--bone-300);
+  border-radius: var(--radius-sm);
+}
+
+.policyGlyph {
+  font-size: 14px;
+  color: var(--bone-600);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.policyText {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--bone-600);
+  line-height: 1.6;
+  margin: 0;
+}

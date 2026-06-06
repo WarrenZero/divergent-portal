@@ -9,7 +9,7 @@ import SupplementPanel from './SupplementPanel';
 import InviteButton from './InviteButton';
 import NAQCopyButton from './NAQCopyButton';
 import NotesPanel, { type NoteRow } from './NotesPanel';
-import { calculateScores, type NAQDomainScore } from '@/app/(client)/naq/data';
+import { calculateScores, NAQ_DOMAINS, type NAQDomainScore } from '@/app/(client)/naq/data';
 
 // ─── Types ────────────────────────────────────────────────────
 
@@ -404,7 +404,7 @@ export default async function ClientProfilePage({
   searchParams: Promise<{ tab?: string }>;
 }) {
   const [{ id }, { tab }] = await Promise.all([params, searchParams]);
-  const activeTab = tab === 'timeline' ? 'timeline' : 'overview';
+  const activeTab = tab === 'timeline' ? 'timeline' : tab === 'naq' ? 'naq' : 'overview';
 
   const practitioner = await getCurrentPractitioner();
   if (!practitioner) redirect('/login');
@@ -561,10 +561,14 @@ export default async function ClientProfilePage({
         marginBottom: 24,
         marginTop: 8,
       }}>
-        {(['overview', 'timeline'] as const).map((t) => (
+        {([
+          { key: 'overview', label: 'Overview', href: `/clients/${client.id}` },
+          { key: 'timeline', label: 'Timeline', href: `/clients/${client.id}?tab=timeline` },
+          { key: 'naq', label: 'NAQ Review', href: `/clients/${client.id}?tab=naq` },
+        ] as const).map((t) => (
           <Link
-            key={t}
-            href={t === 'overview' ? `/clients/${client.id}` : `/clients/${client.id}?tab=timeline`}
+            key={t.key}
+            href={t.href}
             style={{
               fontFamily: "'Syne', sans-serif",
               fontWeight: 700,
@@ -573,16 +577,237 @@ export default async function ClientProfilePage({
               textTransform: 'uppercase' as const,
               padding: '8px 16px',
               textDecoration: 'none',
-              color: activeTab === t ? 'var(--pine-900)' : 'var(--bone-600)',
-              borderBottom: activeTab === t ? '2px solid var(--copper-500)' : '2px solid transparent',
+              color: activeTab === t.key ? 'var(--pine-900)' : 'var(--bone-600)',
+              borderBottom: activeTab === t.key ? '2px solid var(--copper-500)' : '2px solid transparent',
               marginBottom: -1,
               transition: 'color 150ms',
             }}
           >
-            {t === 'overview' ? 'Overview' : 'Timeline'}
+            {t.label}
           </Link>
         ))}
       </div>
+
+      {/* ── NAQ Review tab ───────────────────────────────────── */}
+      {activeTab === 'naq' && (() => {
+        if (!naqComplete) {
+          return (
+            <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--bone-600)', fontFamily: "'Syne', sans-serif", fontSize: 13 }}>
+              No NAQ responses yet — the full question review will appear once{' '}
+              {client.first_name} completes their first assessment.
+            </div>
+          );
+        }
+
+        // Build top 5 highest-burden questions across all domains
+        type ScoredQ = { domainName: string; questionText: string; value: number; branchTag?: string };
+        const scoredQuestions: ScoredQ[] = [];
+        for (const domain of NAQ_DOMAINS) {
+          for (const q of [...domain.screening, ...domain.branches]) {
+            const val = responsesMap[q.id];
+            if (val !== undefined) {
+              scoredQuestions.push({
+                domainName: domain.name,
+                questionText: q.text,
+                value: val,
+                branchTag: q.branchTag,
+              });
+            }
+          }
+        }
+        const top5 = [...scoredQuestions].sort((a, b) => b.value - a.value).slice(0, 5);
+
+        const SCALE = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
+
+        function dotColor(val: number): string {
+          if (val <= 1) return 'var(--pine-400)';
+          if (val === 2) return 'var(--copper-500)';
+          return '#C45C40';
+        }
+
+        return (
+          <div style={{ maxWidth: 700 }}>
+            {/* Top 5 priority items */}
+            <div style={{ marginBottom: 28 }}>
+              <div style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase' as const,
+                color: 'var(--copper-500)',
+                marginBottom: 12,
+              }}>
+                Top 5 Priority Items — Prepare for Session
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {top5.map((q, i) => (
+                  <div key={i} style={{
+                    display: 'flex',
+                    gap: 12,
+                    alignItems: 'flex-start',
+                    background: '#FEF3ED',
+                    border: '1px solid #F0C8A8',
+                    borderRadius: 10,
+                    padding: '10px 14px',
+                  }}>
+                    <div style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      background: dotColor(q.value),
+                      flexShrink: 0,
+                      marginTop: 4,
+                    }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 11, fontWeight: 700, color: 'var(--pine-900)', marginBottom: 2 }}>
+                        {q.domainName}{q.branchTag ? ` · ${q.branchTag}` : ''}
+                      </div>
+                      <div style={{ fontFamily: "'Lora', Georgia, serif", fontSize: 13, color: 'var(--pine-800)', lineHeight: 1.5 }}>
+                        {q.questionText}
+                      </div>
+                    </div>
+                    <div style={{
+                      fontFamily: "'Syne', sans-serif",
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: dotColor(q.value),
+                      flexShrink: 0,
+                    }}>
+                      {SCALE[q.value] ?? q.value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginTop: 12 }}>
+                <a
+                  href={`/clients/${client.id}/report`}
+                  target="_blank"
+                  style={{
+                    display: 'inline-block',
+                    background: 'var(--copper-500)',
+                    color: '#fff',
+                    fontFamily: "'Syne', sans-serif",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: '0.04em',
+                    padding: '8px 18px',
+                    borderRadius: 8,
+                    textDecoration: 'none',
+                  }}
+                >
+                  Prepare for Session →
+                </a>
+              </div>
+            </div>
+
+            {/* Full domain-by-domain review */}
+            {NAQ_DOMAINS.map((domain) => {
+              const allQs = [...domain.screening, ...domain.branches];
+              const answered = allQs.filter((q) => responsesMap[q.id] !== undefined);
+              if (answered.length === 0) return null;
+
+              const domainScore = domainScores.find((d) => d.domainId === domain.id);
+
+              return (
+                <div key={domain.id} style={{
+                  background: 'var(--bone-100)',
+                  border: '1px solid var(--bone-300)',
+                  borderRadius: 12,
+                  marginBottom: 14,
+                  overflow: 'hidden',
+                }}>
+                  {/* Domain header */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '12px 16px',
+                    borderBottom: '1px solid var(--bone-300)',
+                    background: 'var(--bone-50)',
+                  }}>
+                    <span style={{ fontSize: 16 }}>{domain.glyph}</span>
+                    <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 13, color: 'var(--pine-900)', flex: 1 }}>
+                      {domain.name}
+                    </span>
+                    {domainScore && (
+                      <span style={{
+                        fontFamily: "'Syne', sans-serif",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: domainScore.burden <= 25 ? 'var(--pine-500)' : domainScore.burden <= 55 ? 'var(--copper-500)' : '#C45C40',
+                      }}>
+                        {Math.round(domainScore.burden)}% burden
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Questions */}
+                  <div style={{ padding: '8px 0' }}>
+                    {answered.map((q) => {
+                      const val = responsesMap[q.id] ?? 0;
+                      return (
+                        <div key={q.id} style={{
+                          display: 'flex',
+                          gap: 12,
+                          alignItems: 'flex-start',
+                          padding: '8px 16px',
+                          borderBottom: '1px solid var(--bone-200)',
+                        }}>
+                          <div style={{
+                            width: 9,
+                            height: 9,
+                            borderRadius: '50%',
+                            background: dotColor(val),
+                            flexShrink: 0,
+                            marginTop: 5,
+                          }} />
+                          <div style={{ flex: 1 }}>
+                            {q.branchTag && (
+                              <div style={{
+                                fontFamily: "'Syne', sans-serif",
+                                fontSize: 9,
+                                fontWeight: 700,
+                                letterSpacing: '0.08em',
+                                textTransform: 'uppercase' as const,
+                                color: 'var(--copper-600, var(--copper-500))',
+                                marginBottom: 2,
+                              }}>
+                                {q.branchTag}
+                              </div>
+                            )}
+                            <div style={{
+                              fontFamily: "'Lora', Georgia, serif",
+                              fontSize: 13,
+                              color: val >= 3 ? 'var(--pine-900)' : 'var(--pine-700)',
+                              fontWeight: val >= 3 ? 600 : 400,
+                              lineHeight: 1.5,
+                            }}>
+                              {q.text}
+                            </div>
+                          </div>
+                          <div style={{
+                            fontFamily: "'Syne', sans-serif",
+                            fontSize: 11,
+                            fontWeight: 700,
+                            color: dotColor(val),
+                            flexShrink: 0,
+                            minWidth: 60,
+                            textAlign: 'right' as const,
+                          }}>
+                            {SCALE[val] ?? val}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* ── Timeline tab ─────────────────────────────────────── */}
       {activeTab === 'timeline' && (() => {
