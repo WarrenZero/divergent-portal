@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { addManualNote, editNote, deleteNote } from './notes.actions';
+import { addManualNote, editNote, deleteNote, toggleNoteFlag } from './notes.actions';
 import styles from './NotesPanel.module.css';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -12,6 +12,7 @@ export interface NoteRow {
   note_type: 'copilot_summary' | 'manual';
   content: string;
   created_at: string;
+  is_flagged?: boolean;
 }
 
 interface DateGroup {
@@ -63,7 +64,33 @@ export default function NotesPanel({ clientId, initialNotes }: Props) {
   // Inline delete confirm state
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const groups = groupByDate(initialNotes);
+  // Star/flag state
+  const [flaggedIds, setFlaggedIds] = useState<Set<string>>(
+    () => new Set(initialNotes.filter((n) => n.is_flagged).map((n) => n.id)),
+  );
+
+  function toggleFlag(noteId: string) {
+    const newVal = !flaggedIds.has(noteId);
+    setFlaggedIds((prev) => {
+      const next = new Set(prev);
+      newVal ? next.add(noteId) : next.delete(noteId);
+      return next;
+    });
+    startTransition(async () => {
+      await toggleNoteFlag(noteId, clientId, newVal);
+      router.refresh();
+    });
+  }
+
+  // Sort: flagged first, then by date (most recent first)
+  const sortedNotes = [...initialNotes].sort((a, b) => {
+    const aFlagged = flaggedIds.has(a.id) ? 1 : 0;
+    const bFlagged = flaggedIds.has(b.id) ? 1 : 0;
+    if (bFlagged !== aFlagged) return bFlagged - aFlagged;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  const groups = groupByDate(sortedNotes);
 
   // ── Add note ──────────────────────────────────────────────
 
@@ -155,6 +182,14 @@ export default function NotesPanel({ clientId, initialNotes }: Props) {
                         {note.note_type === 'copilot_summary' ? 'Co-Pilot Summary' : 'Manual Note'}
                       </span>
                       <div className={styles.noteActions}>
+                        <button
+                          className={`${styles.noteActionBtn} ${flaggedIds.has(note.id) ? styles.noteFlagged : ''}`}
+                          onClick={() => toggleFlag(note.id)}
+                          aria-label={flaggedIds.has(note.id) ? 'Unstar note' : 'Star note'}
+                          title="Star"
+                        >
+                          {flaggedIds.has(note.id) ? '★' : '☆'}
+                        </button>
                         <button
                           className={styles.noteActionBtn}
                           onClick={() => startEdit(note)}

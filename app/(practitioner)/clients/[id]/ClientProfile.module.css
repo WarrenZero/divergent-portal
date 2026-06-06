@@ -570,6 +570,135 @@
   border-color: var(--pine-400);
 }
 
+/* ─── Phase advancement prompt ───────────────────────────────── */
+.advancePrompt {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--pine-100);
+  border: 1px solid var(--pine-200);
+  border-radius: var(--radius-sm);
+}
+
+.advancePromptTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--pine-700);
+  margin-bottom: 6px;
+}
+
+.advancePromptText {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+.advanceActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.advanceBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--copper-500);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 150ms;
+  display: inline-flex;
+  align-items: center;
+}
+.advanceBtn:hover:not(:disabled) { opacity: 0.88; }
+.advanceBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.advanceSkipBtn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms;
+  display: inline-flex;
+  align-items: center;
+}
+.advanceSkipBtn:hover {
+  background: var(--surface-2);
+  border-color: var(--border-2);
+}
+
+.advanceError {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  color: var(--copper-700);
+  margin-bottom: 8px;
+}
+
+/* ─── Lab Marker Trends ──────────────────────────────────────── */
+.labTrends {
+  padding: 0 16px 14px;
+}
+
+.labTrendsTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.labTrendRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--bone-200);
+}
+.labTrendRow:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.labTrendName {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
+  min-width: 100px;
+}
+
+.labTrendValues {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  flex: 1;
+}
+
+.labTrendArrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .statRow      { grid-template-columns: repeat(2, 1fr); }

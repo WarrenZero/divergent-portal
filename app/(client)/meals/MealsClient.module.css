@@ -818,6 +818,45 @@
 
 .clipboardBtn:hover { border-color: var(--copper-300, #DFA878); }
 
+/* ── Tap hint ─────────────────────────────────────────────── */
+
+.tapHint {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--pine-400, #5A7C62);
+  letter-spacing: 0.06em;
+  text-align: right;
+  padding: 0 10px 8px;
+}
+
+/* ── Rate prompt ──────────────────────────────────────────── */
+
+.ratePrompt {
+  background: var(--copper-100, #F5E0CC);
+  border: 1px solid var(--copper-300, #DFA878);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--copper-700, #8A4810);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.ratePromptDismiss {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--copper-400, #D08C5C);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 /* ── Empty state ──────────────────────────────────────────── */
 
 .empty {

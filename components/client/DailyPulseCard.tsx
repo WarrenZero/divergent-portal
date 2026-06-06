@@ -42,12 +42,7 @@ export default function DailyPulseCard({ firstName }: Props) {
     [],
   );
 
-  // Auto-dismiss success after 3 seconds
-  useEffect(() => {
-    if (status !== 'success') return;
-    const t = setTimeout(() => setStatus('idle'), 3000);
-    return () => clearTimeout(t);
-  }, [status]);
+  // No auto-dismiss — success stays visible until user navigates away or dismisses
 
   async function handleSubmit() {
     if (!selectedEmoji) return;
@@ -77,6 +72,14 @@ export default function DailyPulseCard({ firstName }: Props) {
         <div className={styles.successBox}>
           <span className={styles.successGlyph}>✦</span>
           <div className={styles.successTitle}>✓ Logged · Warren will see this before your next session</div>
+          <button
+            type="button"
+            onClick={() => setStatus('idle')}
+            className={styles.successDismiss}
+            aria-label="Dismiss"
+          >
+            Log again
+          </button>
         </div>
       </div>
     );

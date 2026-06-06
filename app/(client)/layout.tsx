@@ -11,6 +11,7 @@ export default async function ClientLayout({
   children: React.ReactNode;
 }) {
   const client = await requireClient();
+  const wellnessScore = client?.wellness_score ?? null;
 
   return (
     <div
@@ -26,7 +27,7 @@ export default async function ClientLayout({
       <JourneyBar clientId={client.id} />
       {children}
       <WhatTodayButton />
-      <ClientBottomNav />
+      <ClientBottomNav wellnessScore={wellnessScore} />
     </div>
   );
 }

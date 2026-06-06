@@ -124,7 +124,10 @@ function RecipeDetailModal({
   const [saving, setSaving] = useState(false);
 
   const macros = recipe.macros as Macros | null;
-  const naqWarnings = getNAQWarnings(domainScores, recipe.sensitivity_flags);
+  const rawWarnings = getNAQWarnings(domainScores, recipe.sensitivity_flags);
+  const naqWarnings = rawWarnings.filter(
+    (w, i, arr) => arr.findIndex((x) => x.message === w.message) === i,
+  ).slice(0, 1);
   const personalWarnings = recipe.sensitivity_flags.filter((f) =>
     clientSensitivityNames.some((s) => s.toLowerCase() === f.toLowerCase()),
   );
@@ -456,6 +459,7 @@ function ClientRecipeCard({
           </div>
         )}
       </div>
+      <div className={styles.tapHint}>Tap to explore →</div>
     </div>
   );
 }
@@ -597,6 +601,7 @@ export default function MealsClient({
   const [savedIds, setSavedIds] = useState<string[]>(initSaved);
   const [myRatings, setMyRatings] = useState(initRatings);
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeRow | null>(null);
+  const [ratePromptId, setRatePromptId] = useState<string | null>(null);
 
   const sensitivityNames = sensitivities.map((s) => s.name);
 
@@ -710,7 +715,10 @@ export default function MealsClient({
           </div>
           <div className={styles.inSeasonRow}>
             {inSeasonRecipes.map((r) => {
-              const naqW = getNAQWarnings(domainScores, r.sensitivity_flags);
+              const rawNaqW = getNAQWarnings(domainScores, r.sensitivity_flags);
+              const naqW = rawNaqW
+                .filter((w, i, arr) => arr.findIndex((x) => x.message === w.message) === i)
+                .slice(0, 1);
               const persW = r.sensitivity_flags.filter((f) =>
                 sensitivityNames.some((s) => s.toLowerCase() === f.toLowerCase()),
               );
@@ -744,22 +752,41 @@ export default function MealsClient({
       ) : (
         <div className={styles.grid}>
           {displayRecipes.map((r) => {
-            const naqW = getNAQWarnings(domainScores, r.sensitivity_flags);
+            const rawNaqW = getNAQWarnings(domainScores, r.sensitivity_flags);
+            const naqW = rawNaqW
+              .filter((w, i, arr) => arr.findIndex((x) => x.message === w.message) === i)
+              .slice(0, 1);
             const persW = r.sensitivity_flags.filter((f) =>
               sensitivityNames.some((s) => s.toLowerCase() === f.toLowerCase()),
             );
             return (
-              <ClientRecipeCard
-                key={r.id}
-                recipe={r}
-                isSaved={savedIds.includes(r.id)}
-                myRating={myRatings[r.id] ?? null}
-                avgRating={averageRating(allRatings, r.id)}
-                naqWarnings={naqW}
-                personalWarnings={persW}
-                onOpen={() => setSelectedRecipe(r)}
-                onSaveToggle={handleSaveToggle}
-              />
+              <div key={r.id}>
+                <ClientRecipeCard
+                  recipe={r}
+                  isSaved={savedIds.includes(r.id)}
+                  myRating={myRatings[r.id] ?? null}
+                  avgRating={averageRating(allRatings, r.id)}
+                  naqWarnings={naqW}
+                  personalWarnings={persW}
+                  onOpen={() => setSelectedRecipe(r)}
+                  onSaveToggle={(id, newSaved) => {
+                    handleSaveToggle(id, newSaved);
+                    if (newSaved) setRatePromptId(id);
+                    else if (ratePromptId === id) setRatePromptId(null);
+                  }}
+                />
+                {ratePromptId === r.id && (
+                  <div className={styles.ratePrompt}>
+                    <span>Rate this recipe after you try it — it helps Warren personalize your meal plan</span>
+                    <button
+                      className={styles.ratePromptDismiss}
+                      onClick={(e) => { e.stopPropagation(); setRatePromptId(null); }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>

@@ -49,10 +49,13 @@ export default async function JournalPage() {
         <JournalForm />
 
         <div className={styles.historySection}>
-          <div className={styles.sectionLabel}>
-            Recent Entries
-            {entries.length > 0 ? ` · ${entries.length}` : ''}
-          </div>
+          {entries.length > 0 ? (
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 11, color: 'var(--bone-600)', marginBottom: 12 }}>
+              {entries.length} recent {entries.length === 1 ? 'entry' : 'entries'}
+            </div>
+          ) : (
+            <div className={styles.sectionLabel}>Recent Entries</div>
+          )}
           <JournalHistory entries={entries} />
         </div>
 

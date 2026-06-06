@@ -23,7 +23,7 @@ interface Props {
   practitionerName: string;
 }
 
-type FilterTab = 'all' | 'article' | 'document' | 'protocol_resource' | 'clinical_science';
+type FilterTab = 'for_you' | 'all' | 'article' | 'document' | 'protocol_resource' | 'clinical_science';
 
 // ─── Helpers ──────────────────────────────────────────────────────
 
@@ -62,7 +62,7 @@ function formatDate(iso: string): string {
 // ─── Component ────────────────────────────────────────────────────
 
 export default function VaultClient({ items, firstName, practitionerName }: Props) {
-  const [filter, setFilter] = useState<FilterTab>('all');
+  const [filter, setFilter] = useState<FilterTab>('for_you');
   const [search, setSearch] = useState('');
   const [readIds, setReadIds] = useState<Set<string>>(
     () => new Set(items.filter((i) => i.isRead).map((i) => i.id)),
@@ -75,7 +75,8 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
   // ── Filtered list ───────────────────────────────────────────────
   const filtered = useMemo(() => {
     let list = [...items];
-    if (filter !== 'all') list = list.filter((i) => i.contentType === filter);
+    if (filter === 'for_you') list = list.filter((i) => i.contentType !== 'clinical_science');
+    else if (filter !== 'all') list = list.filter((i) => i.contentType === filter);
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter((i) => i.title.toLowerCase().includes(q));
@@ -161,9 +162,11 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
           onChange={(e) => setSearch(e.target.value)}
         />
         <div className={styles.tabs}>
-          {(['all', 'article', 'document', 'protocol_resource', 'clinical_science'] as FilterTab[]).map((tab) => {
+          {(['for_you', 'all', 'article', 'document', 'protocol_resource', 'clinical_science'] as FilterTab[]).map((tab) => {
             const count = tab === 'all'
               ? items.length
+              : tab === 'for_you'
+              ? items.filter((i) => i.contentType !== 'clinical_science').length
               : items.filter((i) => i.contentType === tab).length;
             return (
               <button
@@ -171,7 +174,9 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
                 className={`${styles.tab} ${filter === tab ? styles.tabActive : ''}`}
                 onClick={() => setFilter(tab)}
               >
-                {tab === 'all' ? 'All' : TYPE_LABELS[tab as VaultItem['contentType']]}
+                {tab === 'all' ? 'All'
+                  : tab === 'for_you' ? 'For You'
+                  : TYPE_LABELS[tab as VaultItem['contentType']]}
                 <span className={styles.tabCount}>{count}</span>
               </button>
             );
@@ -184,6 +189,8 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
         <div className={styles.empty}>
           {search
             ? 'No resources match your search.'
+            : filter === 'for_you'
+            ? `Warren will add resources here as your protocol progresses — articles, guides, and tools chosen just for you.`
             : filter !== 'all'
             ? `No ${TYPE_LABELS[filter as VaultItem['contentType']].toLowerCase()} resources in your vault yet.`
             : `Warren will add resources here as your protocol progresses — articles, guides, and tools chosen just for you.`}
@@ -210,7 +217,12 @@ export default function VaultClient({ items, firstName, practitionerName }: Prop
                   >
                     {TYPE_ICONS[item.contentType]}
                   </span>
-                  {!isRead && <div className={styles.unreadDot} />}
+                  {!isRead && (
+                    <div className={styles.unreadDotWrap}>
+                      <div className={styles.unreadDot} />
+                      <span className={styles.unreadNewLabel}>NEW</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Body */}

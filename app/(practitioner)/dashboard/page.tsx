@@ -256,7 +256,7 @@ export default async function DashboardPage() {
         </div>
         <div className={styles.pageActions}>
           <button className={styles.btnGhost}>Export Report</button>
-          <Link href="/clients" className={styles.btnPrimary}>
+          <Link href="/clients/new" className={styles.btnPrimary}>
             + New Client
           </Link>
         </div>

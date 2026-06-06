@@ -111,6 +111,45 @@ export async function autoAddProtocolSupplements(
   return { count: templates.length };
 }
 
+// ─── Advance Protocol Phase ───────────────────────────────────
+
+export async function advanceClientPhase(
+  clientId: string,
+): Promise<{ error?: string; newPhase?: number }> {
+  const { userId } = await auth();
+  if (!userId) return { error: 'Not authenticated' };
+
+  const supabase = await createServiceClient();
+
+  const { data: practitioner } = await supabase
+    .from('practitioners')
+    .select('id')
+    .eq('clerk_user_id', userId)
+    .single();
+
+  if (!practitioner) return { error: 'Not authorized' };
+
+  // Get current active protocol
+  const { data: cp } = await supabase
+    .from('client_protocols')
+    .select('id, current_phase')
+    .eq('client_id', clientId)
+    .eq('is_active', true)
+    .single();
+
+  if (!cp) return { error: 'No active protocol found' };
+
+  const newPhase = cp.current_phase + 1;
+
+  const { error } = await supabase
+    .from('client_protocols')
+    .update({ current_phase: newPhase })
+    .eq('id', cp.id);
+
+  if (error) return { error: error.message };
+  return { newPhase };
+}
+
 // ─── Add Supplement ───────────────────────────────────────────
 
 export interface SupplementFields {
@@ -224,7 +263,7 @@ export async function inviteClient(
       await resend.emails.send({
         from: 'Warren Hennon, NTP <warren@divergentnt.com>',
         to: email,
-        subject: 'Your Divergent portal is ready, ' + firstName,
+        subject: 'Warren has set up your personal wellness space — ' + firstName,
         html: `
 <!DOCTYPE html>
 <html lang="en">

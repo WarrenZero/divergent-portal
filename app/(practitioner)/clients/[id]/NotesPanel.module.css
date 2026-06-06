@@ -145,6 +145,7 @@
 }
 .noteActionBtn:hover { background: var(--surface-2); color: var(--text-1); }
 .noteActionDanger:hover { background: rgba(196, 92, 64, 0.08); color: #C45C40; }
+.noteFlagged { color: var(--copper-500) !important; }
 
 /* ─── Inline edit ────────────────────────────────────────────── */
 .inlineEdit { margin-top: 2px; }

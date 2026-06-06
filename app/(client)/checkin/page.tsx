@@ -159,9 +159,47 @@ export default async function CheckInPage() {
 
   const phaseText = protocol ? phaseLabel(protocol.phase) : null;
   const aiNote = aiNudgeText(firstName, protocol, supplements.length);
-  const weeklyFocus = protocol && protocolDayNum
-    ? weeklyFocusItems(protocol.phase, protocolDayNum)
-    : null;
+  // Try to fetch week-specific focus content from DB; fall back to hardcoded defaults
+  let weeklyFocus: string[] | null = null;
+
+  if (protocol && protocolDayNum && client) {
+    const weekNum = Math.ceil(protocolDayNum / 7);
+
+    try {
+      const focusSupabase = await createClient();
+      const { data: cpData } = await focusSupabase
+        .from('client_protocols')
+        .select('protocol_id')
+        .eq('client_id', client.id)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (cpData?.protocol_id) {
+        const { data: focusData } = await focusSupabase
+          .from('protocol_week_focus')
+          .select('focus_1, focus_2, focus_3')
+          .eq('protocol_id', cpData.protocol_id)
+          .eq('phase', protocol.phase)
+          .eq('week_number', weekNum)
+          .maybeSingle();
+
+        if (focusData?.focus_1) {
+          weeklyFocus = [
+            focusData.focus_1,
+            focusData.focus_2,
+            focusData.focus_3,
+          ].filter(Boolean) as string[];
+        }
+      }
+    } catch {
+      // Non-fatal — fall through to default
+    }
+
+    // Fall back to hardcoded defaults
+    if (!weeklyFocus) {
+      weeklyFocus = weeklyFocusItems(protocol.phase, protocolDayNum);
+    }
+  }
 
   // Fetch weekly voice note from Supabase storage
   let voiceNoteUrl: string | null = null;

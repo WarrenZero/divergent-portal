@@ -199,6 +199,8 @@
   color: var(--text-2);
   cursor: pointer;
   transition: background 150ms, border-color 150ms, color 150ms;
+  min-height: 48px;
+  min-width: 72px;
 }
 
 .pill:hover {

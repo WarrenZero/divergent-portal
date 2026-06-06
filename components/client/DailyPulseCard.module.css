@@ -257,17 +257,27 @@
   border-radius: var(--radius-sm);
   padding: 20px;
   text-align: center;
-  animation: fadeUp var(--dur-base) var(--ease-out), fadeOut 380ms var(--ease-in-out) 2.62s forwards;
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  animation: fadeUp var(--dur-base) var(--ease-out);
 }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+.successDismiss {
+  display: inline-block;
+  margin-top: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pine-400);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .successGlyph {

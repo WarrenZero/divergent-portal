@@ -43,6 +43,10 @@ function formatDaysAgo(days: number | null): string {
   return `${days}d ago`;
 }
 
+function daysBetween(date: Date, now: Date): number {
+  return Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 function formatDate(iso: string | null): string {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -61,6 +65,10 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
   const [bulkSending, setBulkSending] = useState(false);
   const [digestSending, setDigestSending] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [nudgeAllModalOpen, setNudgeAllModalOpen] = useState(false);
+  const [nudgePersonalNote, setNudgePersonalNote] = useState('');
+
+  const now = new Date();
 
   // Merge server-provided lastNudgeDate with live-updated nudgeDates
   const resolvedNudgeDate = (c: ClientEngagement) =>
@@ -156,6 +164,54 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
       {/* Toast */}
       {toast && <div className={styles.toast}>{toast}</div>}
 
+      {/* Nudge All At-Risk confirmation modal */}
+      {nudgeAllModalOpen && (
+        <div className={styles.modalOverlay} onClick={() => setNudgeAllModalOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalTitle}>Nudge All At-Risk Clients</div>
+            <p className={styles.modalDesc}>
+              This will send a check-in nudge email to {atRisk} at-risk {atRisk === 1 ? 'client' : 'clients'}.
+            </p>
+            <label className={styles.modalLabel}>
+              Add a personal note (optional):
+              <textarea
+                className={styles.modalTextarea}
+                placeholder='e.g. "I noticed you haven&apos;t checked in — just wanted to see how you&apos;re feeling this week."'
+                value={nudgePersonalNote}
+                onChange={(e) => setNudgePersonalNote(e.target.value)}
+                rows={3}
+              />
+            </label>
+            <div className={styles.modalActions}>
+              <button className={styles.modalCancel} onClick={() => setNudgeAllModalOpen(false)}>
+                Cancel
+              </button>
+              <button
+                className={styles.modalConfirm}
+                disabled={bulkSending}
+                onClick={async () => {
+                  setNudgeAllModalOpen(false);
+                  setBulkSending(true);
+                  const atRiskClients = sorted.filter((c) => c.status === 'at-risk');
+                  for (const c of atRiskClients) {
+                    await fetch('/api/engagement/nudge', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ clientId: c.id, nudgeType: 'at-risk', personalNote: nudgePersonalNote }),
+                    });
+                  }
+                  setBulkSending(false);
+                  setNudgePersonalNote('');
+                  showToast(`Nudged ${atRiskClients.length} at-risk ${atRiskClients.length === 1 ? 'client' : 'clients'}`);
+                }}
+              >
+                {bulkSending ? 'Sending…' : `Send to ${atRisk} ${atRisk === 1 ? 'client' : 'clients'}`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className={styles.header}>
         <div>
@@ -170,7 +226,7 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
         <div className={styles.headerActions}>
           <button
             className={`${styles.btn} ${styles.btnGhost}`}
-            onClick={nudgeAllAtRisk}
+            onClick={() => setNudgeAllModalOpen(true)}
             disabled={bulkSending || atRisk === 0}
           >
             {bulkSending ? 'Sending…' : `Nudge All At-Risk${atRisk > 0 ? ` (${atRisk})` : ''}`}
@@ -292,6 +348,14 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
                       {formatDate(client.lastSessionDate)}
                     </div>
                     <div className={styles.statCellLab}>Last Session</div>
+                  </div>
+                  <div className={styles.statCell}>
+                    <div className={styles.statCellVal}>
+                      {resolvedNudgeDate(client)
+                        ? formatDaysAgo(daysBetween(new Date(resolvedNudgeDate(client)!), now))
+                        : 'Never'}
+                    </div>
+                    <div className={styles.statCellLab}>Last Nudge</div>
                   </div>
                 </div>
 

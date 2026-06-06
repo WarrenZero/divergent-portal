@@ -365,6 +365,40 @@ export async function POST(req: NextRequest) {
     console.warn('[labs/parse] continuing despite save failure');
   }
 
+  // ─── Save individual markers for trend tracking ──────────────
+
+  if (labResult?.id && clientId && rawMarkers.length > 0) {
+    const markerRows = rawMarkers
+      .filter((m) => {
+        const num = typeof m.value === 'string' ? parseFloat(m.value) : m.value;
+        return m.test_name && !isNaN(num);
+      })
+      .map((m) => {
+        const numValue = typeof m.value === 'string' ? parseFloat(m.value) : m.value;
+        // Find functional status from computed flags
+        const flag = functionalFlags.find((f) => f.test_name === m.test_name);
+        return {
+          client_id: clientId,
+          lab_result_id: labResult.id,
+          marker_name: m.test_name,
+          value: numValue,
+          unit: m.unit ?? null,
+          functional_status: flag?.status ?? null,
+        };
+      });
+
+    if (markerRows.length > 0) {
+      const { error: markerInsertError } = await supabase
+        .from('lab_markers')
+        .insert(markerRows);
+      if (markerInsertError) {
+        console.warn('[labs/parse] lab_markers insert failed (non-fatal):', markerInsertError.message);
+      } else {
+        console.log('[labs/parse] saved', markerRows.length, 'marker rows to lab_markers');
+      }
+    }
+  }
+
   console.log(
     '[labs/parse] complete — markers:', rawMarkers.length,
     '| flags:', functionalFlags.length,

@@ -68,6 +68,14 @@ interface NAQResponseRow {
   responded_at: string;
 }
 
+interface LabMarkerHistoryRow {
+  marker_name: string;
+  value: number;
+  unit: string | null;
+  functional_status: string | null;
+  parsed_at: string;
+}
+
 interface SessionEventRow {
   id: string;
   scheduled_at: string;
@@ -98,6 +106,8 @@ interface ProfileData {
   allJournalEntries: JournalRow[];
   clientSessions: SessionEventRow[];
   protocolHistory: ProtocolEventRow[];
+  // Lab marker trends
+  markersWithTrends: Array<[string, Array<{ value: number; parsedAt: string; status: string | null; unit: string | null }>]>;
 }
 
 // ─── Data fetching ─────────────────────────────────────────────
@@ -119,7 +129,7 @@ async function getProfileData(
   if (clientError || !client) return null;
 
   // Parallel fetch of all related data
-  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes, notesRes, allPulseRes, allJournalRes, clientSessionsRes, protocolHistoryRes] = await Promise.all([
+  const [pulseRes, suppRes, journalRes, protocolRes, sessionRes, protocolsRes, naqRes, notesRes, allPulseRes, allJournalRes, clientSessionsRes, protocolHistoryRes, labMarkersRes] = await Promise.all([
     supabase
       .from('daily_pulse')
       .select('id, digestion_score, sleep_score, stress_score, logged_at')
@@ -170,7 +180,7 @@ async function getProfileData(
 
     supabase
       .from('clinical_notes')
-      .select('id, note_type, content, created_at')
+      .select('id, note_type, content, created_at, is_flagged')
       .eq('client_id', clientId)
       .order('created_at', { ascending: false }),
 
@@ -203,6 +213,14 @@ async function getProfileData(
       .select('id, assigned_at, start_date, protocols(name)')
       .eq('client_id', clientId)
       .order('assigned_at', { ascending: false }),
+
+    // Lab marker history for trend display
+    supabase
+      .from('lab_markers')
+      .select('marker_name, value, unit, functional_status, parsed_at')
+      .eq('client_id', clientId)
+      .order('marker_name')
+      .order('parsed_at', { ascending: true }),
   ]);
 
   let protocol: ProtocolAssignment | null = null;
@@ -218,6 +236,19 @@ async function getProfileData(
     }
   }
 
+  // Build marker trend map: marker name → sorted data points (ASC by parsed_at)
+  const markerTrendMap: Record<string, Array<{ value: number; parsedAt: string; status: string | null; unit: string | null }>> = {};
+  for (const m of (labMarkersRes.data ?? []) as LabMarkerHistoryRow[]) {
+    if (!markerTrendMap[m.marker_name]) markerTrendMap[m.marker_name] = [];
+    markerTrendMap[m.marker_name].push({
+      value: m.value,
+      parsedAt: m.parsed_at,
+      status: m.functional_status,
+      unit: m.unit,
+    });
+  }
+  const markersWithTrends = Object.entries(markerTrendMap).filter(([, arr]) => arr.length >= 2);
+
   return {
     client: client as ClientRow,
     pulseEntries: (pulseRes.data ?? []) as PulseRow[],
@@ -231,6 +262,7 @@ async function getProfileData(
     allPulseEntries: (allPulseRes.data ?? []) as PulseRow[],
     allJournalEntries: (allJournalRes.data ?? []) as JournalRow[],
     clientSessions: (clientSessionsRes.data ?? []) as SessionEventRow[],
+    markersWithTrends,
     protocolHistory: ((protocolHistoryRes.data ?? []) as Array<{
       id: string;
       assigned_at: string;
@@ -380,7 +412,7 @@ export default async function ClientProfilePage({
   const data = await getProfileData(id, practitioner.id);
   if (!data) notFound();
 
-  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses, notes, allPulseEntries, allJournalEntries, clientSessions, protocolHistory } = data;
+  const { client, pulseEntries, supplements, journalEntries, protocol, protocols, sessionsCompleted, naqResponses, notes, allPulseEntries, allJournalEntries, clientSessions, protocolHistory, markersWithTrends } = data;
 
   const age = clientAge(client.date_of_birth);
   const days = protocol ? protocolDays(protocol.start_date) : 0;
@@ -472,6 +504,11 @@ export default async function ClientProfilePage({
           <button className={styles.btnGhost}>Start NAQ</button>
           <Link href={`/clients/${client.id}/symptoms`} className={styles.btnGhost}>◎ Symptom Map</Link>
           <Link href={`/clients/${client.id}/report`} className={styles.btnGhost} target="_blank">↗ Report</Link>
+          {client.email && (
+            <a href={`mailto:${client.email}`} className={styles.btnGhost}>
+              ✉ Message
+            </a>
+          )}
           <button className={styles.btnPrimary}>Open Co-Pilot →</button>
         </div>
       </div>
@@ -879,6 +916,42 @@ export default async function ClientProfilePage({
               </div>
             )}
           </div>
+
+          {/* Lab marker trends */}
+          {markersWithTrends.length > 0 && (
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <span className={styles.cardTitle}>Lab Marker Trends</span>
+                <span style={{ fontFamily: 'Syne, sans-serif', fontSize: 10, color: 'var(--text-3)' }}>
+                  {markersWithTrends.length} marker{markersWithTrends.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+              <div className={styles.labTrends}>
+                {markersWithTrends.map(([markerName, points]) => {
+                  const first = points[0];
+                  const last = points[points.length - 1];
+                  const direction = last.value < first.value ? '↓' : last.value > first.value ? '↑' : '→';
+                  const improving = last.status === 'optimal' || (last.value < first.value && first.status !== 'optimal');
+                  return (
+                    <div key={markerName} className={styles.labTrendRow}>
+                      <span className={styles.labTrendName}>{markerName}</span>
+                      <span className={styles.labTrendValues}>
+                        {points.map((p, i) => (
+                          <span key={i}>{i > 0 ? ' → ' : ''}{p.value}{last.unit ? ` ${last.unit}` : ''}</span>
+                        ))}
+                      </span>
+                      <span
+                        className={styles.labTrendArrow}
+                        style={{ color: improving ? 'var(--pine-500)' : direction === '↑' ? '#C45C40' : 'var(--copper-400)' }}
+                      >
+                        {direction} {improving ? 'Improving' : direction === '→' ? 'Stable' : 'Monitor'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
         </div>
 

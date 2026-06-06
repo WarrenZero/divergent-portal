@@ -556,6 +556,23 @@
 }
 .saveSheetNo:hover { background: var(--surface-2); color: var(--text-2); }
 
+/* ─── DESKTOP SIDE PANEL ──────────────────────────────────────── */
+
+@media (min-width: 1200px) {
+  .panelOpen {
+    position: fixed;
+    right: 0;
+    top: 56px;
+    bottom: 0;
+    width: 480px;
+    height: calc(100vh - 56px);
+    max-height: calc(100vh - 56px);
+    left: auto;
+    border-radius: var(--radius-xl) 0 0 var(--radius-xl);
+    border-right: none;
+  }
+}
+
 /* ─── MOBILE ──────────────────────────────────────────────────── */
 
 @media (max-width: 480px) {

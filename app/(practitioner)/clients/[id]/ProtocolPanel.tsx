@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { assignProtocol, autoAddProtocolSupplements } from './actions';
+import { assignProtocol, autoAddProtocolSupplements, advanceClientPhase } from './actions';
 import styles from './ClientProfile.module.css';
 import modalStyles from './ProtocolModal.module.css';
 
@@ -49,6 +49,19 @@ function protocolDays(startDate: string | null): number {
   ) + 1);
 }
 
+function getMilestoneDay(protocolName: string, currentPhase: number): number | null {
+  const n = protocolName.toLowerCase();
+  if (n.includes('signal-to-noise')) {
+    const days: Record<number, number> = { 1: 30, 2: 60, 3: 90 };
+    return days[currentPhase] ?? null;
+  }
+  if (n.includes('restoration')) {
+    const days: Record<number, number> = { 1: 28, 2: 56 };
+    return days[currentPhase] ?? null;
+  }
+  return null;
+}
+
 // ─── Component ────────────────────────────────────────────────
 
 export default function ProtocolPanel({ clientId, initialProtocol, protocols, days }: Props) {
@@ -57,10 +70,16 @@ export default function ProtocolPanel({ clientId, initialProtocol, protocols, da
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [supplementConfirm, setSupplementConfirm] = useState<{ protocolName: string; supplements: string[] } | null>(null);
+  const [advancing, setAdvancing] = useState(false);
+  const [advanceError, setAdvanceError] = useState<string | null>(null);
+  const [advanceDone, setAdvanceDone] = useState(false);
   const router = useRouter();
 
   const protocol = initialProtocol;
   const activeDays = protocol ? protocolDays(protocol.start_date) : days;
+  const protocolName = protocol?.protocols?.name ?? '';
+  const currentPhase = protocol?.current_phase ?? 1;
+  const milestoneDay = protocol ? getMilestoneDay(protocolName, currentPhase) : null;
 
   function handleAssign() {
     if (!selected) return;
@@ -138,7 +157,50 @@ export default function ProtocolPanel({ clientId, initialProtocol, protocols, da
                 Change Protocol
               </button>
             </div>
-          ) : (
+          ) : null}
+
+          {/* ── Phase advancement prompt ─────────────────────── */}
+          {protocol && !advanceDone && milestoneDay !== null && activeDays >= milestoneDay && activeDays < milestoneDay + 7 && (
+            <div className={styles.advancePrompt}>
+              <div className={styles.advancePromptTitle}>
+                ✦ Day {milestoneDay} milestone reached
+              </div>
+              <p className={styles.advancePromptText}>
+                Ready to advance {protocolName} to Phase {currentPhase + 1}?
+              </p>
+              {advanceError && (
+                <div className={styles.advanceError}>{advanceError}</div>
+              )}
+              <div className={styles.advanceActions}>
+                <button
+                  className={styles.advanceBtn}
+                  disabled={advancing || isPending}
+                  onClick={async () => {
+                    setAdvancing(true);
+                    setAdvanceError(null);
+                    const result = await advanceClientPhase(clientId);
+                    if (result.error) {
+                      setAdvanceError(result.error);
+                    } else {
+                      setAdvanceDone(true);
+                      router.refresh();
+                    }
+                    setAdvancing(false);
+                  }}
+                >
+                  {advancing ? 'Advancing…' : `Advance to Phase ${currentPhase + 1}`}
+                </button>
+                <button
+                  className={styles.advanceSkipBtn}
+                  onClick={() => setAdvanceDone(true)}
+                >
+                  Keep in Phase {currentPhase}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {!protocol && (
             <div className={styles.emptyState} style={{ padding: '20px 0' }}>
               <div className={styles.emptyGlyph}>⊞</div>
               <div className={styles.emptyTitle}>No protocol assigned</div>

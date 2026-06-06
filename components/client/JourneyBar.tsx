@@ -57,7 +57,7 @@ export default async function JourneyBar({ clientId }: Props) {
           </div>
         </div>
         <div className={styles.milestone}>
-          Next milestone: Day {nextMilestone}
+          Next milestone: Day {nextMilestone} — Warren reviews your progress and adjusts your plan
         </div>
       </div>
     </div>

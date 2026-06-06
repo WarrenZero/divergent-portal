@@ -144,6 +144,7 @@ export default function TranscriptionWorkspace({
   );
   const [allVerified, setAllVerified] = useState(false);
   const [noteSaved, setNoteSaved] = useState(existingTranscription?.status === 'complete');
+  const [savedToNotes, setSavedToNotes] = useState(false);
   const [sendingToClient, setSendingToClient] = useState(false);
   const [sentToClient, setSentToClient] = useState(false);
 
@@ -493,7 +494,9 @@ export default function TranscriptionWorkspace({
       const updated = prev.map((item) =>
         item.id === id ? { ...item, confirmed: !item.confirmed } : item,
       );
-      setAllVerified(updated.every((i) => i.confirmed));
+      const verified = updated.every((i) => i.confirmed);
+      setAllVerified(verified);
+      if (verified) setSavedToNotes(true);
       return updated;
     });
   }
@@ -730,6 +733,14 @@ export default function TranscriptionWorkspace({
         </div>
       </div>
 
+      {/* ── Saved to notes banner ── */}
+      {savedToNotes && (
+        <div className={styles.savedBanner}>
+          ✓ Saved to {clientName}&apos;s notes
+          <button onClick={() => setSavedToNotes(false)} className={styles.savedBannerDismiss}>✕</button>
+        </div>
+      )}
+
       {/* ── Verification checklist banner ── */}
       {checklist.length > 0 && !allVerified && (
         <div className={styles.verifyBanner}>
@@ -921,6 +932,9 @@ function ClinicalMatrixLens({
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(['presenting_concerns', 'protocol_updates', 'trajectory_summary']),
   );
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [editingSectionText, setEditingSectionText] = useState('');
+  const [matrixEdits, setMatrixEdits] = useState<Record<string, string>>({});
 
   function toggleSection(key: string) {
     setOpenSections((prev) => {
@@ -934,10 +948,11 @@ function ClinicalMatrixLens({
   return (
     <div className={styles.matrixLens}>
       {sections.map(({ key, label }) => {
-        const content = matrix[key];
-        if (!content || content === 'Not discussed this session') {
+        const rawContent = matrix[key];
+        if (!rawContent || rawContent === 'Not discussed this session') {
           return null;
         }
+        const sectionText = matrixEdits[key] ?? rawContent;
         const isOpen = openSections.has(key);
         return (
           <div key={key} className={styles.matrixSection}>
@@ -951,21 +966,38 @@ function ClinicalMatrixLens({
             </button>
             {isOpen && (
               <div className={styles.matrixSectionBody}>
-                {/* Highlight dosages in copper */}
-                <p
-                  dangerouslySetInnerHTML={{
-                    __html: content
-                      .replace(
-                        /\[DOSAGE\](.*?)\[\/DOSAGE\]/g,
-                        '<strong class="dosage">$1</strong>',
-                      )
-                      .replace(
-                        /\[VERIFY\]/g,
-                        '<span class="verify-flag">[VERIFY]</span>',
-                      )
-                      .replace(/\n/g, '<br/>'),
-                  }}
-                />
+                {editingSection === key ? (
+                  <textarea
+                    className={styles.sectionTextarea}
+                    value={editingSectionText}
+                    onChange={(e) => setEditingSectionText(e.target.value)}
+                    onBlur={() => {
+                      setMatrixEdits((prev) => ({ ...prev, [key]: editingSectionText }));
+                      setEditingSection(null);
+                    }}
+                    autoFocus
+                    rows={4}
+                  />
+                ) : (
+                  <div
+                    className={styles.sectionContent}
+                    onClick={() => { setEditingSection(key); setEditingSectionText(sectionText); }}
+                    title="Click to edit"
+                    style={{ cursor: 'text' }}
+                    dangerouslySetInnerHTML={{
+                      __html: sectionText
+                        .replace(
+                          /\[DOSAGE\](.*?)\[\/DOSAGE\]/g,
+                          '<strong class="dosage">$1</strong>',
+                        )
+                        .replace(
+                          /\[VERIFY\]/g,
+                          '<span class="verify-flag">[VERIFY]</span>',
+                        )
+                        .replace(/\n/g, '<br/>'),
+                    }}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -1042,19 +1074,26 @@ function ClientRoadmapLens({
       </div>
 
       <div className={styles.roadmapActions}>
-        {!sent ? (
-          <button
-            className={styles.roadmapSendBtn}
-            onClick={onSend}
-            disabled={sending}
-          >
-            {sending ? 'Sending…' : `Send to ${clientFirstName}`}
-          </button>
-        ) : (
-          <div className={styles.roadmapSentConfirm}>
-            ✓ Added to {clientFirstName}&apos;s Vault
-          </div>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0' }}>
+          {!sent ? (
+            <button
+              className={styles.roadmapSendBtn}
+              onClick={onSend}
+              disabled={sending}
+            >
+              {sending ? 'Sending…' : `Send to ${clientFirstName} →`}
+            </button>
+          ) : (
+            <div className={styles.roadmapSentConfirm}>
+              ✓ Added to {clientFirstName}&apos;s Vault
+            </div>
+          )}
+          {sent && (
+            <div className={styles.sentToClientMsg}>
+              Sent to {clientFirstName}&apos;s Library &middot; She&apos;ll see it next time she opens the portal
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

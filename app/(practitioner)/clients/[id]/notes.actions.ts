@@ -71,3 +71,24 @@ export async function deleteNote(
   revalidatePath(`/clients/${clientId}`);
   return {};
 }
+
+export async function toggleNoteFlag(
+  noteId: string,
+  clientId: string,
+  isFlagged: boolean,
+): Promise<{ error?: string }> {
+  const practitioner = await getCurrentPractitioner();
+  if (!practitioner) return { error: 'Unauthorized' };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('clinical_notes')
+    .update({ is_flagged: isFlagged })
+    .eq('id', noteId)
+    .eq('practitioner_id', practitioner.id); // RLS double-check
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/clients/${clientId}`);
+  return {};
+}

@@ -137,14 +137,73 @@ export default function JournalForm() {
 
         <div className={styles.timeGroup}>
           <label className={styles.fieldLabel} htmlFor="j-time">Time eaten</label>
-          <input
-            id="j-time"
-            type="time"
-            className={styles.timeInput}
-            value={form.time_eaten}
-            onChange={(e) => set('time_eaten', e.target.value)}
-            disabled={isPending}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <input
+              id="j-time"
+              type="time"
+              className={styles.timeInput}
+              value={form.time_eaten}
+              onChange={(e) => set('time_eaten', e.target.value)}
+              disabled={isPending}
+            />
+            {(() => {
+              const hour = form.time_eaten ? parseInt(form.time_eaten.split(':')[0], 10) : new Date().getHours();
+              const isAM = hour < 12;
+              const ampmBtnBase: React.CSSProperties = {
+                padding: '4px 10px',
+                borderRadius: 20,
+                border: '1px solid var(--border-2)',
+                fontFamily: "'Syne', sans-serif",
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                lineHeight: 1.4,
+                flexShrink: 0,
+              };
+              return (
+                <>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    style={{
+                      ...ampmBtnBase,
+                      background: isAM ? 'var(--copper-500)' : 'var(--bone-200)',
+                      color: isAM ? '#fff' : 'var(--bone-800)',
+                      borderColor: isAM ? 'var(--copper-500)' : 'var(--border-2)',
+                    }}
+                    onClick={() => {
+                      if (!isAM && form.time_eaten) {
+                        const [h, m] = form.time_eaten.split(':');
+                        const newH = parseInt(h, 10) - 12;
+                        set('time_eaten', `${String(newH).padStart(2, '0')}:${m}`);
+                      }
+                    }}
+                  >
+                    AM
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    style={{
+                      ...ampmBtnBase,
+                      background: !isAM ? 'var(--copper-500)' : 'var(--bone-200)',
+                      color: !isAM ? '#fff' : 'var(--bone-800)',
+                      borderColor: !isAM ? 'var(--copper-500)' : 'var(--border-2)',
+                    }}
+                    onClick={() => {
+                      if (isAM && form.time_eaten) {
+                        const [h, m] = form.time_eaten.split(':');
+                        const newH = parseInt(h, 10) + 12;
+                        set('time_eaten', `${String(newH).padStart(2, '0')}:${m}`);
+                      }
+                    }}
+                  >
+                    PM
+                  </button>
+                </>
+              );
+            })()}
+          </div>
         </div>
       </div>
 
@@ -340,7 +399,7 @@ export default function JournalForm() {
         {error && <div className={styles.formError}>{error}</div>}
         {saved && (
           <div className={styles.formSuccess}>
-            ✓ Entry saved — your practitioner can see this in your profile.
+            ✓ Entry saved · Warren reviews your journal before every session
           </div>
         )}
         <button

@@ -986,3 +986,75 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+/* ─── Saved to notes banner (Fix 17a) ───────────────────────── */
+
+.savedBanner {
+  background: var(--pine-800);
+  color: var(--pine-100);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.savedBannerDismiss {
+  background: none;
+  border: none;
+  color: var(--pine-300);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ─── Clinical Matrix inline editing (Fix 17b) ──────────────── */
+
+.sectionTextarea {
+  display: block;
+  width: 100%;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  border: 1px solid var(--pine-400);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  resize: vertical;
+  background: var(--surface);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.sectionTextarea:focus {
+  border-color: var(--pine-500);
+  box-shadow: 0 0 0 2px rgba(58, 92, 66, 0.15);
+}
+
+.sectionContent {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.7;
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  margin: -4px -6px;
+  transition: background var(--dur-fast);
+}
+
+.sectionContent:hover {
+  background: var(--surface-2);
+}
+
+/* ─── Send to client success message (Fix 17c) ──────────────── */
+
+.sentToClientMsg {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--pine-500);
+  margin-top: 8px;
+}

@@ -481,6 +481,62 @@
   text-align: center;
 }
 
+/* ─── Supplement schedule (morning / evening / other) ────────── */
+
+.suppSchedule {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.suppTimeBlock {
+  background: var(--pine-100);
+  border: 1px solid var(--pine-200);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.suppTimeHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.suppTimeIcon {
+  font-size: 14px;
+}
+
+.suppTimeLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pine-700);
+}
+
+.suppTimeSub {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 11px;
+  color: var(--pine-400);
+}
+
+.suppTimeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.suppTimeItem {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 13px;
+  color: var(--pine-800);
+  line-height: 1.5;
+}
+
 /* ─── Protocol badge ─────────────────────────────────────────── */
 .protocolBadge {
   display: inline-flex;
@@ -656,6 +712,34 @@
   flex-direction: column;
   gap: 8px;
   box-sizing: border-box;
+}
+
+/* ─── Power View toggle ──────────────────────────────────────── */
+
+.powerViewRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.powerViewBtn {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--pine-400);
+  background: none;
+  border: 1px solid var(--pine-300);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+
+.powerViewBtnActive {
+  color: var(--copper-500);
+  border-color: var(--copper-300);
+  background: var(--copper-100);
 }
 
 /* ═══════════════════════════════════════════════════════════════

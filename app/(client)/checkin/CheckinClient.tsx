@@ -62,6 +62,30 @@ function supplementWhy(name: string): string {
 type SectionKey = 'checkin' | 'quickactions' | 'nextsession' | 'supplements';
 const SECTION_KEYS: SectionKey[] = ['checkin', 'quickactions', 'nextsession', 'supplements'];
 const STORAGE_PREFIX = 'divergent-section-';
+const POWER_VIEW_KEY = 'divergent-power-view';
+
+function toTitleCase(s: string): string { return s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()); }
+
+function groupSupplementsByTime(supplements: SupplementRow[]): {
+  morning: SupplementRow[];
+  evening: SupplementRow[];
+  other: SupplementRow[];
+} {
+  const morning: SupplementRow[] = [];
+  const evening: SupplementRow[] = [];
+  const other: SupplementRow[] = [];
+  for (const s of supplements) {
+    const t = (s.timing ?? '').toLowerCase();
+    if (t.includes('breakfast') || t.includes('morning') || t.includes('am')) {
+      morning.push(s);
+    } else if (t.includes('dinner') || t.includes('evening') || t.includes('pm') || t.includes('night')) {
+      evening.push(s);
+    } else {
+      other.push(s);
+    }
+  }
+  return { morning, evening, other };
+}
 
 function formatSessionShort(iso: string): string {
   const d = new Date(iso);
@@ -156,6 +180,7 @@ export default function CheckinClient({
     supplements: false,
   });
   const [highlighted, setHighlighted] = useState(false);
+  const [powerView, setPowerView] = useState(false);
   const checkinRef = useRef<HTMLDivElement>(null);
 
   // Restore section state from localStorage on mount
@@ -168,14 +193,33 @@ export default function CheckinClient({
     if (Object.keys(restored).length > 0) {
       setOpen(prev => ({ ...prev, ...restored }));
     }
+    const pv = localStorage.getItem(POWER_VIEW_KEY);
+    if (pv === 'true') {
+      setPowerView(true);
+      setOpen({ checkin: true, quickactions: true, nextsession: true, supplements: true });
+    }
   }, []);
 
   function toggleSection(key: SectionKey) {
+    if (powerView) return; // In power view, sections stay open
     setOpen(prev => {
       const next = { ...prev, [key]: !prev[key] };
       try { localStorage.setItem(STORAGE_PREFIX + key, String(next[key])); } catch { /* ignore */ }
       return next;
     });
+  }
+
+  function togglePowerView() {
+    const next = !powerView;
+    setPowerView(next);
+    try { localStorage.setItem(POWER_VIEW_KEY, String(next)); } catch { /* ignore */ }
+    if (next) {
+      const allOpen: Record<SectionKey, boolean> = { checkin: true, quickactions: true, nextsession: true, supplements: true };
+      setOpen(allOpen);
+      for (const key of SECTION_KEYS) {
+        try { localStorage.setItem(STORAGE_PREFIX + key, 'true'); } catch { /* ignore */ }
+      }
+    }
   }
 
   function handleCheckinButton() {
@@ -305,6 +349,17 @@ export default function CheckinClient({
 
       {/* ── Accordion sections ─────────────────────────────────── */}
       <div className={styles.sections}>
+        <div className={styles.powerViewRow}>
+          <button
+            type="button"
+            className={`${styles.powerViewBtn} ${powerView ? styles.powerViewBtnActive : ''}`}
+            onClick={togglePowerView}
+            title={powerView ? 'Collapse all sections' : 'Expand all sections'}
+            aria-label={powerView ? 'Collapse all sections' : 'Expand all sections'}
+          >
+            {powerView ? '⊟ Compact View' : '⊞ Expand All'}
+          </button>
+        </div>
 
         {/* Milestone celebration (milestone days only) */}
         {protocolDayNum !== null && (
@@ -476,28 +531,78 @@ export default function CheckinClient({
               Your supplement protocol will appear here once your practitioner assigns it.
             </div>
           ) : (
-            <div className={styles.suppList}>
-              {supplements.map((s) => (
-                <div key={s.id} className={styles.suppItem}>
-                  <div>
-                    <div className={styles.suppName}>{s.name}</div>
-                    <div style={{
-                      fontFamily: "'Lora', Georgia, serif",
-                      fontStyle: 'italic',
-                      fontSize: '11px',
-                      color: 'var(--pine-400)',
-                      marginTop: '2px',
-                      lineHeight: 1.4,
-                    }}>
-                      {supplementWhy(s.name)}
-                    </div>
-                    {s.brand && <div className={styles.suppDose}>{s.brand}</div>}
-                    {s.dose && <div className={styles.suppDose}>{s.dose}</div>}
-                    {s.timing && <div className={styles.suppTiming}>{s.timing}</div>}
+            <>
+              {(() => {
+                const { morning, evening, other } = groupSupplementsByTime(supplements);
+                return (
+                  <div className={styles.suppSchedule}>
+                    {morning.length > 0 && (
+                      <div className={styles.suppTimeBlock}>
+                        <div className={styles.suppTimeHeader}>
+                          <span className={styles.suppTimeIcon}>☀️</span>
+                          <span className={styles.suppTimeLabel}>Morning</span>
+                          <span className={styles.suppTimeSub}>with breakfast</span>
+                        </div>
+                        <ul className={styles.suppTimeList}>
+                          {morning.map((s) => (
+                            <li key={s.id} className={styles.suppTimeItem}>• {s.name}{s.dose ? ` — ${s.dose}` : ''}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {evening.length > 0 && (
+                      <div className={styles.suppTimeBlock}>
+                        <div className={styles.suppTimeHeader}>
+                          <span className={styles.suppTimeIcon}>🌙</span>
+                          <span className={styles.suppTimeLabel}>Evening</span>
+                          <span className={styles.suppTimeSub}>with dinner</span>
+                        </div>
+                        <ul className={styles.suppTimeList}>
+                          {evening.map((s) => (
+                            <li key={s.id} className={styles.suppTimeItem}>• {s.name}{s.dose ? ` — ${s.dose}` : ''}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {other.length > 0 && (
+                      <div className={styles.suppTimeBlock}>
+                        <div className={styles.suppTimeHeader}>
+                          <span className={styles.suppTimeIcon}>◈</span>
+                          <span className={styles.suppTimeLabel}>Other</span>
+                        </div>
+                        <ul className={styles.suppTimeList}>
+                          {other.map((s) => (
+                            <li key={s.id} className={styles.suppTimeItem}>• {s.name}{s.dose ? ` — ${s.dose}` : ''}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
-            </div>
+                );
+              })()}
+              <div className={styles.suppList}>
+                {supplements.map((s) => (
+                  <div key={s.id} className={styles.suppItem}>
+                    <div>
+                      <div className={styles.suppName}>{s.name}</div>
+                      <div style={{
+                        fontFamily: "'Lora', Georgia, serif",
+                        fontStyle: 'italic',
+                        fontSize: '11px',
+                        color: 'var(--pine-400)',
+                        marginTop: '2px',
+                        lineHeight: 1.4,
+                      }}>
+                        {supplementWhy(s.name)}
+                      </div>
+                      {s.brand && <div className={styles.suppDose}>{s.brand}</div>}
+                      {s.dose && <div className={styles.suppDose}>{s.dose}</div>}
+                      {s.timing && <div className={styles.suppTiming}>{toTitleCase(s.timing)}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </Accordion>
 
