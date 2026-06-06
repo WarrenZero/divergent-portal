@@ -1,7 +1,7 @@
 import { getCurrentClient } from '@/lib/clerk';
 import { createClient } from '@/lib/supabase/server';
 import CheckinClient from './CheckinClient';
-import type { ProtocolInfo, SupplementRow, SessionRow } from './CheckinClient';
+import type { ProtocolInfo, SupplementRow, SessionRow, LatestInsight } from './CheckinClient';
 
 export const metadata = { title: 'Daily Check-In · Divergent' };
 
@@ -11,11 +11,16 @@ async function getCheckinData(clientId: string): Promise<{
   protocol: ProtocolInfo | null;
   supplements: SupplementRow[];
   nextSession: SessionRow | null;
+  latestInsight: LatestInsight | null;
+  recentJournalCount: number;
+  articlesRead: number;
+  consecutiveDays: number;
 }> {
   const supabase = await createClient();
   const now = new Date().toISOString();
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [protocolRes, supplementsRes, sessionRes] = await Promise.all([
+  const [protocolRes, supplementsRes, sessionRes, insightRes, journalCountRes, articlesRes, pulseRes] = await Promise.all([
     supabase
       .from('client_protocols')
       .select('current_phase, start_date, protocols(name)')
@@ -42,6 +47,37 @@ async function getCheckinData(clientId: string): Promise<{
       .order('scheduled_at')
       .limit(1)
       .maybeSingle(),
+
+    // Most recent insight
+    supabase
+      .from('client_insights')
+      .select('id, insight_text, generated_at, is_read')
+      .eq('client_id', clientId)
+      .order('generated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+
+    // Journal entries in last 7 days (count)
+    supabase
+      .from('journal_entries')
+      .select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId)
+      .gte('logged_at', sevenDaysAgo),
+
+    // Vault items read count
+    supabase
+      .from('vault_items')
+      .select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId)
+      .eq('is_read', true),
+
+    // Daily pulse entries in last 30 days for consecutive days calculation
+    supabase
+      .from('daily_pulse')
+      .select('logged_at')
+      .eq('client_id', clientId)
+      .gte('logged_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+      .order('logged_at', { ascending: false }),
   ]);
 
   let protocol: ProtocolInfo | null = null;
@@ -57,10 +93,41 @@ async function getCheckinData(clientId: string): Promise<{
     }
   }
 
+  // Build latestInsight
+  let latestInsight: LatestInsight | null = null;
+  if (insightRes.data) {
+    latestInsight = {
+      id: insightRes.data.id,
+      text: insightRes.data.insight_text,
+      generatedAt: insightRes.data.generated_at,
+      isRead: insightRes.data.is_read ?? false,
+    };
+  }
+
+  // Calculate consecutive days from pulse entries
+  const pulseDates = (pulseRes.data ?? []).map(
+    (p) => new Date(p.logged_at).toISOString().split('T')[0]
+  );
+  const uniquePulseDates = [...new Set(pulseDates)].sort().reverse();
+  let consecutiveDays = 0;
+  const today = new Date().toISOString().split('T')[0];
+  for (let i = 0; i < uniquePulseDates.length; i++) {
+    const expected = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    if (uniquePulseDates[i] === expected || (i === 0 && uniquePulseDates[0] === today)) {
+      consecutiveDays++;
+    } else {
+      break;
+    }
+  }
+
   return {
     protocol,
     supplements: supplementsRes.data ?? [],
     nextSession: sessionRes.data ?? null,
+    latestInsight,
+    recentJournalCount: journalCountRes.count ?? 0,
+    articlesRead: articlesRes.count ?? 0,
+    consecutiveDays,
   };
 }
 
@@ -147,9 +214,25 @@ export default async function CheckInPage() {
   const wellnessScore = client?.wellness_score ?? 0;
   const dashOffset = wellnessDashOffset(wellnessScore);
 
-  const { protocol, supplements, nextSession } = client
+  const {
+    protocol,
+    supplements,
+    nextSession,
+    latestInsight,
+    recentJournalCount,
+    articlesRead,
+    consecutiveDays,
+  } = client
     ? await getCheckinData(client.id)
-    : { protocol: null, supplements: [], nextSession: null };
+    : {
+        protocol: null,
+        supplements: [],
+        nextSession: null,
+        latestInsight: null,
+        recentJournalCount: 0,
+        articlesRead: 0,
+        consecutiveDays: 0,
+      };
 
   const protocolDay = protocol ? protocolDayLabel(protocol.startDate) : null;
 
@@ -220,6 +303,9 @@ export default async function CheckInPage() {
     }
   }
 
+  // Determine if NAQ is complete (wellness score > 0 means NAQ was submitted)
+  const naqComplete = wellnessScore > 0;
+
   return (
     <CheckinClient
       firstName={firstName}
@@ -234,6 +320,11 @@ export default async function CheckInPage() {
       aiNote={aiNote}
       weeklyFocus={weeklyFocus}
       voiceNoteUrl={voiceNoteUrl}
+      latestInsight={latestInsight}
+      recentJournalCount={recentJournalCount}
+      naqComplete={naqComplete}
+      articlesRead={articlesRead}
+      consecutiveDays={consecutiveDays}
     />
   );
 }

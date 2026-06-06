@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import DailyPulseCard from '@/components/client/DailyPulseCard';
 import MilestoneCard from '@/components/client/MilestoneCard';
+import WeeklyInsightCard from '@/components/client/WeeklyInsightCard';
+import ProgressCelebration from '@/components/client/ProgressCelebration';
 import styles from './Checkin.module.css';
 
 // ─── Types ────────────────────────────────────────────────────
@@ -30,6 +32,13 @@ export interface ProtocolInfo {
   startDate: string;
 }
 
+export interface LatestInsight {
+  id: string;
+  text: string;
+  generatedAt: string;
+  isRead: boolean;
+}
+
 export interface CheckinClientProps {
   firstName: string;
   wellnessScore: number;
@@ -43,6 +52,11 @@ export interface CheckinClientProps {
   aiNote: string;
   weeklyFocus: string[] | null;
   voiceNoteUrl: string | null;
+  latestInsight: LatestInsight | null;
+  recentJournalCount: number;
+  naqComplete: boolean;
+  articlesRead: number;
+  consecutiveDays: number;
 }
 
 // ─── Constants ────────────────────────────────────────────────
@@ -172,6 +186,11 @@ export default function CheckinClient({
   aiNote,
   weeklyFocus,
   voiceNoteUrl,
+  latestInsight,
+  recentJournalCount,
+  naqComplete,
+  articlesRead,
+  consecutiveDays,
 }: CheckinClientProps) {
   const [open, setOpen] = useState<Record<SectionKey, boolean>>({
     checkin: false,
@@ -182,6 +201,14 @@ export default function CheckinClient({
   const [highlighted, setHighlighted] = useState(false);
   const [powerView, setPowerView] = useState(false);
   const checkinRef = useRef<HTMLDivElement>(null);
+
+  // Trigger weekly insight generation if eligible (fire and forget)
+  useEffect(() => {
+    if (recentJournalCount >= 3) {
+      fetch('/api/insights/weekly', { method: 'POST' });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Restore section state from localStorage on mount
   useEffect(() => {
@@ -361,6 +388,17 @@ export default function CheckinClient({
           </button>
         </div>
 
+        {/* Progress celebration (one per milestone, localStorage-gated) */}
+        <ProgressCelebration
+          wellnessScore={wellnessScore}
+          naqComplete={naqComplete}
+          recentJournalCount={recentJournalCount}
+          consecutiveDays={consecutiveDays}
+          articlesRead={articlesRead}
+          hasInsight={latestInsight !== null}
+          protocolDay={protocolDayNum}
+        />
+
         {/* Milestone celebration (milestone days only) */}
         {protocolDayNum !== null && (
           <MilestoneCard day={protocolDayNum} wellnessScore={wellnessScore} />
@@ -434,6 +472,16 @@ export default function CheckinClient({
               ))}
             </ol>
           </div>
+        )}
+
+        {/* ── Weekly Insight Card ──────────────────────────────── */}
+        {recentJournalCount >= 3 && latestInsight && (
+          <WeeklyInsightCard
+            insightId={latestInsight.id}
+            insight={latestInsight.text}
+            generatedAt={latestInsight.generatedAt}
+            isRead={latestInsight.isRead}
+          />
         )}
 
         {/* ── AI Pattern Note ──────────────────────────────────── */}
