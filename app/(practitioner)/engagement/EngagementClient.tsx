@@ -67,6 +67,9 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
   const [toast, setToast] = useState<string | null>(null);
   const [nudgeAllModalOpen, setNudgeAllModalOpen] = useState(false);
   const [nudgePersonalNote, setNudgePersonalNote] = useState('');
+  const [weeklySending, setWeeklySending] = useState(false);
+  const [lastWeeklySentAt, setLastWeeklySentAt] = useState<string | null>(null);
+  const [weeklyClientId, setWeeklyClientId] = useState<string>('');
 
   const now = new Date();
 
@@ -128,6 +131,34 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
     }
     setBulkSending(false);
     showToast(`Sent nudges to ${sent} at-risk client${sent !== 1 ? 's' : ''}`);
+  }
+
+  // ── Weekly accountability emails ────────────────────────────────
+  async function sendWeeklyAccountability(clientId?: string) {
+    setWeeklySending(true);
+    try {
+      const body = clientId ? JSON.stringify({ clientId }) : '{}';
+      const res = await fetch('/api/emails/weekly-accountability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { sent: number; sentAt: string };
+        setLastWeeklySentAt(data.sentAt);
+        showToast(clientId
+          ? 'Weekly summary sent to client'
+          : `Weekly summary sent to ${data.sent} client${data.sent !== 1 ? 's' : ''}`,
+        );
+      } else {
+        showToast('Failed to send weekly summaries');
+      }
+    } catch {
+      showToast('Failed to send weekly summaries');
+    } finally {
+      setWeeklySending(false);
+      setWeeklyClientId('');
+    }
   }
 
   // ── Weekly digest ───────────────────────────────────────────────
@@ -238,7 +269,29 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
           >
             {digestSending ? 'Sending…' : 'Send Weekly Digest'}
           </button>
+          <button
+            className={`${styles.btn} ${styles.btnCopper}`}
+            onClick={() => sendWeeklyAccountability()}
+            disabled={weeklySending}
+            title="Send weekly summary email to all active clients"
+          >
+            {weeklySending ? 'Sending…' : 'Send Weekly Summaries'}
+          </button>
         </div>
+        {lastWeeklySentAt && (
+          <div style={{
+            fontFamily: "'Lora', Georgia, serif",
+            fontStyle: 'italic',
+            fontSize: 11,
+            color: 'var(--pine-400)',
+            marginTop: 6,
+            textAlign: 'right',
+          }}>
+            Last weekly summary sent: {new Date(lastWeeklySentAt).toLocaleString('en-US', {
+              month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true,
+            })}
+          </div>
+        )}
       </div>
 
       {/* Stats strip */}
@@ -374,7 +427,7 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
                   </div>
                 </div>
 
-                {/* Nudge action */}
+                {/* Actions */}
                 <div className={styles.nudgeBlock}>
                   <button
                     className={`${styles.btn} ${styles.btnNudge}`}
@@ -383,9 +436,18 @@ export default function EngagementClient({ clients, practitionerId }: Props) {
                   >
                     {isSending ? '…' : 'Send Nudge'}
                   </button>
+                  <button
+                    className={`${styles.btn} ${styles.btnGhost}`}
+                    onClick={() => { setWeeklyClientId(client.id); sendWeeklyAccountability(client.id); }}
+                    disabled={weeklySending && weeklyClientId === client.id}
+                    title="Send this client their weekly summary email now"
+                    style={{ fontSize: 10, padding: '4px 10px', marginTop: 4 }}
+                  >
+                    {weeklySending && weeklyClientId === client.id ? '…' : '✉ Weekly Summary'}
+                  </button>
                   {lastNudge && (
                     <div className={styles.lastNudge}>
-                      Last: {formatDate(lastNudge)}
+                      Last nudge: {formatDate(lastNudge)}
                     </div>
                   )}
                 </div>
