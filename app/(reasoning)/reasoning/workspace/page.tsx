@@ -2,7 +2,38 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Copy, AlertTriangle, Search } from 'lucide-react';
 import styles from './workspace.module.css';
+
+// ─── Citation helpers ────────────────────────────────────────────────────────
+
+interface ParsedMessage {
+  body: string;
+  references: string[];
+}
+
+function parseMessageCitations(content: string): ParsedMessage {
+  // Match "References:" (case-insensitive) preceded by one or more newlines
+  const refMatch = content.match(/\n{1,}\s*References:\s*\n/i);
+  if (!refMatch || refMatch.index === undefined) {
+    return { body: content, references: [] };
+  }
+  const body = content.slice(0, refMatch.index).trim();
+  const refSection = content.slice(refMatch.index + refMatch[0].length).trim();
+  const references = refSection
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+  return { body, references };
+}
+
+function renderMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\[(\d+)\]/g, '<sup class="citation-ref">[$1]</sup>')
+    .replace(/\n/g, '<br />');
+}
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -159,6 +190,127 @@ function buildSuggestedPrompts(profile: Profile | null): string[] {
   return prompts.slice(0, 4);
 }
 
+// ─── AssistantMessageBubble ────────────────────────────────────────────────
+
+interface AssistantMessageBubbleProps {
+  msg: {
+    id: string;
+    content: string;
+  };
+  onCopy: (content: string) => void;
+  onSaveNote: (content: string) => Promise<void>;
+  onResearchDepth: (content: string) => void;
+  onFindStudies: (content: string) => void;
+  styles: Record<string, string>;
+}
+
+function CitationLine({ line }: { line: string }) {
+  const isUncited = line.includes('⚠️') || line.includes('[Clinical pattern');
+  const numberMatch = line.match(/^\[(\d+)\]/);
+
+  if (isUncited) {
+    return (
+      <div className="citation-uncited">
+        <AlertTriangle size={11} color="#DFA878" style={{ flexShrink: 0, marginTop: 1 }} />
+        <em style={{ color: '#DFA878' }}>{line.replace('⚠️', '').trim()}</em>
+      </div>
+    );
+  }
+
+  if (!numberMatch) return <div className="citation-line">{line}</div>;
+
+  const number = numberMatch[0];
+  const rest = line.slice(number.length);
+
+  return (
+    <div className="citation-line">
+      <span className="citation-number">{number}</span>
+      <span className="citation-text">{rest}</span>
+    </div>
+  );
+}
+
+function AssistantMessageBubble({
+  msg,
+  onCopy,
+  onSaveNote,
+  onResearchDepth,
+  onFindStudies,
+  styles,
+}: AssistantMessageBubbleProps) {
+  const { body, references } = parseMessageCitations(msg.content);
+
+  function copyAllCitations() {
+    const text = references.join('\n');
+    void navigator.clipboard.writeText(text);
+  }
+
+  return (
+    <div className={styles.assistantMessage}>
+      <div>
+        <div className={styles.assistantBubble}>
+          <span className={styles.assistantPrefix}>✦</span>
+          <span
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(body) }}
+          />
+        </div>
+
+        {/* Citation block */}
+        {references.length > 0 && (
+          <div className={styles.citationBlock}>
+            <div className={styles.citationHeader}>
+              <span className={styles.citationLabel}>REFERENCES</span>
+              <button
+                className={styles.citationCopyBtn}
+                onClick={copyAllCitations}
+                title="Copy all citations"
+              >
+                <Copy size={11} />
+                Copy
+              </button>
+            </div>
+            <div className={styles.citationLines}>
+              {references.map((line, i) => (
+                <CitationLine key={i} line={line} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Action row */}
+        <div className={styles.assistantActions}>
+          <button
+            className={styles.assistantActionButton}
+            onClick={() => onCopy(msg.content)}
+          >
+            Copy
+          </button>
+          <button
+            className={styles.assistantActionButton}
+            onClick={() => void onSaveNote(msg.content)}
+          >
+            Save to notes →
+          </button>
+          <button
+            className={`${styles.assistantActionButton} ${styles.researchDepthBtn}`}
+            onClick={() => onResearchDepth(msg.content)}
+          >
+            ✦ Research depth
+          </button>
+          <button
+            className={styles.assistantActionButton}
+            onClick={() => onFindStudies(msg.content)}
+            style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            <em>Find studies</em>
+            <Search size={11} strokeWidth={2} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ────────────────────────────────────────────────────────
 
 export default function WorkspacePage() {
@@ -175,6 +327,7 @@ export default function WorkspacePage() {
   const [files, setFiles] = useState<ReasoningFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [attachments, setAttachments] = useState<AttachedFile[]>([]);
@@ -333,7 +486,21 @@ export default function WorkspacePage() {
 
   // ── Chat send ───────────────────────────────────────────────────────────
 
-  async function sendMessage() {
+  async function sendResearchMessage(prompt: string, sourceContent?: string) {
+    // Build a research-specific message — extracts topic from source content
+    const topicHint = sourceContent
+      ? sourceContent.slice(0, 120).replace(/\n/g, ' ')
+      : '';
+    const fullPrompt = topicHint
+      ? `${prompt}\n\nContext from previous response:\n"${topicHint}..."`
+      : prompt;
+    setInput(fullPrompt);
+    // Use a short timeout so input state is committed before sendMessage reads it
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
+    await sendMessage(true);
+  }
+
+  async function sendMessage(researchMode = false) {
     const text = input.trim();
     if (!text || isStreaming) return;
 
@@ -391,6 +558,7 @@ export default function WorkspacePage() {
           messages: historyMessages,
           conversationId: conv.id,
           attachedFileContent: attachedFileContent || undefined,
+          researchMode,
         }),
       });
 
@@ -414,7 +582,10 @@ export default function WorkspacePage() {
           if (!line.startsWith('data: ')) continue;
           try {
             const parsed = JSON.parse(line.slice(6)) as { type: string; content?: string };
-            if (parsed.type === 'delta' && parsed.content) {
+            if (parsed.type === 'search_active') {
+              setIsSearching(true);
+            } else if (parsed.type === 'delta' && parsed.content) {
+              setIsSearching(false);
               assistantText += parsed.content;
               setStreamedContent(assistantText);
             } else if (parsed.type === 'done') {
@@ -441,6 +612,7 @@ export default function WorkspacePage() {
       }
     } catch { /* non-fatal */ } finally {
       setIsStreaming(false);
+      setIsSearching(false);
       setStreamedContent('');
     }
   }
@@ -448,7 +620,7 @@ export default function WorkspacePage() {
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      void sendMessage();
+      void sendMessage(false);
     }
   }
 
@@ -838,35 +1010,24 @@ export default function WorkspacePage() {
                       <div className={styles.userBubble}>{msg.content}</div>
                     </div>
                   ) : (
-                    <div className={styles.assistantMessage}>
-                      <div>
-                        <div className={styles.assistantBubble}>
-                          <span className={styles.assistantPrefix}>✦</span>
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: msg.content
-                                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                                .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                                .replace(/\n/g, '<br />'),
-                            }}
-                          />
-                        </div>
-                        <div className={styles.assistantActions}>
-                          <button
-                            className={styles.assistantActionButton}
-                            onClick={() => copyMessage(msg.content)}
-                          >
-                            Copy
-                          </button>
-                          <button
-                            className={styles.assistantActionButton}
-                            onClick={() => void saveMessageAsNote(msg.content)}
-                          >
-                            Save to notes →
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <AssistantMessageBubble
+                      msg={msg}
+                      onCopy={copyMessage}
+                      onSaveNote={saveMessageAsNote}
+                      onResearchDepth={(content) =>
+                        void sendResearchMessage(
+                          'Provide the peer-reviewed research basis for your previous response. Search PubMed for supporting studies. Include specific PMID numbers where available. Format as a research summary with full citations.',
+                          content,
+                        )
+                      }
+                      onFindStudies={(content) =>
+                        void sendResearchMessage(
+                          'Search PubMed for peer-reviewed studies on the topic from your previous response. Return the most relevant 3-5 studies with authors, title, journal, year, and PMID.',
+                          content,
+                        )
+                      }
+                      styles={styles}
+                    />
                   )}
                 </div>
               ))}
@@ -879,17 +1040,16 @@ export default function WorkspacePage() {
                         <span className={styles.assistantPrefix}>✦</span>
                         <span
                           dangerouslySetInnerHTML={{
-                            __html: streamedContent
-                              .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                              .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                              .replace(/\n/g, '<br />'),
+                            __html: renderMarkdown(streamedContent),
                           }}
                         />
                       </>
                     ) : (
                       <div className={styles.streamingIndicator}>
                         <span className={styles.glyphPulse}>✦</span>
-                        Reasoning through your case…
+                        {isSearching
+                          ? 'Searching PubMed…'
+                          : 'Reasoning through your case…'}
                       </div>
                     )}
                   </div>
@@ -954,7 +1114,7 @@ export default function WorkspacePage() {
             </div>
             <button
               className={styles.sendButton}
-              onClick={() => void sendMessage()}
+              onClick={() => void sendMessage(false)}
               disabled={isStreaming || !input.trim()}
             >
               Send ✦

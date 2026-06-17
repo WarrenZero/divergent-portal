@@ -1192,3 +1192,104 @@
 .hiddenInput {
   display: none;
 }
+
+/* ─── Citation block ─────────────────────────────────────────────────────── */
+
+.citationBlock {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 10px;
+}
+
+.citationHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.citationLabel {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #C07848;
+  text-transform: uppercase;
+}
+
+.citationCopyBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #5A7C62;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 150ms, background 150ms;
+}
+
+.citationCopyBtn:hover {
+  color: #FDFAF5;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.citationLines {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* citation-line and citation-uncited are global because they render
+   inside dangerouslySetInnerHTML sibling components */
+:global(.citation-line) {
+  display: flex;
+  gap: 6px;
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-size: 10px;
+  line-height: 1.55;
+  color: #5A7C62;
+}
+
+:global(.citation-number) {
+  color: #C07848;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+:global(.citation-text) {
+  color: #5A7C62;
+}
+
+:global(.citation-uncited) {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+:global(.citation-ref) {
+  color: #C07848;
+  font-size: 0.75em;
+  vertical-align: super;
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 600;
+}
+
+/* ─── Research depth button ──────────────────────────────────────────────── */
+
+.researchDepthBtn {
+  color: #C07848 !important;
+}
+
+.researchDepthBtn:hover {
+  color: #D08C5C !important;
+}

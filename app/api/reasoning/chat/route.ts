@@ -2,7 +2,11 @@ import { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { anthropic, COPILOT_MODEL } from '@/lib/anthropic/client';
 import { createClient } from '@/lib/supabase/server';
-import type { MessageParam } from '@anthropic-ai/sdk/resources/messages';
+import {
+  formatReferencesForPrompt,
+  hasClinicalSearchTerms,
+} from '@/lib/reasoning/citations';
+import type { MessageParam, WebSearchTool20250305 } from '@anthropic-ai/sdk/resources/messages';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -28,6 +32,7 @@ interface ChatRequestBody {
   messages: Array<{ role: 'user' | 'assistant'; content: string }>;
   conversationId?: string;
   attachedFileContent?: string;
+  researchMode?: boolean;
 }
 
 // ─── SSE helpers ──────────────────────────────────────────────────────────
@@ -98,6 +103,29 @@ Use *italic* for somatopsychic observations.
 No ## headers. Short paragraphs. Bullet points only for 3+ items.
 Start each response with the most important clinical observation.
 
+# EVIDENCE AND CITATIONS
+You have access to a curated knowledge base of foundational NTA/HTMA clinical references. When making specific clinical claims, cite relevant sources using inline superscript-style numbers [1], [2] etc.
+
+At the end of responses that include citations, add a References section in this exact format:
+
+References:
+[1] David L. Watts. "HTMA: A Status Report." Trace Elements Inc., 1995.
+[2] Forrest H. Nielsen. "Boron in Human and Animal Nutrition." USDA Human Nutrition Research, 2014.
+
+CITATION RULES:
+1. Only cite sources that genuinely support your specific claim. Do not pad with unrelated references.
+2. Use HTMA references (Eck & Watts 1989, Watts 1995, Wilson 2010) when discussing mineral ratios, oxidation rate, and metabolic patterns.
+3. Use NTA Foundations when discussing the foundational hierarchy (digestion → blood sugar → fatty acids → minerals → vitamins → protein).
+4. When you make a clinically specific claim you cannot back with a reference from the list below, add a note on that line: ⚠️ [Clinical pattern — no specific citation available]
+5. This is more trustworthy than inventing references. Never fabricate authors, titles, or PMIDs.
+6. If web search results are available in the conversation, cite PubMed studies in this format:
+   [3] Author et al. "Title." Journal Name. Year. pubmed.ncbi.nlm.nih.gov/PMID
+7. Maximum 4 citations per response — most clinically relevant only.
+8. For conversational, non-clinical messages: no citations needed.
+
+CORE REFERENCE LIBRARY (use these — do not invent others):
+${formatReferencesForPrompt()}
+
 # CRITICAL RULES
 - Never diagnose, treat, cure, or prescribe.
 - Use language: "may support," "foundational nutrition," "restoration," "recalibration"
@@ -106,6 +134,16 @@ Start each response with the most important clinical observation.
 - Referral: always flag [REFERRAL NOTE]
 - You are a reasoning partner. The practitioner decides.`;
 }
+
+// ─── PubMed web search tool ────────────────────────────────────────────────
+
+const PUBMED_SEARCH_TOOL: WebSearchTool20250305 = {
+  type: 'web_search_20250305',
+  name: 'web_search',
+  // Restrict searches to PubMed for evidence quality
+  allowed_domains: ['pubmed.ncbi.nlm.nih.gov', 'ncbi.nlm.nih.gov'],
+  max_uses: 2,
+};
 
 // ─── Route handler ─────────────────────────────────────────────────────────
 
@@ -128,7 +166,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const { messages, conversationId, attachedFileContent } = body;
+  const { messages, conversationId, attachedFileContent, researchMode } = body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return new Response(sseChunk({ type: 'error', message: 'messages array is required' }), {
@@ -172,6 +210,12 @@ export async function POST(req: NextRequest) {
     return { role: m.role, content: m.content };
   });
 
+  // Determine if web search should be enabled
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user');
+  const shouldSearch =
+    researchMode === true ||
+    (lastUserMessage && hasClinicalSearchTerms(lastUserMessage.content));
+
   const encoder = new TextEncoder();
   let fullAssistantContent = '';
   let outputTokens = 0;
@@ -183,12 +227,20 @@ export async function POST(req: NextRequest) {
         controller.enqueue(encoder.encode(sseChunk(data)));
 
       try {
-        const anthropicStream = anthropic.messages.stream({
+        const streamParams = {
           model: COPILOT_MODEL,
-          max_tokens: 2048,
+          max_tokens: shouldSearch ? 3072 : 2048,
           system: systemPrompt,
           messages: anthropicMessages,
-        });
+          ...(shouldSearch && { tools: [PUBMED_SEARCH_TOOL] }),
+        };
+
+        const anthropicStream = anthropic.messages.stream(streamParams);
+
+        // Emit a signal so the UI can show "Searching PubMed..." if search is active
+        if (shouldSearch) {
+          enqueue({ type: 'search_active' });
+        }
 
         anthropicStream.on('text', (text) => {
           fullAssistantContent += text;
@@ -237,7 +289,6 @@ export async function POST(req: NextRequest) {
 
         await supabase.from('reasoning_messages').insert(inserts);
 
-        // Update conversation count and timestamp
         await supabase
           .from('reasoning_conversations')
           .update({
