@@ -242,6 +242,27 @@
   margin-top: 6px;
 }
 
+.annualOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 12px;
+  color: #5A4C38;
+}
+
+.bestValueTag {
+  background: #1E3122;
+  color: #80A088;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
 /* Mini feature checklist */
 
 .miniFeatures {
@@ -808,4 +829,111 @@
   .formRow {
     grid-template-columns: 1fr;
   }
+}
+
+/* ─── Founding Member card ───────────────────────────────────────────────── */
+
+.foundingCard {
+  margin-top: 16px;
+  background: #0F1F13;
+  border: 1px solid rgba(192, 120, 72, 0.5);
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 0 0 1px rgba(192, 120, 72, 0.1), 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.foundingEyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #C07848;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.foundingGlyph {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.foundingHeadline {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FDFAF5;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.foundingPrice {
+  color: #C07848;
+  font-weight: 800;
+}
+
+.foundingBody {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #80A088;
+  margin-bottom: 14px;
+}
+
+.foundingSpots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #DFA878;
+  margin-bottom: 16px;
+}
+
+.foundingSpotsDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #C07848;
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.foundingCta {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(192, 120, 72, 0.6);
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #C07848;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, color 150ms;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.foundingCta:hover {
+  background: rgba(192, 120, 72, 0.1);
+  border-color: #C07848;
+  color: #DFA878;
+}
+
+/* ─── Pricing card annual line ───────────────────────────────────────────── */
+
+.pricingCardAnnual {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 12px;
+  color: #5A7C62;
+  margin-bottom: 6px;
+  font-style: italic;
 }

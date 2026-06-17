@@ -204,10 +204,14 @@ export default function JoinPage() {
             <div className={styles.signupCardHeader}>
               <span className={styles.trialBadge}>7-Day Free Trial</span>
               <div className={styles.priceRow}>
-                <span className={styles.price}>$39.99</span>
+                <span className={styles.price}>$49.99</span>
                 <span className={styles.pricePer}>/month</span>
               </div>
               <p className={styles.priceSub}>after trial · cancel anytime</p>
+              <p className={styles.annualOption}>
+                <span className={styles.bestValueTag}>BEST VALUE</span>
+                Or $399/year — save $201
+              </p>
             </div>
 
             <ul className={styles.miniFeatures}>
@@ -294,6 +298,35 @@ export default function JoinPage() {
               No credit card required for trial. Cancel anytime.
             </p>
           </div>
+
+          {/* ── Founding Member offer ── */}
+          <div className={styles.foundingCard}>
+            <p className={styles.foundingEyebrow}>
+              <span className={styles.foundingGlyph}>✦</span>
+              FOUNDING MEMBER OFFER
+            </p>
+            <p className={styles.foundingHeadline}>
+              Join before July 15 and lock in{' '}
+              <strong className={styles.foundingPrice}>$29/month forever.</strong>
+            </p>
+            <p className={styles.foundingBody}>
+              First 20 practitioners only — this rate never increases as the platform grows.
+            </p>
+            <p className={styles.foundingSpots}>
+              <span className={styles.foundingSpotsDot} />
+              17 of 20 spots remaining
+            </p>
+            <button
+              type="button"
+              className={styles.foundingCta}
+              onClick={() => {
+                document.querySelector('input#firstName')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                (document.querySelector('input#firstName') as HTMLInputElement)?.focus();
+              }}
+            >
+              Claim Founding Member rate →
+            </button>
+          </div>
         </div>
       </section>
 
@@ -346,9 +379,12 @@ export default function JoinPage() {
             <div className={styles.pricingCardBadge}>Start here</div>
             <p className={styles.pricingCardLabel}>Reasoning Assistant</p>
             <div className={styles.pricingCardPrice}>
-              <span className={styles.pricingAmount}>$39.99</span>
+              <span className={styles.pricingAmount}>$49.99</span>
               <span className={styles.pricingCadence}>/month</span>
             </div>
+            <p className={styles.pricingCardAnnual}>
+              Annual: $399/year
+            </p>
             <p className={styles.pricingCardTrial}>7-day free trial · no card required</p>
             <ul className={styles.tierList}>
               {TIER_REASONING.map((f) => (
@@ -374,6 +410,9 @@ export default function JoinPage() {
               <span className={styles.pricingAmount}>$129</span>
               <span className={styles.pricingCadence}>/month</span>
             </div>
+            <p className={styles.pricingCardAnnual}>
+              Annual: $999/year
+            </p>
             <p className={styles.pricingCardTrial}>Includes Reasoning Assistant</p>
             <ul className={styles.tierList}>
               {TIER_FULL.map((f) => (
