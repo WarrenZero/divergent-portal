@@ -259,7 +259,7 @@ export default function OnboardingPage() {
           </div>
           <button
             className={styles.openButton}
-            onClick={() => router.push('/workspace')}
+            onClick={() => router.push('/reasoning/workspace')}
           >
             Open the Reasoning Assistant →
           </button>
@@ -273,7 +273,7 @@ export default function OnboardingPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <Link href="/join" className={styles.headerBrand}>✦ Divergent AI</Link>
+        <Link href="/reasoning/join" className={styles.headerBrand}>✦ Divergent AI</Link>
         <span className={styles.headerStep}>Step {step} of {totalSteps}</span>
       </header>
 

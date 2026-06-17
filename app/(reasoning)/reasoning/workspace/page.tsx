@@ -734,7 +734,7 @@ export default function WorkspacePage() {
             </div>
           </div>
 
-          <button className={styles.settingsLink} onClick={() => router.push('/onboarding')}>
+          <button className={styles.settingsLink} onClick={() => router.push('/reasoning/onboarding')}>
             ⚙ Settings / Update profile
           </button>
         </div>

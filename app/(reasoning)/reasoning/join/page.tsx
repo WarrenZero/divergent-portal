@@ -49,7 +49,7 @@ export default function JoinPage() {
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
       } else {
-        router.push('/onboarding');
+        router.push('/reasoning/onboarding');
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
