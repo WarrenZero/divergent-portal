@@ -1,0 +1,396 @@
+/* onboarding.module.css — Divergent AI onboarding wizard */
+
+.page {
+  min-height: 100vh;
+  background: #FDFAF5;
+  font-family: var(--font-lora), Georgia, serif;
+}
+
+/* ─── Header ──────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  border-bottom: 1px solid #E8DECE;
+  background: #FDFAF5;
+}
+
+.headerBrand {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  font-variant: small-caps;
+  color: #C07848;
+  text-decoration: none;
+}
+
+.headerStep {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 13px;
+  color: #9A8A72;
+}
+
+/* ─── Progress bar ────────────────────────────────── */
+
+.progressWrap {
+  background: #F0E8DA;
+  height: 3px;
+}
+
+.progressBar {
+  height: 3px;
+  background: #C07848;
+  transition: width 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Content area ────────────────────────────────── */
+
+.content {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 56px 48px 80px;
+}
+
+.stepHeader {
+  margin-bottom: 40px;
+}
+
+.stepEyebrow {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #C07848;
+  margin-bottom: 10px;
+}
+
+.stepTitle {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: #0F1F13;
+  margin: 0 0 10px;
+  line-height: 1.2;
+}
+
+.stepSubtitle {
+  font-style: italic;
+  font-size: 16px;
+  color: #9A8A72;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ─── Field groups ────────────────────────────────── */
+
+.fieldGroup {
+  margin-bottom: 32px;
+}
+
+.fieldLabel {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5A4C38;
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* ─── Chip multi-select ───────────────────────────── */
+
+.chipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #D4C4B0;
+  background: #FDFAF5;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5A4C38;
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms, color 150ms;
+  user-select: none;
+}
+
+.chip:hover {
+  border-color: #C07848;
+  color: #C07848;
+}
+
+.chipActive {
+  border-color: #C07848;
+  background: #F5E0CC;
+  color: #8A4810;
+}
+
+/* ─── Radio options ───────────────────────────────── */
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radioOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid #E8DECE;
+  border-radius: 10px;
+  background: #FDFAF5;
+  cursor: pointer;
+  transition: border-color 150ms, background 150ms;
+}
+
+.radioOption:hover {
+  border-color: #C07848;
+  background: #F8F2E8;
+}
+
+.radioOptionActive {
+  border-color: #C07848;
+  background: #F5E0CC;
+}
+
+.radioCircle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #D4C4B0;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 150ms;
+}
+
+.radioCircleActive {
+  border-color: #C07848;
+}
+
+.radioDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #C07848;
+}
+
+.radioLabel {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F1F13;
+  margin-bottom: 2px;
+}
+
+.radioSub {
+  font-size: 13px;
+  color: #9A8A72;
+  line-height: 1.5;
+}
+
+/* ─── Text inputs ─────────────────────────────────── */
+
+.textInput {
+  width: 100%;
+  background: #FDFAF5;
+  border: 1.5px solid #E8DECE;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #0F1F13;
+  font-family: var(--font-lora), Georgia, serif;
+  transition: border-color 150ms;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.textInput::placeholder {
+  color: #D4C4B0;
+}
+
+.textInput:focus {
+  border-color: #C07848;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.65;
+}
+
+/* ─── Number input ────────────────────────────────── */
+
+.numberInput {
+  width: 140px;
+}
+
+/* ─── Navigation buttons ──────────────────────────── */
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid #E8DECE;
+}
+
+.backButton {
+  background: transparent;
+  border: 1.5px solid #D4C4B0;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #9A8A72;
+  cursor: pointer;
+  transition: border-color 150ms, color 150ms;
+}
+
+.backButton:hover {
+  border-color: #5A4C38;
+  color: #5A4C38;
+}
+
+.continueButton {
+  background: #C07848;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 28px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F1F13;
+  cursor: pointer;
+  transition: background 150ms, transform 150ms;
+  letter-spacing: 0.02em;
+}
+
+.continueButton:hover:not(:disabled) {
+  background: #D08C5C;
+  transform: translateY(-1px);
+}
+
+.continueButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Completion screen ───────────────────────────── */
+
+.completionPage {
+  min-height: 100vh;
+  background: #0F1F13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-lora), Georgia, serif;
+}
+
+.completionCard {
+  max-width: 520px;
+  text-align: center;
+  padding: 48px;
+}
+
+.completionGlyph {
+  font-size: 56px;
+  color: #C07848;
+  margin-bottom: 32px;
+  animation: glyphPulse 2s ease-in-out infinite;
+}
+
+@keyframes glyphPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.completionTitle {
+  font-family: var(--font-syne), sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  color: #FDFAF5;
+  margin: 0 0 14px;
+}
+
+.completionSubtitle {
+  font-style: italic;
+  font-size: 17px;
+  color: #80A088;
+  line-height: 1.65;
+  margin: 0 0 32px;
+}
+
+.intelligenceBadge {
+  display: inline-block;
+  border: 1px solid rgba(192, 120, 72, 0.4);
+  border-radius: 8px;
+  padding: 12px 24px;
+  margin-bottom: 36px;
+}
+
+.intelligenceBadgeLabel {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #5A7C62;
+  margin-bottom: 6px;
+}
+
+.intelligenceBadgeValue {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #C07848;
+  text-transform: capitalize;
+}
+
+.openButton {
+  background: #C07848;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 36px;
+  font-family: var(--font-syne), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1F13;
+  cursor: pointer;
+  transition: background 150ms, transform 150ms;
+  letter-spacing: 0.02em;
+  width: 100%;
+}
+
+.openButton:hover {
+  background: #D08C5C;
+  transform: translateY(-1px);
+}
+
+/* ─── Responsive ──────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 24px;
+  }
+
+  .content {
+    padding: 36px 24px 60px;
+  }
+}
