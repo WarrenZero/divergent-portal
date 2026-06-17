@@ -174,6 +174,7 @@ export default function WorkspacePage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [files, setFiles] = useState<ReasoningFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [attachments, setAttachments] = useState<AttachedFile[]>([]);
@@ -254,13 +255,22 @@ export default function WorkspacePage() {
   async function loadConversationMessages(conv: Conversation) {
     setActiveConversation(conv);
     setMessages([]);
+    setInput('');
+    setAttachments([]);
+    setIsLoadingMessages(true);
     try {
       const res = await fetch(`/api/reasoning/conversations/${conv.id}`);
       if (res.ok) {
-        const data = await res.json() as { messages: Message[] };
+        const data = await res.json() as { conversation: Conversation; messages: Message[] };
         setMessages(data.messages ?? []);
+        // Scroll to bottom after messages populate
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 50);
       }
-    } catch { /* non-fatal */ }
+    } catch { /* non-fatal */ } finally {
+      setIsLoadingMessages(false);
+    }
   }
 
   // ── Conversation management ─────────────────────────────────────────────
@@ -782,7 +792,8 @@ export default function WorkspacePage() {
 
         {/* Messages area */}
         <div className={styles.messagesArea}>
-          {(!activeConversation || messages.length === 0) ? (
+          {!activeConversation ? (
+            // No conversation selected — landing empty state
             <div className={styles.emptyState}>
               <div className={styles.emptyGlyph}>✦</div>
               <h2 className={styles.emptyTitle}>
@@ -802,6 +813,21 @@ export default function WorkspacePage() {
                   </button>
                 ))}
               </div>
+            </div>
+          ) : isLoadingMessages ? (
+            // Conversation selected, messages loading
+            <div className={styles.loadingState}>
+              <span className={styles.glyphPulse}>✦</span>
+              <p>Loading conversation…</p>
+            </div>
+          ) : messages.length === 0 ? (
+            // Conversation selected, no messages yet
+            <div className={styles.emptyState}>
+              <div className={styles.emptyGlyph}>✦</div>
+              <h2 className={styles.emptyTitle}>New conversation</h2>
+              <p className={styles.emptySubtitle}>
+                <em>Type your first message below to begin.</em>
+              </p>
             </div>
           ) : (
             <>
