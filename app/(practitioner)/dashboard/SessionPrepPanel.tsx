@@ -36,6 +36,8 @@ export interface ClientForPrep {
   last_name: string;
   wellness_score: number;
   primary_concern: string | null;
+  shame_signal_active: boolean | null;
+  last_psychological_state: string | null;
 }
 
 interface Props {
@@ -187,6 +189,50 @@ export default function SessionPrepPanel({ sessions, clientsById, prepData }: Pr
             <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 10, color: '#9A8A72', letterSpacing: '0.08em', marginBottom: 20 }}>
               SESSION BRIEF
             </div>
+
+            {/* Shame signal warning */}
+            {openClient.shame_signal_active && (
+              <div style={{
+                background: '#FEF3C7',
+                border: '1px solid #FCD34D',
+                borderLeft: '3px solid #D97706',
+                borderRadius: 8,
+                padding: '10px 14px',
+                marginBottom: 20,
+              }}>
+                <div style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase' as const,
+                  color: '#92400E',
+                  marginBottom: 4,
+                }}>
+                  ⚠ Shame Signal Detected
+                </div>
+                <div style={{
+                  fontFamily: "'Lora', Georgia, serif",
+                  fontSize: 12,
+                  color: '#78350F',
+                  lineHeight: 1.6,
+                }}>
+                  {openClient.first_name} flagged shame or overwhelm in their last check-in. Open with non-judgmental language — validate the effort, not the outcome.
+                </div>
+              </div>
+            )}
+
+            {/* Behavioral state */}
+            {openClient.last_psychological_state && !openClient.shame_signal_active && (
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#9A8A72', marginBottom: 4 }}>
+                  Behavioral State
+                </div>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#0F1F13', textTransform: 'capitalize' as const }}>
+                  {openClient.last_psychological_state}
+                </div>
+              </div>
+            )}
 
             {/* Wellness Score */}
             <div style={{ marginBottom: 20 }}>

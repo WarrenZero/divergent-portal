@@ -17,6 +17,8 @@ interface ClientRow {
   primary_concern: string | null;
   wellness_score: number;
   created_at: string;
+  shame_signal_active: boolean | null;
+  last_psychological_state: string | null;
 }
 
 // ─── Page ─────────────────────────────────────────────────────
@@ -28,7 +30,7 @@ export default async function ClientsPage() {
   const supabase = await createClient();
   const { data: clients } = await supabase
     .from('clients')
-    .select('id, first_name, last_name, email, primary_concern, wellness_score, created_at')
+    .select('id, first_name, last_name, email, primary_concern, wellness_score, created_at, shame_signal_active, last_psychological_state')
     .eq('practitioner_id', practitioner.id)
     .order('created_at', { ascending: false });
 

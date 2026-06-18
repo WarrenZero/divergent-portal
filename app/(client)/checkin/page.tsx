@@ -1,6 +1,7 @@
 import { getCurrentClient } from '@/lib/clerk';
 import { createClient } from '@/lib/supabase/server';
 import CheckinClient from './CheckinClient';
+import FrictionCheckin from '@/components/client/FrictionCheckin';
 import type { ProtocolInfo, SupplementRow, SessionRow, LatestInsight } from './CheckinClient';
 
 export const metadata = { title: 'Daily Check-In · Divergent' };
@@ -15,6 +16,7 @@ async function getCheckinData(clientId: string): Promise<{
   recentJournalCount: number;
   articlesRead: number;
   consecutiveDays: number;
+  daysSinceLastCheckin: number | null;
 }> {
   const supabase = await createClient();
   const now = new Date().toISOString();
@@ -120,6 +122,11 @@ async function getCheckinData(clientId: string): Promise<{
     }
   }
 
+  const lastPulseEntry = pulseRes.data?.[0];
+  const daysSinceLastCheckin = lastPulseEntry
+    ? Math.floor((Date.now() - new Date(lastPulseEntry.logged_at).getTime()) / 86400000)
+    : null;
+
   return {
     protocol,
     supplements: supplementsRes.data ?? [],
@@ -128,6 +135,7 @@ async function getCheckinData(clientId: string): Promise<{
     recentJournalCount: journalCountRes.count ?? 0,
     articlesRead: articlesRes.count ?? 0,
     consecutiveDays,
+    daysSinceLastCheckin,
   };
 }
 
@@ -222,6 +230,7 @@ export default async function CheckInPage() {
     recentJournalCount,
     articlesRead,
     consecutiveDays,
+    daysSinceLastCheckin,
   } = client
     ? await getCheckinData(client.id)
     : {
@@ -232,6 +241,7 @@ export default async function CheckInPage() {
         recentJournalCount: 0,
         articlesRead: 0,
         consecutiveDays: 0,
+        daysSinceLastCheckin: null,
       };
 
   const protocolDay = protocol ? protocolDayLabel(protocol.startDate) : null;
@@ -306,25 +316,37 @@ export default async function CheckInPage() {
   // Determine if NAQ is complete (wellness score > 0 means NAQ was submitted)
   const naqComplete = wellnessScore > 0;
 
+  const showFrictionCheckin =
+    client !== null &&
+    (daysSinceLastCheckin === null || daysSinceLastCheckin >= 2);
+
   return (
-    <CheckinClient
-      firstName={firstName}
-      wellnessScore={wellnessScore}
-      dashOffset={dashOffset}
-      protocol={protocol}
-      protocolDay={protocolDay}
-      protocolDayNum={protocolDayNum}
-      phaseText={phaseText}
-      supplements={supplements}
-      nextSession={nextSession}
-      aiNote={aiNote}
-      weeklyFocus={weeklyFocus}
-      voiceNoteUrl={voiceNoteUrl}
-      latestInsight={latestInsight}
-      recentJournalCount={recentJournalCount}
-      naqComplete={naqComplete}
-      articlesRead={articlesRead}
-      consecutiveDays={consecutiveDays}
-    />
+    <>
+      {showFrictionCheckin && client && (
+        <FrictionCheckin
+          clientId={client.id}
+          missedDays={daysSinceLastCheckin ?? 999}
+        />
+      )}
+      <CheckinClient
+        firstName={firstName}
+        wellnessScore={wellnessScore}
+        dashOffset={dashOffset}
+        protocol={protocol}
+        protocolDay={protocolDay}
+        protocolDayNum={protocolDayNum}
+        phaseText={phaseText}
+        supplements={supplements}
+        nextSession={nextSession}
+        aiNote={aiNote}
+        weeklyFocus={weeklyFocus}
+        voiceNoteUrl={voiceNoteUrl}
+        latestInsight={latestInsight}
+        recentJournalCount={recentJournalCount}
+        naqComplete={naqComplete}
+        articlesRead={articlesRead}
+        consecutiveDays={consecutiveDays}
+      />
+    </>
   );
 }

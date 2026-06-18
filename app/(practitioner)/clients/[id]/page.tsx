@@ -24,6 +24,8 @@ interface ClientRow {
   date_of_birth: string | null;
   wellness_score: number;
   created_at: string;
+  last_psychological_state: string | null;
+  shame_signal_active: boolean | null;
 }
 
 interface PulseRow {
@@ -466,6 +468,37 @@ export default async function ClientProfilePage({
           {client.primary_concern && (
             <div className={styles.profileConcern}>
               &ldquo;{client.primary_concern}&rdquo;
+            </div>
+          )}
+          {(client.shame_signal_active || client.last_psychological_state) && (
+            <div style={{ marginTop: 6, display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+              {client.shame_signal_active && (
+                <span style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: '#92400E',
+                  background: '#FEF3C7',
+                  border: '1px solid #FCD34D',
+                  padding: '2px 9px',
+                  borderRadius: 4,
+                  letterSpacing: '0.03em',
+                }}>
+                  ⚠ Shame signal
+                </span>
+              )}
+              {client.last_psychological_state && (
+                <span style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: 'var(--bone-600)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.07em',
+                }}>
+                  Behavioral state: {client.last_psychological_state}
+                </span>
+              )}
             </div>
           )}
         </div>

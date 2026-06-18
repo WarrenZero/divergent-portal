@@ -12,6 +12,8 @@ interface ClientRow {
   primary_concern: string | null;
   wellness_score: number;
   created_at: string;
+  shame_signal_active: boolean | null;
+  last_psychological_state: string | null;
 }
 
 interface Props {
@@ -176,6 +178,19 @@ export default function ClientListWithBulkActions({ clients }: Props) {
                   {client.wellness_score}
                 </span>
                 <span className={styles.scoreLabel}>Wellness</span>
+                {client.shame_signal_active && (
+                  <span style={{
+                    display: 'block',
+                    fontFamily: "'Syne', sans-serif",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: '#D97706',
+                    marginTop: 4,
+                    letterSpacing: '0.02em',
+                  }}>
+                    ⚠ Shame signal
+                  </span>
+                )}
               </div>
             </Link>
           </div>

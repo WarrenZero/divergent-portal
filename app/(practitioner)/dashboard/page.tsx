@@ -19,6 +19,8 @@ interface ClientRow {
   wellness_score: number;
   primary_concern: string | null;
   created_at: string;
+  shame_signal_active: boolean | null;
+  last_psychological_state: string | null;
 }
 
 interface SessionRow {
@@ -49,7 +51,7 @@ async function getDashboardData(practitionerId: string): Promise<DashboardData> 
   const [clientsRes, sessionsRes, completedRes, totalClientsRes] = await Promise.all([
     supabase
       .from('clients')
-      .select('id, first_name, last_name, wellness_score, primary_concern, created_at')
+      .select('id, first_name, last_name, wellness_score, primary_concern, created_at, shame_signal_active, last_psychological_state')
       .eq('practitioner_id', practitionerId)
       .order('created_at', { ascending: false }),
     supabase
