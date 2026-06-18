@@ -15,7 +15,7 @@
 }
 
 .pageTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -80,7 +80,7 @@
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 20px;
   background: transparent;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -149,7 +149,7 @@
   left: 8px;
   background: rgba(15, 31, 19, 0.75);
   color: var(--copper-300, #DFA878);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -174,7 +174,7 @@
 }
 
 .tag {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -186,7 +186,7 @@
 }
 
 .cardTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-1, #0F1F13);
@@ -208,7 +208,7 @@
 }
 
 .cardMeta {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   color: var(--text-3, #9A8A72);
   margin: 0 12px 8px;
@@ -222,7 +222,7 @@
 }
 
 .macroPillP {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   background: var(--pine-100, #DDE8DE);
@@ -232,7 +232,7 @@
 }
 
 .macroPillC {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   background: var(--copper-100, #F5E0CC);
@@ -242,7 +242,7 @@
 }
 
 .macroPillF {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   background: var(--bone-200, #F0E8DA);
@@ -258,7 +258,7 @@
 }
 
 .shareIconBtn {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--copper-500, #C07848);
@@ -285,7 +285,7 @@
   padding: 5px 8px;
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 6px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   background: #fff;
   color: var(--text-1, #0F1F13);
@@ -297,7 +297,7 @@
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -320,7 +320,7 @@
   color: var(--pine-200, #B0C8B4);
   border: none;
   border-radius: 8px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -406,7 +406,7 @@
   left: 16px;
   background: rgba(15, 31, 19, 0.75);
   color: var(--copper-300, #DFA878);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -432,7 +432,7 @@
 }
 
 .modalTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -461,7 +461,7 @@
 }
 
 .modalMeta {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-3, #9A8A72);
 }
@@ -473,7 +473,7 @@
 }
 
 .therapeuticNoteLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -504,7 +504,7 @@
 }
 
 .flagChip {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -525,7 +525,7 @@
 }
 
 .sectionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -562,7 +562,7 @@
 .ingredientRow:last-child { border-bottom: none; }
 
 .ingredientAmt {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   color: var(--copper-500, #C07848);
@@ -612,7 +612,7 @@
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 7px;
   background: #fff;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-1, #0F1F13);
   width: 100%;
@@ -637,7 +637,7 @@
   color: #fff;
   border: none;
   border-radius: 7px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -649,7 +649,7 @@
 .shareBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .shareSuccess {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
   color: var(--pine-400, #5A7C62);
@@ -700,7 +700,7 @@
 }
 
 .formLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -719,7 +719,7 @@
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 20px;
   background: transparent;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -744,7 +744,7 @@
   color: var(--pine-200, #B0C8B4);
   border: none;
   border-radius: 8px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -772,7 +772,7 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .genError {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   color: #B04848;
   background: rgba(176, 72, 72, 0.08);
@@ -795,7 +795,7 @@
 }
 
 .generatedTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -803,7 +803,7 @@
 }
 
 .metaRow {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   color: var(--text-3, #9A8A72);
 }
@@ -820,7 +820,7 @@
   color: #fff;
   border: none;
   border-radius: 7px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -832,7 +832,7 @@
   color: var(--text-3, #9A8A72);
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 7px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;

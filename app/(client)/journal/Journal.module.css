@@ -33,7 +33,7 @@
 }
 
 .topBarLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -43,7 +43,7 @@
 }
 
 .topBarTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.2rem, 2.5vw, 1.6rem);
   font-weight: 800;
   color: #fff;
@@ -76,7 +76,7 @@
 
 /* ─── Section label ──────────────────────────────────────────── */
 .sectionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -104,7 +104,7 @@
 
 /* ─── Field labels ───────────────────────────────────────────── */
 .fieldLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -160,7 +160,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   color: var(--text-1);
   box-sizing: border-box;
@@ -193,7 +193,7 @@
   border-radius: 20px;
   border: 1px solid var(--border-2);
   background: var(--surface);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-2);
@@ -234,7 +234,7 @@
   border-radius: 50%;
   border: 1.5px solid var(--border-2);
   background: var(--surface);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-2);
@@ -259,7 +259,7 @@
 }
 
 .scaleCaption {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   color: var(--pine-600);
@@ -269,7 +269,7 @@
 .scaleRange {
   display: flex;
   justify-content: space-between;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -289,7 +289,7 @@
 }
 
 .symptomNoteLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -311,7 +311,7 @@
   border-radius: var(--radius-sm);
   border: 2px solid var(--border-2);
   background: var(--surface);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -347,7 +347,7 @@
   border-radius: 8px;
   border: 1.5px solid var(--border-2);
   background: var(--surface);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-2);
@@ -370,7 +370,7 @@
 }
 
 .bristolCaption {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   margin-bottom: 2px;
@@ -422,7 +422,7 @@
   background: var(--copper-100);
   border: 1px solid var(--copper-300);
   border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   color: var(--copper-700);
 }
@@ -432,7 +432,7 @@
   background: var(--pine-100);
   border: 1px solid var(--pine-200);
   border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--pine-600);
@@ -444,7 +444,7 @@
   background: var(--pine-700);
   border: none;
   border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -508,14 +508,14 @@
 }
 
 .dateGroupTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 600;
   color: var(--pine-900, #0F1F13);
 }
 
 .dateGroupBadge {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   color: var(--copper-500);
@@ -632,7 +632,7 @@
 }
 
 .entryDate {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1);
@@ -640,7 +640,7 @@
 }
 
 .entryTime {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   color: var(--text-3);
   flex-shrink: 0;
@@ -651,7 +651,7 @@
   background: var(--pine-700);
   color: #fff;
   border-radius: 20px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -672,7 +672,7 @@
 }
 
 .moodPill {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   color: var(--text-3);
 }
@@ -683,7 +683,7 @@
 }
 
 .bristolTag {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 800;
 }
@@ -709,7 +709,7 @@
 .entryField {}
 
 .entryFieldLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -743,7 +743,7 @@
 }
 
 .entryMetaLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -752,7 +752,7 @@
 }
 
 .entryMetaVal {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-1);
@@ -784,7 +784,7 @@
 }
 
 .emptyTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: var(--text-2);

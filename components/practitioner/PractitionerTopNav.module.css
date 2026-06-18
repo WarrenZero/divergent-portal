@@ -41,7 +41,7 @@
 }
 
 .brandName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 800;
   color: #fff;
@@ -70,7 +70,7 @@
 }
 
 .practitionerLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--pine-300);
@@ -85,7 +85,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 5px 12px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--pine-200);

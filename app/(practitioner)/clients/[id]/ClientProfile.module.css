@@ -3,7 +3,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-3);
@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 800;
   color: #fff;
@@ -40,7 +40,7 @@
 .profileInfo { flex: 1; min-width: 0; }
 
 .profileName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 800;
   color: var(--text-1);
@@ -73,7 +73,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: none;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
@@ -95,7 +95,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--copper-500);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -116,7 +116,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--pine-600);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -147,7 +147,7 @@
 }
 
 .statLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -157,7 +157,7 @@
 }
 
 .statValue {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 800;
   color: var(--pine-900);
@@ -193,7 +193,7 @@
   stroke-dasharray: 132;
 }
 .scoreText {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 800;
   fill: var(--pine-900);
@@ -229,7 +229,7 @@
 }
 
 .cardTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-1);
@@ -239,7 +239,7 @@
 
 /* ─── Section label (inside card) ───────────────────────────── */
 .sectionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -263,7 +263,7 @@
 .pulseRow:last-child { border-bottom: none; }
 
 .pulseDate {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-3);
@@ -291,7 +291,7 @@
 }
 
 .pulseVal {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1);
@@ -319,7 +319,7 @@
 }
 
 .journalTime {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -328,7 +328,7 @@
 }
 
 .journalDate {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   color: var(--text-3);
 }
@@ -359,7 +359,7 @@
 }
 
 .protocolName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 800;
   color: var(--text-1);
@@ -379,7 +379,7 @@
   background: var(--pine-100);
   color: var(--pine-600);
   border-radius: 20px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -407,7 +407,7 @@
 .suppRow:last-child { border-bottom: none; }
 
 .suppName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1);
@@ -421,7 +421,7 @@
 }
 
 .suppTiming {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -444,7 +444,7 @@
 }
 
 .emptyTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--text-2);
@@ -465,7 +465,7 @@
   align-items: center;
   padding: 3px 10px;
   border-radius: 20px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -505,7 +505,7 @@
 }
 
 .naqDomainName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   color: var(--text-1);
@@ -532,13 +532,13 @@
 }
 
 .naqPct {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 800;
 }
 
 .naqLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -556,7 +556,7 @@
   background: var(--surface-2);
   border: 1px solid var(--border-2);
   border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -580,7 +580,7 @@
 }
 
 .advancePromptTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -607,7 +607,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--copper-500);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -626,7 +626,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: none;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
@@ -642,7 +642,7 @@
 }
 
 .advanceError {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   color: var(--copper-700);
   margin-bottom: 8px;
@@ -654,7 +654,7 @@
 }
 
 .labTrendsTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.10em;
@@ -679,7 +679,7 @@
 }
 
 .labTrendName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1);
@@ -694,7 +694,7 @@
 }
 
 .labTrendArrow {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
 }

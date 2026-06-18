@@ -20,7 +20,7 @@
 }
 
 .pageTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--pine-900);
@@ -57,7 +57,7 @@
 }
 
 .nextBannerLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -67,7 +67,7 @@
 }
 
 .nextBannerDate {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: #fff;
@@ -154,7 +154,7 @@
 }
 
 .cardTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 800;
   color: var(--pine-900);
@@ -174,7 +174,7 @@
 
 .cardPrice {
   display: block;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   color: var(--copper-500);
@@ -182,7 +182,7 @@
 
 .cardDuration {
   display: block;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--text-3, var(--bone-600));
@@ -204,7 +204,7 @@
   display: inline-block;
   background: var(--copper-500);
   color: #fff;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.04em;

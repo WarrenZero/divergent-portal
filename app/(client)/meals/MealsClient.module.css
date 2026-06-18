@@ -26,7 +26,7 @@
 }
 
 .pageTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -60,7 +60,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-2, #5A4C38);
@@ -112,7 +112,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   background: var(--pine-100, #DDE8DE);
@@ -156,7 +156,7 @@
   color: #fff;
   border: none;
   border-radius: 7px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -171,7 +171,7 @@
 }
 
 .sensSuggestion {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -195,7 +195,7 @@
 }
 
 .sharedLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -254,7 +254,7 @@
 }
 
 .sharedCardTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1, #0F1F13);
@@ -286,7 +286,7 @@
   padding: 10px 18px;
   border: none;
   background: none;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -311,7 +311,7 @@
 }
 
 .inSeasonLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -362,7 +362,7 @@
   background: rgba(192, 120, 72, 0.12);
   border-bottom: 1px solid rgba(192, 120, 72, 0.25);
   padding: 6px 10px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   color: var(--copper-700, #8A4810);
@@ -373,7 +373,7 @@
   background: rgba(192, 120, 72, 0.07);
   border-bottom: 1px solid rgba(192, 120, 72, 0.15);
   padding: 5px 10px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--copper-700, #8A4810);
@@ -429,7 +429,7 @@
 }
 
 .tag {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -441,7 +441,7 @@
 }
 
 .cardTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1, #0F1F13);
@@ -470,7 +470,7 @@
 }
 
 .cardMeta {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   color: var(--text-3, #9A8A72);
   display: flex;
@@ -478,7 +478,7 @@
 }
 
 .myRatingBadge {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--copper-500, #C07848);
@@ -590,7 +590,7 @@
   border: 1px solid rgba(192, 120, 72, 0.25);
   border-radius: 8px;
   padding: 8px 12px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--copper-700, #8A4810);
@@ -616,7 +616,7 @@
 }
 
 .modalTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -624,7 +624,7 @@
 }
 
 .modalMeta {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   color: var(--text-3, #9A8A72);
   display: flex;
@@ -647,7 +647,7 @@
 }
 
 .sectionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -683,7 +683,7 @@
 .ingredientRow:last-child { border-bottom: none; }
 
 .ingredientAmt {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   color: var(--copper-500, #C07848);
@@ -755,7 +755,7 @@
 }
 
 .ratingSaved {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--pine-400, #5A7C62);
@@ -791,7 +791,7 @@
 }
 
 .communityAnon {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   color: var(--text-3, #9A8A72);
   font-style: italic;
@@ -808,7 +808,7 @@
   background: none;
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 7px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -821,7 +821,7 @@
 /* ── Tap hint ─────────────────────────────────────────────── */
 
 .tapHint {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--pine-400, #5A7C62);

@@ -35,7 +35,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div
           style={{
-            fontFamily: 'Syne, sans-serif',
+            fontFamily: 'var(--font-display)',
             fontSize: 18,
             fontWeight: 800,
             letterSpacing: '0.04em',
@@ -46,7 +46,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </div>
         <div
           style={{
-            fontFamily: 'Syne, sans-serif',
+            fontFamily: 'var(--font-display)',
             fontSize: 10,
             letterSpacing: '0.14em',
             textTransform: 'uppercase',

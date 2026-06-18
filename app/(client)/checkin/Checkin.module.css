@@ -31,7 +31,7 @@
 }
 
 .welcome {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -41,7 +41,7 @@
 }
 
 .name {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2.1rem);
   font-weight: 800;
   color: #fff;
@@ -95,7 +95,7 @@
 }
 
 .scoreText {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   fill: #fff;
@@ -103,7 +103,7 @@
 }
 
 .scoreSub {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   fill: var(--pine-300);
@@ -111,7 +111,7 @@
 }
 
 .scoreLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -144,7 +144,7 @@
 }
 
 .statVal {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 800;
   color: #fff;
@@ -154,7 +154,7 @@
 .statLab {
   font-size: 11px;
   color: var(--pine-300);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.04em;
 }
 
@@ -184,7 +184,7 @@
 
 /* ─── Section heading ────────────────────────────────────────── */
 .sectionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -205,7 +205,7 @@
   padding: 13px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--surface-2);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -249,7 +249,7 @@
 }
 
 .journalCardTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   color: var(--pine-900);
@@ -265,7 +265,7 @@
 }
 
 .journalCardArrow {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 300;
   color: var(--copper-500);
@@ -298,7 +298,7 @@
 }
 
 .aiNudgeLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -327,7 +327,7 @@
   padding: 10px 12px;
   border-radius: var(--radius);
   border: none;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -382,7 +382,7 @@
 }
 
 .sessionDate {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -419,7 +419,7 @@
   background: var(--pine-600);
   color: #fff;
   border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   text-decoration: none;
@@ -449,7 +449,7 @@
 }
 
 .suppName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-1);
@@ -463,7 +463,7 @@
 }
 
 .suppTiming {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -511,7 +511,7 @@
 }
 
 .suppTimeLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--pine-700);
@@ -547,7 +547,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--pine-200);
@@ -609,7 +609,7 @@
 }
 
 .heroDayNum {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 56px;
   font-weight: 800;
   color: #fff;
@@ -617,7 +617,7 @@
 }
 
 .heroDayLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -638,7 +638,7 @@
 }
 
 .heroWelcome {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -648,7 +648,7 @@
 }
 
 .heroPhase {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 15px;
   font-weight: 700;
   color: #fff;
@@ -673,7 +673,7 @@
   border: none;
   border-radius: var(--radius);
   color: #fff;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -723,7 +723,7 @@
 }
 
 .powerViewBtn {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -801,14 +801,14 @@
 }
 
 .accordionTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 600;
   color: var(--pine-900);
 }
 
 .accordionBadge {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   color: var(--copper-500);

@@ -5,6 +5,7 @@
 Before any build task, read the relevant skill files in `.claude/skills/`:
 
 - **design-system.md** — Colors, typography, components, Divergent design tokens
+- **typography.md** — Font pairings, type scale, border radius, shadows, transitions, CSS variables (read before any UI work)
 - **supabase.md** — Database patterns, RLS, auth, migrations, storage
 - **nextjs.md** — App Router patterns, server vs client components, API routes
 - **resend.md** — Email templates, attachments, all email types
@@ -24,7 +25,7 @@ Before any build task, read the relevant skill files in `.claude/skills/`:
 ## Non-Negotiable Rules
 
 1. Color tokens are locked — never deviate from Pine/Bone/Copper palette
-2. Fonts are locked — Syne (display), Lora (body), JetBrains Mono (code)
+2. Fonts — Plus Jakarta Sans (headers), Inter (body/UI), Lora (Warren's voice/quotes), JetBrains Mono (code) — see typography.md for full spec
 3. No `any` TypeScript types in clinical data models
 4. No PHI in localStorage, sessionStorage, or JS variables
 5. RLS must be active on all PHI tables — a practitioner must never see another's clients

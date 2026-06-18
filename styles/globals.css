@@ -5,7 +5,7 @@
    DO NOT modify color values — see CLAUDE.md for rationale
 ═══════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ─── COLOR PALETTE ─── */
 :root {
@@ -65,17 +65,29 @@
   --sidebar-muted:  var(--pine-400);
   --sidebar-active: var(--pine-700);
 
+  /* ─── TYPOGRAPHY ─── */
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --font-serif:   'Lora', serif;
+
   /* ─── BORDER RADIUS ─── */
-  --radius-sm: 6px;
-  --radius:    12px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
+  --radius-sm:   8px;
+  --radius:      12px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-pill: 100px;
 
   /* ─── SHADOWS ─── */
   --shadow-sm:     0 1px 3px rgba(15, 31, 19, 0.08);
   --shadow:        0 4px 16px rgba(15, 31, 19, 0.10);
   --shadow-lg:     0 12px 40px rgba(15, 31, 19, 0.14);
   --shadow-copper: 0 4px 20px rgba(192, 120, 72, 0.25);
+  --shadow-card:   0px 8px 32px rgba(26, 43, 33, 0.04);
+  --shadow-hover:  0px 12px 40px rgba(26, 43, 33, 0.08);
+  --shadow-modal:  0px 24px 64px rgba(26, 43, 33, 0.12);
+  --shadow-cta:    0px 4px 16px rgba(192, 120, 72, 0.25);
 
   /* ─── MOTION ─── */
   --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
@@ -156,12 +168,13 @@ html {
 }
 
 body {
-  font-family: 'Lora', Georgia, serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text-1);
   font-size: 15px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Grain overlay — parasympathetic-first texture */
@@ -176,9 +189,27 @@ body::before {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 600;
   line-height: 1.2;
+}
+
+h1 {
+  font-size: 32px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 1.30;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 1.40;
+  letter-spacing: 0;
 }
 
 p { color: var(--text-2); }
@@ -186,28 +217,66 @@ p { color: var(--text-2); }
 a { color: inherit; text-decoration: none; }
 
 button {
-  font-family: 'Lora', serif;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   border: none;
   background: none;
 }
 
-input, textarea, select {
-  font-family: 'Lora', serif;
-  font-size: 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  background: var(--surface);
-  color: var(--text-1);
-  outline: none;
-  width: 100%;
-  transition: border-color 0.2s, box-shadow 0.2s;
+small, .caption, .meta {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.40;
 }
 
-input:focus, textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--copper-100);
+label, .label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.40;
+}
+
+input, select {
+  height: 52px;
+  padding: 0 16px;
+  border: 1.5px solid rgba(58, 92, 66, 0.15);
+  border-radius: 12px;
+  background: white;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--bone-800);
+  outline: none;
+  width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+textarea {
+  padding: 12px 16px;
+  border: 1.5px solid rgba(58, 92, 66, 0.15);
+  border-radius: 12px;
+  background: white;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--bone-800);
+  outline: none;
+  width: 100%;
+  transition: all 0.2s ease-in-out;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(192, 120, 72, 0.4);
+  box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.15);
+  outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--pine-300);
+  font-style: normal;
 }
 
 /* ─── ACCESSIBILITY ─── */
@@ -219,7 +288,7 @@ input:focus, textarea:focus {
   color: #fff;
   padding: 10px 16px;
   border-radius: 8px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
   z-index: 99999;
@@ -266,7 +335,9 @@ select:focus-visible,
 .text-sm   { font-size: 13px; }
 .text-xs   { font-size: 11px; }
 .text-muted { color: var(--text-3); }
-.font-syne  { font-family: 'Syne', sans-serif; }
+.font-display { font-family: var(--font-display); }
+.font-syne    { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
 .font-mono  { font-family: 'JetBrains Mono', monospace; }
 .font-bold  { font-weight: 700; }
 .mt-8  { margin-top: 8px; }
@@ -284,14 +355,13 @@ select:focus-visible,
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  border-radius: var(--radius-sm);
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
   border: none;
   white-space: nowrap;
 }
@@ -299,12 +369,12 @@ select:focus-visible,
 .btn-primary {
   background: var(--accent);
   color: #fff;
-  box-shadow: var(--shadow-copper);
+  box-shadow: var(--shadow-cta);
 }
 .btn-primary:hover {
   background: var(--copper-600);
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(192, 120, 72, 0.35);
+  box-shadow: 0px 6px 24px rgba(192, 120, 72, 0.35);
 }
 
 .btn-pine {
@@ -338,7 +408,7 @@ select:focus-visible,
   align-items: center;
   padding: 3px 10px;
   border-radius: 20px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -361,7 +431,13 @@ select:focus-visible,
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
 }
 .card-pad { padding: 20px; }
 .card-header {
@@ -372,7 +448,7 @@ select:focus-visible,
   justify-content: space-between;
 }
 .card-title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -424,12 +500,12 @@ select:focus-visible,
   color: var(--pine-100); font-size: 14px;
 }
 .brand-name {
-  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800;
+  font-family: var(--font-display); font-size: 15px; font-weight: 800;
   letter-spacing: 0.04em; color: var(--pine-900);
 }
 [data-theme="dark"] .brand-name { color: var(--bone-100); }
 .brand-tag {
-  font-size: 10px; font-family: 'Syne', sans-serif;
+  font-size: 10px; font-family: var(--font-display);
   color: var(--text-3); letter-spacing: 0.12em; text-transform: uppercase;
 }
 
@@ -440,7 +516,7 @@ select:focus-visible,
 }
 .switcher-btn {
   padding: 6px 18px; border-radius: 6px;
-  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600;
+  font-family: var(--font-display); font-size: 12px; font-weight: 600;
   letter-spacing: 0.04em; color: var(--text-3);
   transition: all 0.2s; border: none; background: none; cursor: pointer;
 }
@@ -460,7 +536,7 @@ select:focus-visible,
 .user-avatar {
   width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: #fff;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700; color: #fff;
 }
 
 .theme-toggle {
@@ -469,7 +545,7 @@ select:focus-visible,
 }
 .theme-btn {
   padding: 5px 10px; border-radius: 14px; cursor: pointer;
-  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
   color: var(--text-3); background: transparent;
   transition: all var(--dur-fast) var(--ease-out);
   display: flex; align-items: center; gap: 5px;
@@ -525,7 +601,7 @@ select:focus-visible,
   padding: 6px 14px; border-radius: 100px;
   background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px);
   border: 1px solid var(--border-2);
-  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--pine-700); margin-bottom: 28px;
 }
@@ -541,7 +617,7 @@ select:focus-visible,
 
 /* Hero text */
 .v2-h1 {
-  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-family: var(--font-display); font-weight: 800;
   font-size: clamp(44px, 7vw, 88px);
   line-height: 1.02; text-align: center;
   max-width: 900px; color: var(--text-1);
@@ -567,7 +643,7 @@ select:focus-visible,
 .v2-cta {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 16px 28px; border-radius: 100px;
-  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
   letter-spacing: 0.05em; text-transform: uppercase;
   cursor: pointer; transition: all var(--dur-base) var(--ease-out); border: none;
 }
@@ -596,7 +672,7 @@ select:focus-visible,
 }
 .v2-stat { text-align: center; }
 .v2-stat-num {
-  font-family: 'Syne', sans-serif; font-size: 28px;
+  font-family: var(--font-display); font-size: 28px;
   font-weight: 800; color: var(--pine-700);
 }
 [data-theme="dark"] .v2-stat-num { color: var(--copper-300); }
@@ -627,12 +703,12 @@ select:focus-visible,
 .v2-portal > * { position: relative; z-index: 1; }
 
 .v2-portal-type {
-  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
   letter-spacing: 0.15em; text-transform: uppercase;
   color: var(--copper-500); margin-bottom: 14px;
 }
 .v2-portal-title {
-  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  font-family: var(--font-display); font-size: 28px; font-weight: 800;
   color: var(--text-1); margin-bottom: 10px; letter-spacing: -0.01em;
 }
 .v2-portal-desc {
@@ -640,7 +716,7 @@ select:focus-visible,
 }
 .v2-portal-arrow {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--pine-700);
   transition: gap var(--dur-base) var(--ease-out);
@@ -666,7 +742,7 @@ select:focus-visible,
   font-size: 20px; margin-bottom: 16px;
 }
 .v2-feat-title {
-  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
   color: var(--text-1); margin-bottom: 6px;
 }
 .v2-feat-desc { font-size: 13px; color: var(--text-3); line-height: 1.6; }
@@ -676,6 +752,18 @@ select:focus-visible,
   margin-top: 80px; font-size: 12px; color: var(--text-3);
   letter-spacing: 0.08em; text-align: center;
 }
+
+/* ─── EYEBROW / SECTION LABELS ─── */
+.section-eyebrow,
+[class*="eyebrow"],
+[class*="Eyebrow"] {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
 
 /* ─── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 640px) {

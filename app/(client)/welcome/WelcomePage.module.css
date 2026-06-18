@@ -41,7 +41,7 @@
 /* ─── Greeting ───────────────────────────────────────────────── */
 
 .heading {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(32px, 8vw, 48px);
   font-weight: 800;
   color: var(--pine-50, #FDFAF5);
@@ -107,7 +107,7 @@
 }
 
 .stepTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 700;
   color: var(--pine-100);
@@ -130,7 +130,7 @@
   border: none;
   border-radius: var(--radius-lg);
   color: #fff;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;

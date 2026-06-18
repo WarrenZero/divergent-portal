@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -42,7 +42,7 @@
 }
 
 .title {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -67,7 +67,7 @@
 
 .toggleBtn {
   padding: 7px 16px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.03em;
@@ -110,7 +110,7 @@
   border: 1px solid var(--border-1, #E8DECE);
   border-radius: 8px;
   background: var(--surface-1, #FDFAF5);
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-2, #5A4C38);
@@ -228,7 +228,7 @@
 
 /* Domain labels */
 .domainLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9.5px;
   font-weight: 600;
   fill: var(--text-3, #9A8A72);
@@ -238,7 +238,7 @@
 }
 
 .domainLabelActive {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9.5px;
   font-weight: 700;
   fill: var(--pine-700, #1E3122);
@@ -273,14 +273,14 @@
 }
 
 .wellnessScore {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 800;
   line-height: 1;
 }
 
 .wellnessLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -309,7 +309,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -372,7 +372,7 @@
 }
 
 .detailTitle {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 17px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -418,7 +418,7 @@
 }
 
 .detailScoreLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -427,14 +427,14 @@
 }
 
 .detailScoreValue {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 800;
   line-height: 1;
 }
 
 .detailSectionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -470,7 +470,7 @@
 
 .branchTag {
   display: inline-block;
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -514,7 +514,7 @@
 }
 
 .trendSessionLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   color: var(--pine-100, #DDE8DE);
@@ -530,7 +530,7 @@
 }
 
 .trendWellness {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 800;
   margin-top: 4px;
@@ -569,7 +569,7 @@
 }
 
 .trendDomainName {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--text-1, #0F1F13);
@@ -605,14 +605,14 @@
 }
 
 .trendBurden {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   color: var(--text-2, #5A4C38);
 }
 
 .trendDelta {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 700;
 }
@@ -644,7 +644,7 @@
 }
 
 .emptyLink {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 600;
   color: var(--copper-500, #C07848);

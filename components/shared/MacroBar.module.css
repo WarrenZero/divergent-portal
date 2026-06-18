@@ -11,7 +11,7 @@
 }
 
 .calValue {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 800;
   color: var(--text-1, #0F1F13);
@@ -19,7 +19,7 @@
 }
 
 .calLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-3, #9A8A72);
@@ -41,7 +41,7 @@
 }
 
 .barLabel {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   color: var(--text-3, #9A8A72);
@@ -81,7 +81,7 @@
 }
 
 .barGrams {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
   color: var(--text-2, #5A4C38);
@@ -96,7 +96,7 @@
 }
 
 .metabolicNote {
-  font-family: 'Syne', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 600;
   color: var(--copper-700, #8A4810);
